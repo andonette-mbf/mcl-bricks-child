@@ -345,14 +345,63 @@ return;
             <div class="title-row step-title">
               <span class="title smaller-title to-animate">Please enter delegate information</span>
             </div>
+            <?php
+// Assuming this is within the loop or you have access to the current product
+global $product;
 
-        <div class="delegate-fields">
-          <div class="step-inputs-split">
-            <b>Delegate <span class="number">{X}</span> Information</b>
-            <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value="" placeholder="Delegate {X} Name">
-            <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
-            <input name="delegate_NI[{X}]" data-number="{X}" required class="delegate_NI" value="" placeholder="Delegate {X} NI Number">
-          </div>
+// Check if the product belongs to the 'irata' category
+if (has_term('irata-courses', 'product_cat', $product->get_id())) {
+?>
+<div class="delegate-fields">
+    <div class="step-inputs-split">
+        <b>Delegate <span class="number">{X}</span> Information</b>
+        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value="" placeholder="Delegate {X} Name">
+        <select name="delegate_level[{X}]" data-number="{X}" required class="delegate_level" onchange="toggleDelegateNumberField(this)">
+            <option value="" disabled selected>Select Delegate {X} Level</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value="" placeholder="Delegate {X} Number" style="display: none;">
+        <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
+    </div>
+</div>
+<?php
+} elseif(has_term('gwo-courses', 'product_cat', $product->get_id())) {
+  ?>
+  <div class="delegate-fields">
+      <div class="step-inputs-split">
+          <b>Delegate <span class="number">{X}</span> Information</b>
+          <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value="" placeholder="Delegate {X} Name">
+          <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value="" placeholder="Delegate {X} GWO Number"">
+          <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} Date Of Birth">
+      </div>
+  </div>
+  <?php
+    
+} else {
+  ?>
+<div class="delegate-fields">
+    <div class="step-inputs-split">
+        <b>Delegate <span class="number">{X}</span> Information</b>
+        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value="" placeholder="Delegate {X} Name">
+        <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} Date Of">
+    </div>
+</div>
+<?php
+}
+?>
+
+<script>
+function toggleDelegateNumberField(selectElement) {
+    var delegateNumberField = selectElement.parentElement.querySelector('.delegate_number');
+    if (selectElement.value == "1" || selectElement.value == "2") {
+        delegateNumberField.style.display = "block";
+    } else {
+        delegateNumberField.style.display = "none";
+    }
+}
+</script>
           <div class="outputted-fields"></div>
 
           <span class="alert alert-danger float-left mt-4" id="delegate_info_error" style="display: none;">Please enter all delegate information.</span>
