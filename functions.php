@@ -75,96 +75,6 @@ function grouped_product_redirect_post() {
     }
 }
 
-// ADDING A CUSTOM COLUMN TITLE TO ADMIN PRODUCTS LIST
-add_filter( 'manage_edit-product_columns', 'custom_product_column',11);
-function custom_product_column($columns)
-{
-
-	$new_columns = array();
-
-    foreach ( $columns as $key => $name ) {
-
-        $new_columns[ $key ] = $name;
-
-        // add ship-to after order status column
-        if ( 'sku' === $key ) {
-            $new_columns['product_location'] = __( 'Product Location', 'textdomain' );
-            $new_columns['venue_id'] = __( 'Venue ID', 'textdomain' );
-            $new_columns['template_id'] = __( 'Template ID', 'textdomain' );
-        }
-    }
-
-    unset($new_columns['product_tag']);
-    unset($new_columns['featured']);
-
-    return $new_columns;
-
-}
-
-//Control width of columns
-add_action( 'admin_head', 'style_custom_columns_identify' );
-
-function style_custom_columns_identify() {
-    global $pagenow;
-    if ( $pagenow == 'edit.php' ) {
-        ?>
-        <style type="text/css">
-          .manage-column.column-product_location {
-               width: 80px;
-           }
-           .manage-column.column-venue_id, .manage-column.column-template_id {
-               width: 60px;
-           }
-         </style>
-        <?php
-    }
-}
-
-// Add data to columns
-add_action( 'manage_product_posts_custom_column' , 'custom_product_list_column_content', 10, 2 );
-function custom_product_list_column_content( $column, $product_id )
-{
-    global $post;
-
-    switch ( $column )
-    {
-        case 'product_location' :
-            echo get_post_meta( $product_id, 'product_location', true ); // display the data
-            break;
-        case 'venue_id' :
-            echo get_post_meta( $product_id, 'venue_id', true ); // display the data
-            break;
-        case 'template_id' :
-            echo get_post_meta( $product_id, 'template_id', true ); // display the data
-            break;
-    }
-}
-
-//Make columns sortable
-add_filter( 'manage_edit-product_sortable_columns', 'sortable_custom_product_cols' );
-function sortable_custom_product_cols( $columns ) {
-    $columns['product_location'] = 'product_location';
-    $columns['venue_id'] = 'venue_id';
-    $columns['template_id'] = 'template_id';
- 
-    //To make a column 'un-sortable' remove it from the array
-    //unset($columns['date']);
- 
-    return $columns;
-}
-
-//Allow meta data to be sortable
-add_filter( 'woocommerce_shop_order_search_fields', 'location_searchable_fields', 10, 1 );
-function location_searchable_fields( $meta_keys ){
-    $meta_keys[] = 'product_location';
-    $meta_keys[] = 'venue_id';
-    $meta_keys[] = 'template_id';
-    return $meta_keys;
-}
-
-remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
-
-
 //Output delegate name field
 function delegate_output_name_field() {
 	global $product;
@@ -206,90 +116,6 @@ function delegate_output_name_field() {
 	}
 }
 add_action( 'woocommerce_before_add_to_cart_button', 'delegate_output_name_field', 10 );
-
-//Output delegate level field
-function delegate_output_level_field() {
-	global $product;
-	if($product->is_type('booking')){
-		?>
-
-            <div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-1" level="delegate[1][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-2" level="delegate[2][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-3" level="delegate[3][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-4" level="delegate[4][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-5" level="delegate[5][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-6" level="delegate[6][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-7" level="delegate[7][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-8" level="delegate[8][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-9" level="delegate[9][level]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-level-10" level="delegate[10][level]">
-            </div>
-
-		<?php
-	}
-}
-add_action( 'woocommerce_before_add_to_cart_button', 'delegate_output_level_field', 10 );
-
-//Output delegate number field
-function delegate_output_number_field() {
-	global $product;
-	if($product->is_type('booking')){
-		?>
-
-            <div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-1" number="delegate[1][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-2" number="delegate[2][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-3" number="delegate[3][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-4" number="delegate[4][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-5" number="delegate[5][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-6" number="delegate[6][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-7" number="delegate[7][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-8" number="delegate[8][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-9" number="delegate[9][number]">
-            </div>
-			<div class="delegate-name-email-field hidden">
-                <input type="hidden" id="delegate-number-10" number="delegate[10][number]">
-            </div>
-
-		<?php
-	}
-}
-add_action( 'woocommerce_before_add_to_cart_button', 'delegate_output_number_field', 10 );
 
 //Output delegate dob field
 function delegate_output_dob_field() {
@@ -414,18 +240,6 @@ function delegate_display_name_email_text_cart( $item_data, $cart_item ) {
 			);
 
 			$item_data[] = array(
-				'key'     => __( 'Delegate '.$i.' Level', 'delegates' ),
-				'value'   => wc_clean($delegate['level']),
-				'display' => '',
-			);
-
-			$item_data[] = array(
-				'key'     => __( 'Delegate '.$i.' Number', 'delegates' ),
-				'value'   => wc_clean($delegate['number']),
-				'display' => '',
-			);
-
-			$item_data[] = array(
 				'key'     => __( 'Delegate '.$i.' DOB', 'delegates' ),
 				'value'   => wc_clean($delegate['dob']),
 				'display' => '',
@@ -438,7 +252,9 @@ function delegate_display_name_email_text_cart( $item_data, $cart_item ) {
 			);
 
 		}
+
 	}
+
 	return $item_data;
 }
 
@@ -453,10 +269,9 @@ function delegate_add_name_email_text_to_order_items( $item, $cart_item_key, $va
 
 	//set delegates for variable
 	$delegates = $values['delegates'];
-    echo $delegates;
 
 	//add delegates for array
-	$item->add_meta_data( __( 'delegates', 'delegates','delegates','delegates','delegates' ), $delegates );
+	$item->add_meta_data( __( 'delegates', 'delegates' ), $delegates );
 
 	//Split out delegates for display
 	$i = 0;
@@ -465,15 +280,14 @@ function delegate_add_name_email_text_to_order_items( $item, $cart_item_key, $va
 
 		if(!empty($delegate['name'])){
 			$item->add_meta_data( __( 'Delegate '.$i.' Name', 'delegates' ), $delegate['name'] );
-            $item->add_meta_data( __( 'Delegate '.$i.' Level', 'delegates' ), $delegate['level'] );
-            $item->add_meta_data( __( 'Delegate '.$i.' Number', 'delegates' ), $delegate['number'] );
 			$item->add_meta_data( __( 'Delegate '.$i.' DOB', 'delegates' ), $delegate['dob'] );
 			$item->add_meta_data( __( 'Delegate '.$i.' NI Number', 'delegates' ), $delegate['NI'] );
 		}
 	}
 
 }
-add_action( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
+
+add_action( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 4 );
 
 //CITB Number Field
 add_action('woocommerce_after_order_notes', 'custom_citb_field');
