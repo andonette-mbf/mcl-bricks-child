@@ -138,78 +138,8 @@ if ( post_password_required () ) {
               </div>
             </div>
             
-            <div class="step-layouts">
-              <div class="layouts" id="layout-list">
-                <div class="calendar-list">
-                  <div class="table-section">
-                  <?php
-                  $select_address       = get_field_object ( 'select_address' );
-                  $select_address_value = $select_address[ 'value' ];
-                  //Get values from label
-                  $select_address_field = get_field_object ( 'select_address' );
-                  $select_address_value = get_field ( 'select_address' );
-                  $select_address_label = $field[ 'choices' ][ $value ];
+            <?php get_template_part('woocommerce/template-parts/template', 'date-table'); ?>
 
-                  //if we have some dates lets make a table
-                  if ( ! empty ( $futureAvailabilityDates ) ) { ?>
-                  <table class="table">
-                    <thead>
-                      <th>Start Date</th>
-                      <th>Location</th>
-                      <th>Availability</th>
-                      <th class="add-td"></th>
-                    </thead>
-                    <tbody>
-                      <?php
-                      $dateCounter = 0;
-                      foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
-                                  $dateCounter++;
-
-                                  echo '<tr data-start="' . $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) . '" data-end="' . $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) . '">';
-                                  echo '<td>' . $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) . '</td>';
-
-                                  if ( $select_address_value == 'Redwood Park Estate, Stallingborough NE, Lincolnshire, DN41 8TH' )
-                                    {
-                                    echo '<td>Humber Training Centre</td>';
-                                    }
-                                  else if ( $select_address_value == '11 Thornsett Works, Thornsett Road, Wandsworth, London, SW18 4EW' )
-                                    {
-                                    echo '<td>South London Training Centre</td>';
-                                    }
-                                  else
-                                    {
-                                    echo '<td>East London Training Centre</td>';
-                                    }
-
-                                  echo '<td>Bookings Available</td>';
-                                  echo '<td class="add-td"><a href="#" data-day="' . $futureAvailabilityDate[ 'from' ]->format ( 'j' ) . '" data-month="' . $futureAvailabilityDate[ 'from' ]->format ( 'n' ) . '" data-year="' . $futureAvailabilityDate[ 'from' ]->format ( 'Y' ) . '" class="cta-button book-now-button float-right">Select Date</a></td>';
-                                  echo '</tr>';
-                                  }
-                                ?>
-                              </tbody>
-                            </table>
-                          <?php } ?>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="layouts float-left w-100 position-relative" id="layout-calendar">
-                      <?php
-                      /**
-                       * Hook: woocommerce_single_product_summary.
-                       *
-                       * @hooked woocommerce_template_single_title - 5
-                       * @hooked woocommerce_template_single_rating - 10
-                       * @hooked woocommerce_template_single_price - 10
-                       * @hooked woocommerce_template_single_excerpt - 20
-                       * @hooked woocommerce_template_single_add_to_cart - 30
-                       * @hooked woocommerce_template_single_meta - 40
-                       * @hooked woocommerce_template_single_sharing - 50
-                       * @hooked WC_Structured_Data::generate_product_data() - 60
-                       */
-                      do_action ( 'woocommerce_single_product_summary' );
-                      ?>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="course-step" id="step-3">
