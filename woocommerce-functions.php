@@ -4,16 +4,29 @@
 //* Enqueue scripts and styles
 add_action ( 'wp_enqueue_scripts', 'disable_woocommerce_loading_css_js' );
 
-function disable_woocommerce_loading_css_js ()
-    {
+//Remove unused tabs
+add_filter ( 'woocommerce_product_tabs', 'wcs_woo_remove_reviews_tab', 98 );
+function wcs_woo_remove_reviews_tab ( $tabs ) {
+    unset ( $tabs[ 'reviews' ] );
+    unset ( $tabs[ 'description' ] );
+    unset ( $tabs[ 'additional_information' ] );
+    return $tabs;
+    }
+
+// Remove breadcrumbs from shop & categories
+add_filter ( 'woocommerce_before_main_content', 'remove_breadcrumbs' );
+function remove_breadcrumbs () {
+    remove_action ( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
+    }
+
+
+function disable_woocommerce_loading_css_js () {
 
     // Check if WooCommerce plugin is active
-    if ( function_exists ( 'is_woocommerce' ) )
-        {
+    if ( function_exists ( 'is_woocommerce' ) ) {
 
         // Check if it's any of WooCommerce page
-        if ( ! is_woocommerce () && ! is_cart () && ! is_checkout () && ! is_account_page () )
-            {
+        if ( ! is_woocommerce () && ! is_cart () && ! is_checkout () && ! is_account_page () ) {
 
             ## Dequeue WooCommerce styles
             wp_dequeue_style ( 'woocommerce-layout' );
@@ -33,8 +46,7 @@ function disable_woocommerce_loading_css_js ()
     }
 
 // Get Grouped product parent
-function parent_grouped_id ( $post_id = 0 )
-    {
+function parent_grouped_id ( $post_id = 0 ) {
     global $post, $wpdb;
 
     if ( $post_id == 0 )
@@ -57,11 +69,9 @@ function parent_grouped_id ( $post_id = 0 )
     " );
 
     // Retreiving the parent grouped product ID
-    foreach ( $results as $result )
-        {
+    foreach ( $results as $result ) {
         foreach ( maybe_unserialize ( $result->child_ids ) as $child_id )
-            if ( $child_id == $post_id )
-                {
+            if ( $child_id == $post_id ) {
                 $parent_grouped_id = $result->post_id;
                 break;
                 }
@@ -73,19 +83,16 @@ function parent_grouped_id ( $post_id = 0 )
 
 
 //Redirect training products to cart page on add to cart
-function training_custom_add_to_cart_redirect ( $url )
-    {
+function training_custom_add_to_cart_redirect ( $url ) {
 
-    if ( ! isset ( $_REQUEST[ 'add-to-cart' ] ) || ! is_numeric ( $_REQUEST[ 'add-to-cart' ] ) )
-        {
+    if ( ! isset ( $_REQUEST[ 'add-to-cart' ] ) || ! is_numeric ( $_REQUEST[ 'add-to-cart' ] ) ) {
         return $url;
         }
 
     $product_id = apply_filters ( 'woocommerce_add_to_cart_product_id', absint ( $_REQUEST[ 'add-to-cart' ] ) );
 
     // Only redirect products that have the 't-shirts' category
-    if ( has_term ( 'training-courses', 'product_cat', $product_id ) )
-        {
+    if ( has_term ( 'training-courses', 'product_cat', $product_id ) ) {
         $url = get_permalink ( 123 );
         }
 
