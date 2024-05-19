@@ -54,15 +54,20 @@ if ( post_password_required () ) {
 
         <div class="brxe-block">
           <h3 class="brxe-heading">Confirm Venue</h3>
-          <?php if ( $product->is_type ( 'booking' ) ) { ?>
+          <?php if ( $product->is_type ( 'booking' ) )
+          { ?>
           <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
+
           <input type="hidden" id="multi-cost-of-course" value="" />
+
           <input type="hidden" id="changed-cost-of-course" value="" />
 
-          <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
+          <?php if ( isset ( $_GET[ 'scrollStep' ] ) )
+          {
           $scrollStep = $_GET[ 'scrollStep' ]; ?>
 
           <script type="text/javascript">
+
             jQuery(document).ready(function () {
               var scrollStep = "<?php echo $scrollStep; ?>";
 
@@ -71,6 +76,7 @@ if ( post_password_required () ) {
                 scrollTop: jQuery(".training-course-steps .course-step#step-" + scrollStep).offset().top - 160
               }, 2000);
             });
+
           </script>
           <?php } ?>
 
@@ -78,91 +84,113 @@ if ( post_password_required () ) {
           $availabilityInFuture = false;
           $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
           $availabilityTest     = array_filter ( $availability );
+
           //Store availability dates
           $futureAvailabilityDates = array();
           $fad                     = 0;
+
           //Loop through and check date is in the future
-          foreach ( $availabilityTest as $availabilityTestRange ) {
-            foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
+          foreach ( $availabilityTest as $availabilityTestRange )
+            {
+            foreach ( $availabilityTestRange as $availabilityTestRangeSingle )
+              {
+
               //For some reason if a course has a time, that goes in the from value and they introduce a from_date, how stupid
-              if ( $availabilityTestRangeSingle[ "from_date" ] ) {
+              if ( $availabilityTestRangeSingle[ "from_date" ] )
+                {
                 $opening_date = new DateTime( $availabilityTestRangeSingle[ "from_date" ] );
                 $closing_date = new DateTime( $availabilityTestRangeSingle[ "to_date" ] );
-                } else {
+                }
+              else
+                {
                 $opening_date = new DateTime( $availabilityTestRangeSingle[ "from" ] );
                 $closing_date = new DateTime( $availabilityTestRangeSingle[ "to" ] );
                 }
-                $current_date = new DateTime();
-                
-                if ( $opening_date > $current_date ) {
+
+              $current_date = new DateTime();
+
+              if ( $opening_date > $current_date )
+                {
                 $availabilityInFuture = true;
-                
+
                 //Add to array to display in list
                 $futureAvailabilityDates[ $fad ][ "from" ] = $opening_date;
                 $futureAvailabilityDates[ $fad ][ "to" ]   = $closing_date;
                 $fad++;
                 }
+
               }
             } ?>
 
           <div class="training-course-steps">
-            <?php do_action ( 'woocommerce_before_single_product' ); ?>
+            <?php
+            //Notices
+            do_action ( 'woocommerce_before_single_product' ); ?>
 
             <div class="course-step" id="step-1">
-              <div class="step-title"><span class="title">Step 1 - Select Your Venue</span></div>
+              <div class="step-title">
+                <span class="title">Step 1 - Select Your Venue</span>
+              </div>
               <div>
-              <?php
-              $locations = $parent_group->get_children ();
-              // this returns the product ID into $location
-              foreach ( $locations as $location ) { ?>
-              <!-- Need to get the right info coming in -->
-              <div class="step-field location">
-                <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>" href="<?php echo get_permalink ( $location ); ?>?scrollStep=2"><?php echo get_field ( 'select_address', $location ); ?></a>
-              </div>
-              <?php } ?>
-            </div>
-          </div> 
+                <?php
+                $locations = $parent_group->get_children ();
+                foreach ( $locations as $location )
+                  {
+                  ?>
+                <!-- Need to get the right info coming in -->
+                      <div class="step-field location">
+                        <a class="<?php if ( $location === $product->id )
+                        { ?>active<?php } ?>"
+                          href="<?php echo get_permalink ( $location ); ?>?scrollStep=2"><?php echo get_field ( 'select_address', $location ); ?></a>
+                      </div>
+                    <?php } ?>
+                  </div>
+                </div>
 
-          <div class="course-step" id="step-2">
-            <div class="step-title">
-              <span class="title">Step 2 - Choose The Date</span>
-              <a href="#" data-step="2" class="previous-step">Previous step</a>
-            </div>
+                <div class="course-step" id="step-2">
+                  <div class="step-title">
+                    <span class="title">Step 2 - Choose The Date</span>
+                    <a href="#" data-step="2" class="previous-step">Previous step</a>
+                  </div>
 
-            <div class="course-layout-select">
-              <div class="toggle-style-block">
-                <a href="#" class="title course-style">
-                  <span class="toggle-label active">List</span>
-                  <span class="toggle-identifier"></span>
-                  <span class="toggle-label">Calendar</span></a>
-              </div>
-            </div>
-            
-            <div class="step-layouts">
-              <div class="layouts" id="layout-list">
-                <div class="calendar-list">
-                  <div class="table-section">
-                  <?php
-                  $select_address       = get_field_object ( 'select_address' );
-                  $select_address_value = $select_address[ 'value' ];
-                  //Get values from label
-                  $select_address_field = get_field_object ( 'select_address' );
-                  $select_address_value = get_field ( 'select_address' );
-                  $select_address_label = $field[ 'choices' ][ $value ];
+                  <div class="course-layout-select">
+                    <div class="toggle-style-block">
+                      <a href="#" class="title course-style">
+                        <span class="toggle-label active">List</span>
+                        <span class="toggle-identifier"></span>
+                        <span class="toggle-label">Calendar</span></a>
+                    </div>
+                  </div>
 
-                  //if we have some dates lets make a table
-                  if ( ! empty ( $futureAvailabilityDates ) ) { ?>
-                  <table class="table">
-                    <thead>
-                      <th>Start Date</th>
-                      <th>Location</th>
-                      <th>Availability</th>
-                      <th class="add-td"></th>
-                    </thead>
-                    <tbody>
-                      <?php
-                      $dateCounter = 0;
-                      foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
+                  <div class="step-layouts">
+                    <div class="layouts" id="layout-list">
+                      <div class="calendar-list">
+                        <div class="table-section">
+
+                          <?php
+                          $select_address       = get_field_object ( 'select_address' );
+                          $select_address_value = $select_address[ 'value' ];
+
+                          //Get values from label
+                          $select_address_field = get_field_object ( 'select_address' );
+                          $select_address_value = get_field ( 'select_address' );
+                          $select_address_label = $field[ 'choices' ][ $value ];
+
+                          if ( ! empty ( $futureAvailabilityDates ) )
+                            { ?>
+
+                            <table class="table">
+                              <thead>
+                                <th>Start Date</th>
+                                <th>Location</th>
+                                <th>Availability</th>
+                                <th class="add-td"></th>
+                              </thead>
+                              <tbody>
+                                <?php
+                                $dateCounter = 0;
+                                foreach ( $futureAvailabilityDates as $futureAvailabilityDate )
+                                  {
                                   $dateCounter++;
 
                                   echo '<tr data-start="' . $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) . '" data-end="' . $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) . '">';
@@ -511,8 +539,72 @@ if ( post_password_required () ) {
       <?php } ?>
     
     <!--tabbed data -->
-    <?php get_template_part('woocommerce/template-parts/template', 'tabbed-data'); ?>
-   
+    <section class="brxe-section brxe-wc-section">
+      <div class="brxe-container">
+        <div id="brxe-tabs" data-script-id="tabs" class="brxe-tabs-nested">
+    <div id="brxe-pljtos" class="brxe-block tab-menu">
+    <div class="brxe-div tab-title brx-open">
+      <div class="brxe-text-basic">Course Details</div>
+    </div>
+    <div class="brxe-div tab-title">
+      <div class="brxe-text-basic">Included In Course</div>
+    </div>
+    <div class="brxe-div tab-title">
+      <div class="brxe-text-basic">Pre Training Requirements</div>
+          </div>
+    </div>
+          <div class="brxe-block tab-content">
+
+                   <div class="brxe-block tab-pane fade active show brx-open">
+      <div class="brxe-text">
+          <p><?php the_field ( 'course_details' ); ?></p>
+      </div>
+    </div>
+    <div class="brxe-block tab-pane">
+      <div class="brxe-text">
+      <p><?php the_field ( 'included_in_course' ); ?></p>
+      </div>
+    </div>
+    <div class="brxe-block tab-pane">
+      <div class="brxe-text">
+      <p><?php the_field ( 'pre_training_requirements' ); ?></p>
+          </div>
+    </div>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="brxe-section brxe-wc-section related-products">
+  <div class="related-title">
+  <?php
+  $training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
+  $terms               = get_the_terms ( $product->id, 'product_cat' );
+  foreach ( $terms as $term )
+    {
+    if ( $term->parent === $training_courses_id->term_id )
+      {
+      $cat_name_first = $term->name;
+      break;
+      }
+    } ?>
+
+  <span class="title to-animate">Other <?php echo $cat_name_first; ?> you may be interested in</span>
+
+  <a href="<?php echo get_term_link ( 'training-courses', 'product_cat' ); ?>" class="float-right title-link">See all training courses</a>
+</div>
+
+  <?php
+  /**
+   * Hook: woocommerce_after_single_product_summary.
+   *
+   * @hooked woocommerce_output_product_data_tabs - 10
+   * @hooked woocommerce_upsell_display - 15
+   * @hooked woocommerce_output_related_products - 20
+   */
+  do_action ( 'woocommerce_after_single_product_summary' );
+  ?>
+
+</section>
 </main>
 
 <?php do_action ( 'woocommerce_after_single_product' ); ?>
