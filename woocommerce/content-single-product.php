@@ -360,8 +360,12 @@ if ( post_password_required () ) {
                         <b>Delegate <span class="number">{X}</span> Information</b>
                         <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                           placeholder="Delegate {X} Name">
-                        <input name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select"
-                          value="" placeholder="Delegate {X} Level Select">
+                          <select name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select">
+            <option value="" disabled selected>Choose Your Level</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
                         <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
                           placeholder="Delegate {X} Number">
                         <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
