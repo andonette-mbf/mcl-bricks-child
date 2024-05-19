@@ -52,7 +52,6 @@ if ( post_password_required () )
     ?>
 
       <!--Header section -->
-      <!--Need To Code In Featured Image -->
       <section class="brxe-section brxe-wc-section mcl-hero">
         <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
           <div class="brxe-div mcl-hero__content mcl-flex--col">
@@ -393,8 +392,13 @@ if ( post_password_required () )
                         <b>Delegate <span class="number">{X}</span> Information</b>
                         <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                           placeholder="Delegate {X} Name">
-                        <input name="delegate_level[{X}]" data-number="{X}" required class="delegate_level" value=""
-                          placeholder="Delegate {X} Level">
+                        <select name="delegate_level[{X}]" data-number="{X}" required class="delegate_level" placeholder="Delegate {X} Level">
+                          <option value="" disabled selected>Select Level</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                  
                         <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
                           placeholder="Delegate {X} Number">
                         <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
