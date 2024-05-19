@@ -355,6 +355,20 @@ if ( post_password_required () ) {
                       <span class="title smaller-title to-animate">Please enter delegate information</span>
                     </div>
 
+
+                    <?php 
+                    
+                    // Check if the current product belongs to the 'irata' category
+if (has_term('irata-courses', 'product_cat')) {
+  // Code to execute if the product is in the 'irata' category
+  echo 'This product is in the irata category.';
+} else if (has_term('gwo-courses', 'product_cat')){
+  // Code to execute if the product is not in the 'irata' category
+  echo 'This product is in the gwo category.';
+} else {
+  echo 'This product is not in the irata category.';
+}
+?>
                     <div class="delegate-fields">
                       <div class="step-inputs-split">
                         <b>Delegate <span class="number">{X}</span> Information</b>
@@ -367,17 +381,29 @@ if ( post_password_required () ) {
             <option value="3">3</option>
         </select>
                         <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
-                          placeholder="Delegate {X} Number">
-                        <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-                          placeholder="Delegate {X} DOB">
-                        <input name="delegate_NI[{X}]" data-number="{X}" required class="delegate_NI" value=""
-                          placeholder="Delegate {X} NI Number">
+                          placeholder="Delegate {X} Number" style="display:none;">
+                          <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
+                   
                       </div>
                       <div class="outputted-fields"></div>
 
                       <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
                         style="display: none;">Please enter all delegate information.</span>
                     </div>
+                    <script>
+                      // Function to handle changes for delegate level select
+jQuery('body').on('change', 'select.delegate_level_select', function() {
+    var fieldNumber = jQuery(this).attr('data-number');
+    var selectedValue = jQuery(this).val();
+    
+    if (selectedValue === "2" || selectedValue === "3") {
+        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').show();
+    } else {
+        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
+    }
+});
+
+                    </script>
                   </div>
                 </div>
 

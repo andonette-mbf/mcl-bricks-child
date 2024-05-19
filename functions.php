@@ -175,7 +175,7 @@ function delegate_output_fields () {
                 <input type="hidden" id="delegate-level-select-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][level_select]">
                 <input type="hidden" id="delegate-number-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][number]">
                 <input type="hidden" id="delegate-dob-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][dob]">
-                <input type="hidden" id="delegate-NI-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][NI]">
+
             </div>
             <?php
             }
@@ -237,12 +237,6 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
             $item_data[] = array(
                 'key'     => __ ( 'Delegate ' . $i . ' DOB', 'delegates' ),
                 'value'   => wc_clean ( $delegate[ 'dob' ] ),
-                'display' => '',
-            );
-
-            $item_data[] = array(
-                'key'     => __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ),
-                'value'   => wc_clean ( $delegate[ 'NI' ] ),
                 'display' => '',
             );
 
