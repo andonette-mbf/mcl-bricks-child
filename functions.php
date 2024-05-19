@@ -58,6 +58,40 @@ add_filter ( 'bricks/code/echo_function_names', function ()
     } );
 
 
+add_action ( 'template_redirect', 'grouped_product_redirect_post' );
+function grouped_product_redirect_post ()
+    {
+    global $post;
+    if ( is_product () )
+        {
+        $product = get_product ( $post->ID );
+        if ( $product->is_type ( 'grouped' ) )
+            {
+
+            $locations = $product->get_children ();
+            var_dump ( $locations[ 0 ] );
+
+            if ( strpos ( get_permalink ( $locations[ 0 ] ), 'wandsworth' ) !== false )
+                {
+                wp_redirect ( get_permalink ( $locations[ 0 ] ), 301 );
+                }
+            else
+                {
+                if ( strpos ( get_permalink ( $locations[ 1 ] ), 'wandsworth' ) !== false )
+                    {
+                    wp_redirect ( get_permalink ( $locations[ 1 ] ), 301 );
+                    }
+                else
+                    {
+                    wp_redirect ( get_permalink ( $locations[ 0 ] ), 301 );
+                    }
+                }
+
+            exit;
+            }
+        }
+    }
+
 //Output delegate name field
 function delegate_output_name_field ()
     {
