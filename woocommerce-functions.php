@@ -138,6 +138,8 @@ function parent_grouped_id( $post_id = 0 ){
 }
 
 
+
+
 //Dont show booking products on front end
 add_action( 'pre_get_posts', 'dont_show_booking' );
 function dont_show_booking( $query ) {
