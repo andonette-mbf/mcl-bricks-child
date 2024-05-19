@@ -32,24 +32,6 @@ function disable_woocommerce_loading_css_js ()
         }
     }
 
-//Remove Woocommerce Select2 - Woocommerce 3.2.1+
-function woo_dequeue_select2 ()
-    {
-    if ( class_exists ( 'woocommerce' ) )
-        {
-        wp_dequeue_style ( 'select2' );
-        wp_deregister_style ( 'select2' );
-
-        wp_dequeue_script ( 'selectWoo' );
-        wp_deregister_script ( 'selectWoo' );
-        }
-    }
-add_action ( 'wp_enqueue_scripts', 'woo_dequeue_select2', 100 );
-
-//Remove Category: From product page
-remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
-
-
 // Get Grouped product parent
 function parent_grouped_id ( $post_id = 0 )
     {
@@ -88,36 +70,6 @@ function parent_grouped_id ( $post_id = 0 )
     return $parent_grouped_id;
     }
 
-
-//Dont show booking products on front end
-add_action ( 'pre_get_posts', 'dont_show_booking' );
-function dont_show_booking ( $query )
-    {
-    if ( ! is_admin () && is_tax () && $query->is_main_query () )
-        {
-
-        $taxquery = array(
-            array(
-                'taxonomy' => 'product_type',
-                'field'    => 'slug',
-                'terms'    => 'booking',
-                'operator' => 'NOT IN',
-            ),
-        );
-
-        $query->set ( 'tax_query', $taxquery );
-        }
-    }
-
-
-// Change Woocommerce css breaktpoint from max width: 768px to 767px  
-add_filter ( 'woocommerce_style_smallscreen_breakpoint', 'woo_custom_breakpoint' );
-
-function woo_custom_breakpoint ( $px )
-    {
-    $px = '767px';
-    return $px;
-    }
 
 
 //Redirect training products to cart page on add to cart
