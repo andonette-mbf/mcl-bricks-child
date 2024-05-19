@@ -27,172 +27,174 @@ if ( post_password_required () ) {
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php wc_product_class ( '', $product ); ?>>
 
-    <?php if ( has_term ( 'training-courses', 'product_cat' ) )
-    {
-    if ( $product->is_type ( 'booking' ) ) {
-      $product_group_id = parent_grouped_id ( $product->id );
-      $parent_group     = wc_get_product ( $product_group_id );
-      $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
-      $duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit' );
-      $duarionTime = get_post_meta ( $product->id, '_wc_booking_duration' );
-      $price_2023 = get_field ( '2023_price', $product->id );
-      } else {
-      $product_group_id = $product->id;
-      $parent_group     = $product;
-      $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
-      }
-    ?>
+    <?php if ( has_term ( 'training-courses', 'product_cat' ) ) {
+      if ( $product->is_type ( 'booking' ) ) {
+        $product_group_id = parent_grouped_id ( $product->id );
+        $parent_group     = wc_get_product ( $product_group_id );
+        $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
+        $duarionType      = get_post_meta ( $product->id, '_wc_booking_duration_unit' );
+        $duarionTime      = get_post_meta ( $product->id, '_wc_booking_duration' );
+        $price_2023       = get_field ( '2023_price', $product->id );
+        } else {
+        $product_group_id = $product->id;
+        $parent_group     = $product;
+        $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
+        }
+      ?>
 
       <!--Header section -->
-      <?php get_template_part('woocommerce/template-parts/template', 'product-header'); ?>
+      <?php get_template_part ( 'woocommerce/template-parts/template', 'product-header' ); ?>
       <!--Course Selection-->
       <section class="brxe-section brxe-wc-section training-course-product">
         <div class="brxe-container grid--1-3 gap--m">
           <div class="training-sidebar">
-          <?php get_template_part('woocommerce/template-parts/template', 'training-sidebar'); ?>
+            <?php get_template_part ( 'woocommerce/template-parts/template', 'training-sidebar' ); ?>
           </div>
 
-        <div class="brxe-block">
-          <h3 class="brxe-heading">Confirm Venue</h3>
-          <?php if ( $product->is_type ( 'booking' ) ) { ?>
-          <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
-          <input type="hidden" id="multi-cost-of-course" value="" />
-          <input type="hidden" id="changed-cost-of-course" value="" />
+          <div class="brxe-block">
+            <h3 class="brxe-heading">Confirm Venue</h3>
+            <?php if ( $product->is_type ( 'booking' ) ) { ?>
+              <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
+              <input type="hidden" id="multi-cost-of-course" value="" />
+              <input type="hidden" id="changed-cost-of-course" value="" />
 
-          <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
-          $scrollStep = $_GET[ 'scrollStep' ]; ?>
+              <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
+                $scrollStep = $_GET[ 'scrollStep' ]; ?>
 
-          <script type="text/javascript">
-            jQuery(document).ready(function () {
-              var scrollStep = "<?php echo $scrollStep; ?>";
+                <script type="text/javascript">
+                  jQuery(document).ready(function () {
+                    var scrollStep = "<?php echo $scrollStep; ?>";
 
-              //custom scrolling function - use common sense to see how it all fits together
-              jQuery('html, body').animate({
-                scrollTop: jQuery(".training-course-steps .course-step#step-" + scrollStep).offset().top - 160
-              }, 2000);
-            });
-          </script>
-          <?php } ?>
-
-          <?php
-          $availabilityInFuture = false;
-          $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
-          $availabilityTest     = array_filter ( $availability );
-          //Store availability dates
-          $futureAvailabilityDates = array();
-          $fad                     = 0;
-          //Loop through and check date is in the future
-          foreach ( $availabilityTest as $availabilityTestRange ) {
-            foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
-              //For some reason if a course has a time, that goes in the from value and they introduce a from_date, how stupid
-              if ( $availabilityTestRangeSingle[ "from_date" ] ) {
-                $opening_date = new DateTime( $availabilityTestRangeSingle[ "from_date" ] );
-                $closing_date = new DateTime( $availabilityTestRangeSingle[ "to_date" ] );
-                } else {
-                $opening_date = new DateTime( $availabilityTestRangeSingle[ "from" ] );
-                $closing_date = new DateTime( $availabilityTestRangeSingle[ "to" ] );
-                }
-                $current_date = new DateTime();
-                
-                if ( $opening_date > $current_date ) {
-                $availabilityInFuture = true;
-                
-                //Add to array to display in list
-                $futureAvailabilityDates[ $fad ][ "from" ] = $opening_date;
-                $futureAvailabilityDates[ $fad ][ "to" ]   = $closing_date;
-                $fad++;
-                }
-              }
-            } ?>
-
-          <div class="training-course-steps">
-            <?php do_action ( 'woocommerce_before_single_product' ); ?>
-
-            <div class="course-step" id="step-1">
-              <div class="step-title"><span class="title">Step 1 - Select Your Venue</span></div>
-              <div>
-              <?php
-              $locations = $parent_group->get_children ();
-              // this returns the product ID into $location
-              foreach ( $locations as $location ) { ?>
-              <!-- Need to get the right info coming in -->
-              <div class="step-field location">
-                <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>" href="<?php echo get_permalink ( $location ); ?>?scrollStep=2"><?php echo get_field ( 'select_address', $location ); ?></a>
-              </div>
+                    //custom scrolling function - use common sense to see how it all fits together
+                    jQuery('html, body').animate({
+                      scrollTop: jQuery(".training-course-steps .course-step#step-" + scrollStep).offset().top - 160
+                    }, 2000);
+                  });
+                </script>
               <?php } ?>
-            </div>
-          </div> 
 
-          <div class="course-step" id="step-2">
-            <div class="step-title">
-              <span class="title">Step 2 - Choose The Date</span>
-              <a href="#" data-step="2" class="previous-step">Previous step</a>
-            </div>
+              <?php
+              $availabilityInFuture = false;
+              $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
+              $availabilityTest     = array_filter ( $availability );
+              //Store availability dates
+              $futureAvailabilityDates = array();
+              $fad                     = 0;
+              //Loop through and check date is in the future
+              foreach ( $availabilityTest as $availabilityTestRange ) {
+                foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
+                  //For some reason if a course has a time, that goes in the from value and they introduce a from_date, how stupid
+                  if ( $availabilityTestRangeSingle[ "from_date" ] ) {
+                    $opening_date = new DateTime( $availabilityTestRangeSingle[ "from_date" ] );
+                    $closing_date = new DateTime( $availabilityTestRangeSingle[ "to_date" ] );
+                    } else {
+                    $opening_date = new DateTime( $availabilityTestRangeSingle[ "from" ] );
+                    $closing_date = new DateTime( $availabilityTestRangeSingle[ "to" ] );
+                    }
+                  $current_date = new DateTime();
 
-            <div class="course-layout-select">
-              <div class="toggle-style-block">
-                <a href="#" class="title course-style">
-                  <span class="toggle-label active">List</span>
-                  <span class="toggle-identifier"></span>
-                  <span class="toggle-label">Calendar</span></a>
-              </div>
-            </div>
-            
-            <div class="step-layouts">
-              <div class="layouts" id="layout-list">
-                <div class="calendar-list">
-                  <div class="table-section">
-                  <?php
-                  $select_address       = get_field_object ( 'select_address' );
-                  $select_address_value = $select_address[ 'value' ];
+                  if ( $opening_date > $current_date ) {
+                    $availabilityInFuture = true;
 
-                  // Check if we have some future availability dates
-                  if ( ! empty ( $futureAvailabilityDates ) ) {
-                      ?>
-                      <table class="table">
-                          <thead>
-                              <tr>
+                    //Add to array to display in list
+                    $futureAvailabilityDates[ $fad ][ "from" ] = $opening_date;
+                    $futureAvailabilityDates[ $fad ][ "to" ]   = $closing_date;
+                    $fad++;
+                    }
+                  }
+                } ?>
+
+              <div class="training-course-steps">
+                <?php do_action ( 'woocommerce_before_single_product' ); ?>
+
+                <div class="course-step" id="step-1">
+                  <div class="step-title"><span class="title">Step 1 - Select Your Venue</span></div>
+                  <div>
+                    <?php
+                    $locations = $parent_group->get_children ();
+                    // this returns the product ID into $location
+                    foreach ( $locations as $location ) { ?>
+                      <!-- Need to get the right info coming in -->
+                      <div class="step-field location">
+                        <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>"
+                          href="<?php echo get_permalink ( $location ); ?>?scrollStep=2"><?php echo get_field ( 'select_address', $location ); ?></a>
+                      </div>
+                    <?php } ?>
+                  </div>
+                </div>
+
+                <div class="course-step" id="step-2">
+                  <div class="step-title">
+                    <span class="title">Step 2 - Choose The Date</span>
+                    <a href="#" data-step="2" class="previous-step">Previous step</a>
+                  </div>
+
+                  <div class="course-layout-select">
+                    <div class="toggle-style-block">
+                      <a href="#" class="title course-style">
+                        <span class="toggle-label active">List</span>
+                        <span class="toggle-identifier"></span>
+                        <span class="toggle-label">Calendar</span></a>
+                    </div>
+                  </div>
+
+                  <div class="step-layouts">
+                    <div class="layouts" id="layout-list">
+                      <div class="calendar-list">
+                        <div class="table-section">
+                          <?php
+                          $select_address       = get_field_object ( 'select_address' );
+                          $select_address_value = $select_address[ 'value' ];
+
+                          // Check if we have some future availability dates
+                          if ( ! empty ( $futureAvailabilityDates ) ) {
+                            ?>
+                            <table class="table">
+                              <thead>
+                                <tr>
                                   <th>Start Date</th>
                                   <th>Location</th>
                                   <th>Availability</th>
                                   <th class="add-td"></th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                            <?php
-                            foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
-                              $start_date_formatted = $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' );
-                              $end_date_formatted   = $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' );
-                              $day                  = $futureAvailabilityDate[ 'from' ]->format ( 'j' );
-                              $month                = $futureAvailabilityDate[ 'from' ]->format ( 'n' );
-                              $year                 = $futureAvailabilityDate[ 'from' ]->format ( 'Y' );
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <?php
+                                foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
+                                  $start_date_formatted = $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' );
+                                  $end_date_formatted   = $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' );
+                                  $day                  = $futureAvailabilityDate[ 'from' ]->format ( 'j' );
+                                  $month                = $futureAvailabilityDate[ 'from' ]->format ( 'n' );
+                                  $year                 = $futureAvailabilityDate[ 'from' ]->format ( 'Y' );
 
-                              // Determine the location based on the selected address value
-                              $location = 'East London Training Centre';
-                              if ( $select_address_value == 'Redwood Park Estate, Stallingborough NE, Lincolnshire, DN41 8TH' ) {
-                                  $location = 'Humber Training Centre';
-                                  } elseif ( $select_address_value == '11 Thornsett Works, Thornsett Road, Wandsworth, London, SW18 4EW' ) {
-                                  $location = 'South London Training Centre';
-                                  }
-                              ?>
-                              <tr data-start="<?php echo esc_attr ( $start_date_formatted ); ?>" data-end="<?php echo esc_attr ( $end_date_formatted ); ?>">
-                              <td><?php echo esc_html ( $start_date_formatted ); ?></td>
-                              <td><?php echo esc_html ( $location ); ?></td>
-                              <td>Bookings Available</td>
-                              <td class="add-td">
-                                <a href="#" data-day="<?php echo esc_attr ( $day ); ?>"
-                                    data-month="<?php echo esc_attr ( $month ); ?>"
-                                    data-year="<?php echo esc_attr ( $year ); ?>"
-                                    class="cta-button book-now-button float-right">Select Date</a>
-                              </td>
-                            </tr>
-                            <?php } ?>
-                          </tbody>
-                      </table>
-                      <?php } ?>
+                                  // Determine the location based on the selected address value
+                                  $location = 'East London Training Centre';
+                                  if ( $select_address_value == 'Redwood Park Estate, Stallingborough NE, Lincolnshire, DN41 8TH' ) {
+                                    $location = 'Humber Training Centre';
+                                    } elseif ( $select_address_value == '11 Thornsett Works, Thornsett Road, Wandsworth, London, SW18 4EW' ) {
+                                    $location = 'South London Training Centre';
+                                    }
+                                  ?>
+                                  <tr data-start="<?php echo esc_attr ( $start_date_formatted ); ?>"
+                                    data-end="<?php echo esc_attr ( $end_date_formatted ); ?>">
+                                    <td><?php echo esc_html ( $start_date_formatted ); ?></td>
+                                    <td><?php echo esc_html ( $location ); ?></td>
+                                    <td>Bookings Available</td>
+                                    <td class="add-td">
+                                      <a href="#" data-day="<?php echo esc_attr ( $day ); ?>"
+                                        data-month="<?php echo esc_attr ( $month ); ?>"
+                                        data-year="<?php echo esc_attr ( $year ); ?>"
+                                        class="cta-button book-now-button float-right">Select Date</a>
+                                    </td>
+                                  </tr>
+                                <?php } ?>
+                              </tbody>
+                            </table>
+                          <?php } ?>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                    <!-- this div toggles the calendar away. not sure how to bring it back -->
                 <div id="layout-calendar">
                 <?php
                 /**
@@ -383,13 +385,11 @@ if ( post_password_required () ) {
         </div>
       </section>
 
-      <?php if ( $product->is_type ( 'booking' ) )
-      { ?>
+      <?php if ( $product->is_type ( 'booking' ) ) { ?>
         <script>
           <?php
           //Do we have any call to book dates?
-          if ( get_field ( 'additional_date_information' ) )
-            {
+          if ( get_field ( 'additional_date_information' ) ) {
             //Get the call to book dates
             $additional_dates_information = json_decode ( get_field ( 'additional_date_information' ), true );
 
@@ -397,19 +397,15 @@ if ( post_password_required () ) {
             $additional_dates_information_per_day = [];
 
             $x = 0;
-            foreach ( $additional_dates_information as $additional_date_information )
-              {
+            foreach ( $additional_dates_information as $additional_date_information ) {
 
-              if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] )
-                {
+              if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] ) {
 
                 //1 day course
-                $period                                                                          = new DateTime( $additional_date_information[ 'to' ] );
+                $period                                                                                 = new DateTime( $additional_date_information[ 'to' ] );
                 $additional_dates_information_per_day[ $period->format ( 'Y-m-d' ) ][ 'spaces_remain' ] = $additional_date_information[ 'spaces_remain' ];
                 $additional_dates_information_per_day[ $period->format ( 'Y-m-d' ) ][ 'call_to_book' ]  = $additional_date_information[ 'call_to_book' ];
-                }
-              else
-                {
+                } else {
 
                 //Add each day in the period
                 $period = new DatePeriod(
@@ -418,8 +414,7 @@ if ( post_password_required () ) {
                   new DateTime( $additional_date_information[ 'to' ] ),
                 );
 
-                foreach ( $period as $key => $value )
-                  {
+                foreach ( $period as $key => $value ) {
                   $additional_dates_information_per_day[ $value->format ( 'Y-m-d' ) ][ 'spaces_remain' ] = $additional_date_information[ 'spaces_remain' ];
                   $additional_dates_information_per_day[ $value->format ( 'Y-m-d' ) ][ 'call_to_book' ]  = $additional_date_information[ 'call_to_book' ];
                   }
@@ -505,8 +500,8 @@ if ( post_password_required () ) {
       <?php } ?>
     
     <!--tabbed data -->
-    <?php get_template_part('woocommerce/template-parts/template', 'tabbed-data'); ?>
-   
+                <?php get_template_part ( 'woocommerce/template-parts/template', 'tabbed-data' ); ?>
+
 </main>
 
 <?php do_action ( 'woocommerce_after_single_product' ); ?>
