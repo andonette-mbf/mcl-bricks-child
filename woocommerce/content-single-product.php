@@ -403,8 +403,6 @@ if ( post_password_required () )
                           placeholder="Delegate {X} Number">
                         <input name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
                           placeholder="Delegate {X} DOB">
-                        <input name="delegate_NI[{X}]" data-number="{X}" required class="delegate_NI" value=""
-                          placeholder="Delegate {X} NI Number">
                       </div>
                       <div class="outputted-fields"></div>
 

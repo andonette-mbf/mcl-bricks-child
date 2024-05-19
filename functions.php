@@ -268,49 +268,6 @@ function delegate_output_dob_field ()
     }
 add_action ( 'woocommerce_before_add_to_cart_button', 'delegate_output_dob_field', 10 );
 
-//Output delegate dob field
-function delegate_output_NI_field ()
-    {
-    global $product;
-    if ( $product->is_type ( 'booking' ) )
-        {
-        ?>
-
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-1" name="delegate[1][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-2" name="delegate[2][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-3" name="delegate[3][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-4" name="delegate[4][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-5" name="delegate[5][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-6" name="delegate[6][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-7" name="delegate[7][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-8" name="delegate[8][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-9" name="delegate[9][NI]">
-        </div>
-        <div class="delegate-name-email-field hidden">
-            <input type="hidden" id="delegate-NI-10" name="delegate[10][NI]">
-        </div>
-
-        <?php
-        }
-    }
-add_action ( 'woocommerce_before_add_to_cart_button', 'delegate_output_NI_field', 10 );
 
 //Update cart meta if it has delegates
 function delegate_add_name_email_text_to_cart_item ( $cart_item_data, $product_id, $variation_id )
@@ -374,12 +331,6 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item )
                 'display' => '',
             );
 
-            $item_data[] = array(
-                'key'     => __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ),
-                'value'   => wc_clean ( $delegate[ 'NI' ] ),
-                'display' => '',
-            );
-
             }
         }
     return $item_data;
@@ -401,7 +352,7 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
     echo $delegates;
 
     //add delegates for array
-    $item->add_meta_data ( __ ( 'delegates', 'delegates', 'delegates', 'delegates', 'delegates' ), $delegates );
+    $item->add_meta_data ( __ ( 'delegates', 'delegates', 'delegates', 'delegates', ), $delegates );
 
     //Split out delegates for display
     $i = 0;
@@ -415,13 +366,25 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level', 'delegates' ), $delegate[ 'level' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Number', 'delegates' ), $delegate[ 'number' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' DOB', 'delegates' ), $delegate[ 'dob' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ), $delegate[ 'NI' ] );
             }
         }
 
     }
 add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
 
+add_action ( 'woocommerce_before_add_to_cart_button', 'add_delegate_hidden_fields' );
+
+function add_delegate_hidden_fields ()
+    {
+    for ( $i = 1; $i <= 10; $i++ )
+        { // Assuming a maximum of 10 delegates
+        echo '<input type="hidden" name="delegate[' . $i . '][name]" value="" />';
+        echo '<input type="hidden" name="delegate[' . $i . '][level]" value="" />';
+        echo '<input type="hidden" name="delegate[' . $i . '][number]" value="" />';
+        echo '<input type="hidden" name="delegate[' . $i . '][dob]" value="" />';
+        echo '<input type="hidden" name="delegate[' . $i . '][ni]" value="" />';
+        }
+    }
 
 //Add custom field to the checkout page
 add_action ( 'woocommerce_after_order_notes', 'custom_po_number_field' );
@@ -471,8 +434,6 @@ function bbloomer_redirect_thank_you_page_order_admin_actions ( $order )
         return $url;
         } );
     }
-
-add_filter ( 'wpcf7_autop_or_not', '__return_false' );
 
 //Disable KSE Escaping of ACF
 add_filter ( 'acf/the_field/allow_unsafe_html', function ($allowed, $selector)
