@@ -659,11 +659,5 @@ jQuery(document).ready(function () {
 		}
 	);
 
-	    jQuery('.delegate_dob').datepicker({
-        dateFormat: 'yy-mm-dd', // You can change the date format as needed
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0" // Allows selection from 100 years ago to the current year
-    });
 
 });
