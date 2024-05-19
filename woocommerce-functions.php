@@ -46,70 +46,8 @@ function woo_dequeue_select2 ()
     }
 add_action ( 'wp_enqueue_scripts', 'woo_dequeue_select2', 100 );
 
-
-// Remove breadcrumbs from shop & categories
-add_filter ( 'woocommerce_before_main_content', 'remove_breadcrumbs' );
-function remove_breadcrumbs ()
-    {
-    remove_action ( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
-    }
-
 //Remove Category: From product page
 remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
-
-
-//Change in and out of stock message
-add_filter ( 'woocommerce_get_stock_html', 'filter_get_stock_html', 10, 2 );
-function filter_get_stock_html ( $html, $product )
-    {
-    // Low stock quantity amount
-    $low_stock_qty = 3;
-
-    $availability = $product->get_availability ();
-
-    if ( ! empty ( $availability[ 'availability' ] ) )
-        {
-        $class      = esc_attr ( $availability[ 'class' ] );
-        $avail_text = wp_kses_post ( $availability[ 'availability' ] );
-        $stock_qty  = $product->get_stock_quantity ();
-
-        if ( $stock_qty <= $low_stock_qty )
-            {
-            $class .= ' few-in-stock';
-            }
-        ob_start ();
-
-        // Make your changes below
-        ?>
-        <p class="stock <?php echo $class; ?>"><?php echo $avail_text; ?></p>
-        <?php
-
-        $html = ob_get_clean ();
-        }
-    return $html;
-    }
-
-//Remove unused tabs
-add_filter ( 'woocommerce_product_tabs', 'wcs_woo_remove_reviews_tab', 98 );
-function wcs_woo_remove_reviews_tab ( $tabs )
-    {
-    unset ( $tabs[ 'reviews' ] );
-    unset ( $tabs[ 'description' ] );
-    unset ( $tabs[ 'additional_information' ] );
-    return $tabs;
-    }
-
-//Remove product title
-remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
-
-//Remove product standard price
-remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
-
-//Remove product short desc
-remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
-
-//Remove product rating
-remove_action ( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
 
 
 // Get Grouped product parent
