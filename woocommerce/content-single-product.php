@@ -175,46 +175,19 @@ if ( post_password_required () )
           <?php } ?>
 
           <?php
-          $availabilityInFuture = false;
-          $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
-          $availabilityTest     = array_filter ( $availability );
+$product_id = $product->get_id(); // Assuming $product is the current product object
+$availability_data = get_future_availability_dates($product_id);
 
-          //Store availability dates
-          $futureAvailabilityDates = array();
-          $fad                     = 0;
-
-          //Loop through and check date is in the future
-          foreach ( $availabilityTest as $availabilityTestRange )
-            {
-            foreach ( $availabilityTestRange as $availabilityTestRangeSingle )
-              {
-
-              //For some reason if a course has a time, that goes in the from value and they introduce a from_date, how stupid
-              if ( $availabilityTestRangeSingle[ "from_date" ] )
-                {
-                $opening_date = new DateTime( $availabilityTestRangeSingle[ "from_date" ] );
-                $closing_date = new DateTime( $availabilityTestRangeSingle[ "to_date" ] );
-                }
-              else
-                {
-                $opening_date = new DateTime( $availabilityTestRangeSingle[ "from" ] );
-                $closing_date = new DateTime( $availabilityTestRangeSingle[ "to" ] );
-                }
-
-              $current_date = new DateTime();
-
-              if ( $opening_date > $current_date )
-                {
-                $availabilityInFuture = true;
-
-                //Add to array to display in list
-                $futureAvailabilityDates[ $fad ][ "from" ] = $opening_date;
-                $futureAvailabilityDates[ $fad ][ "to" ]   = $closing_date;
-                $fad++;
-                }
-
-              }
-            } ?>
+if ($availability_data['availability_in_future']) {
+    echo '<ul>';
+    foreach ($availability_data['future_availability_dates'] as $date_range) {
+        echo '<li>Available from ' . $date_range['from']->format('Y-m-d') . ' to ' . $date_range['to']->format('Y-m-d') . '</li>';
+    }
+    echo '</ul>';
+} else {
+    echo 'No future availability dates.';
+}
+?>
 
           <div class="training-course-steps">
             <?php
