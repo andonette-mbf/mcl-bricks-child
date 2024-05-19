@@ -172,7 +172,7 @@ function delegate_output_fields () {
             ?>
             <div class="delegate-name-email-field hidden">
                 <input type="hidden" id="delegate-name-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][name]">
-                <input type="hidden" id="delegate-level-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][level]">
+                <input type="hidden" id="delegate-level-select-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][level_select]">
                 <input type="hidden" id="delegate-number-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][number]">
                 <input type="hidden" id="delegate-dob-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][dob]">
                 <input type="hidden" id="delegate-NI-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][NI]">
@@ -223,8 +223,8 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
             );
 
             $item_data[] = array(
-                'key'     => __ ( 'Delegate ' . $i . ' Level', 'delegates' ),
-                'value'   => wc_clean ( $delegate[ 'level' ] ),
+                'key'     => __ ( 'Delegate ' . $i . '  Select', 'delegates' ),
+                'value'   => wc_clean ( $delegate[ 'level_select' ] ),
                 'display' => '',
             );
 
@@ -274,7 +274,7 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
 
         if ( ! empty ( $delegate[ 'name' ] ) ) {
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Name', 'delegates' ), $delegate[ 'name' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level', 'delegates' ), $delegate[ 'level' ] );
+            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level Select', 'delegates' ), $delegate[ 'level_select' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Number', 'delegates' ), $delegate[ 'number' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' DOB', 'delegates' ), $delegate[ 'dob' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ), $delegate[ 'NI' ] );
@@ -292,8 +292,8 @@ function custom_citb_field ( $checkout ) {
         array(
             'type'  => 'text',
             'class' => array(
-                    'my-field-class form-row-wide',
-                ),
+                'my-field-class form-row-wide',
+            ),
             'label' => __ ( 'CITB Levy Number' ),
         ),
         $checkout->get_value ( 'citb_levy_number' ),
