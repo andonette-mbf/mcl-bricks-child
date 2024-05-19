@@ -658,6 +658,24 @@ jQuery(document).ready(function () {
 			).val(fieldValue);
 		}
 	);
+    // Initialize datepicker on delegate_dob input fields
+    $('.delegate_dob').datepicker({
+        dateFormat: 'yy-mm-dd', // You can change the date format as needed
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "-100:+0" // Allows selection from 100 years ago to the current year
+    });
+// Function to handle changes for delegate level select
+jQuery('body').on('change', 'select.delegate_level_select', function() {
+    var fieldNumber = jQuery(this).attr('data-number');
+    var selectedValue = jQuery(this).val();
+    
+    if (selectedValue === "2" || selectedValue === "3") {
+        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').show();
+    } else {
+        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
+    }
+});
 
 
 });
