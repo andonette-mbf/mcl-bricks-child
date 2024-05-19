@@ -15,75 +15,73 @@
  * @version     3.9.0
  */
 
-if ( ! defined ( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
-    }
+}
 
-$current_product_id = get_the_ID ();
+$current_product_id = get_the_ID();
 
 global $product, $woocommerce_loop;
-
-if ( empty ( $product ) || ! $product->exists () ) {
+ 
+if ( empty( $product ) || ! $product->exists() ) {
     return;
-    }
-
-if ( ! $related = $product->get_related ( $posts_per_page ) ) {
+}
+ 
+if ( ! $related = $product->get_related( $posts_per_page ) ) {
     return;
-    }
-
-$cats_array = array( 0 );
-
+}
+ 
+$cats_array = array(0);
+ 
 // get categories
-$terms = wp_get_post_terms ( $product->id, 'product_cat' );
-
+$terms = wp_get_post_terms( $product->id, 'product_cat' );
+ 
 // select only the category which doesn't have any children
 foreach ( $terms as $term ) {
-    $children = get_term_children ( $term->term_id, 'product_cat' );
-    if ( ! sizeof ( $children ) )
-        $cats_array[] = $term->term_id;
-    }
+    $children = get_term_children( $term->term_id, 'product_cat' );
+    if ( !sizeof( $children ) )
+    $cats_array[] = $term->term_id;
+}
 
-$args = apply_filters ( 'woocommerce_related_products_args', array(
-    'post_type'      => 'product',
+$args = apply_filters( 'woocommerce_related_products_args', array(
+    'post_type' => 'product',
     'posts_per_page' => 2,
-    'post__not_in'   => array( $current_product_id ),
-    'tax_query'      => array(
+	'post__not_in' => array($current_product_id),
+    'tax_query' => array(
         'relation' => 'AND',
         array(
             'taxonomy' => 'product_cat',
-            'field'    => 'id',
-            'terms'    => $cats_array,
+            'field' => 'id',
+            'terms' => $cats_array
         ),
         array(
             'taxonomy' => 'product_type',
             'field'    => 'slug',
             'terms'    => 'booking',
-            'operator' => 'NOT IN',
-        ),
-    ),
-),
-);
-
+            'operator' => 'NOT IN'
+        )
+    )
+));
+ 
 $products                    = new WP_Query( $args );
-$woocommerce_loop[ 'name' ]    = 'related';
-$woocommerce_loop[ 'columns' ] = apply_filters ( 'woocommerce_related_products_columns', $columns );
+$woocommerce_loop['name']    = 'related';
+$woocommerce_loop['columns'] = apply_filters( 'woocommerce_related_products_columns', $columns );
+ 
+if ( $products->have_posts() ) : ?>
 
-if ( $products->have_posts () ) : ?>
+        
+    <?php while ( $products->have_posts() ) : $products->the_post(); ?>
 
+        <?php global $product;?>
 
-    <?php while ( $products->have_posts () ) :
-        $products->the_post (); ?>
-
-        <?php global $product; ?>
-
-        <?php if ( has_term ( 25, 'product_cat', $current_product_id ) ) {
-            include ( get_stylesheet_directory () . '/template-parts/post/content-training.php' );
-            } else {
-            include ( get_stylesheet_directory () . '/template-parts/post/content-product.php' );
-            } ?>
+        <?php if( has_term( 25, 'product_cat', $current_product_id ) ) {
+            include( get_stylesheet_directory() . '/template-parts/post/content-training.php');
+        } else {
+            include( get_stylesheet_directory() . '/template-parts/post/content-product.php');
+        }?>
 
     <?php endwhile; // end of the loop. ?>
-
-    <?php
+        
+<?php
 endif;
-wp_reset_postdata ();
+wp_reset_postdata();
