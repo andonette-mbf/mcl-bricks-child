@@ -47,7 +47,6 @@ if ( post_password_required () ) {
       ?>
 
       <!--Header section -->
-      <!--Need To Code In Featured Image -->
       <section class="brxe-section brxe-wc-section mcl-hero">
         <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
           <div class="brxe-div mcl-hero__content mcl-flex--col">
@@ -354,58 +353,74 @@ if ( post_password_required () ) {
                     <div class="title-row step-title">
                       <span class="title smaller-title to-animate">Please enter delegate information</span>
                     </div>
-
-
                     <?php 
                     
                     // Check if the current product belongs to the 'irata' category
-if (has_term('irata-courses', 'product_cat')) {
-  // Code to execute if the product is in the 'irata' category
-  echo 'This product is in the irata category.';
-} else if (has_term('gwo-courses', 'product_cat')){
-  // Code to execute if the product is not in the 'irata' category
-  echo 'This product is in the gwo category.';
-} else {
-  echo 'This product is not in the irata category.';
-}
-?>
-                    <div class="delegate-fields">
+                    if (has_term('irata-courses', 'product_cat')) {
+                    ?>
+                              <div class="delegate-fields">
                       <div class="step-inputs-split">
                         <b>Delegate <span class="number">{X}</span> Information</b>
                         <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                           placeholder="Delegate {X} Name">
                           <select name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select">
-            <option value="" disabled selected>Choose Your Level</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select>
-                        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
-                          placeholder="Delegate {X} Number" style="display:none;">
-                          <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
-                   
-                      </div>
-                      <div class="outputted-fields"></div>
-
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all delegate information.</span>
+                            <option value="" disabled selected>Choose Your Level</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value="" placeholder="Delegate {X} Number" style="display:none;">
+                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
                     </div>
-                    <script>
+                    <div class="outputted-fields"></div>
+                    <span class="alert alert-danger float-left mt-4" id="delegate_info_error" style="display: none;">Please enter all delegate information.</span>
+                </div>
+                <script>
                       // Function to handle changes for delegate level select
-jQuery('body').on('change', 'select.delegate_level_select', function() {
-    var fieldNumber = jQuery(this).attr('data-number');
-    var selectedValue = jQuery(this).val();
-    
-    if (selectedValue === "2" || selectedValue === "3") {
-        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').show();
-    } else {
-        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
-    }
-});
+                        jQuery('body').on('change', 'select.delegate_level_select', function() {
+                        var fieldNumber = jQuery(this).attr('data-number');
+                        var selectedValue = jQuery(this).val();
+
+                        if (selectedValue === "2" || selectedValue === "3") {
+                        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').show();
+                        } else {
+                        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
+                        }
+                        });
 
                     </script>
-                  </div>
+                    <?php
+                    } else if (has_term('gwo-courses', 'product_cat')){
+                    ?>
+                              <div class="delegate-fields">
+                      <div class="step-inputs-split">
+                        <b>Delegate <span class="number">{X}</span> Information</b>
+                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
+                          placeholder="Delegate {X} Name">
+                        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value="" placeholder="Delegate {X} GWO Number">
+                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
+                    </div>
+                    <div class="outputted-fields"></div>
+                    <span class="alert alert-danger float-left mt-4" id="delegate_info_error" style="display: none;">Please enter all delegate information.</span>
                 </div>
+                    <?php
+                    } else {
+                    ?>
+                              <div class="delegate-fields">
+                      <div class="step-inputs-split">
+                        <b>Delegate <span class="number">{X}</span> Information</b>
+                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
+                          placeholder="Delegate {X} Name">
+                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value="" placeholder="Delegate {X} DOB">
+                    </div>
+                    <div class="outputted-fields"></div>
+                    <span class="alert alert-danger float-left mt-4" id="delegate_info_error" style="display: none;">Please enter all delegate information.</span>
+                </div>
+                    <?
+                    }
+                    ?>
+            </div>
+        </div>
 
                 <div class="course-step" id="step-4">
                   <div class="title-row step-title">
