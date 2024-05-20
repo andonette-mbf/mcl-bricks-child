@@ -432,69 +432,6 @@ jQuery(document).ready(function () {
 		jQuery('div#layout-calendar form.cart').submit();
 	});
 
-	//check certification checkboxes
-	jQuery('.step-field.qualification-field a').click(function (e) {
-		e.preventDefault();
-		jQuery(this).toggleClass('active');
-
-		var classNotFound = false;
-		jQuery('.step-field.qualification-field a').each(function () {
-			if (!jQuery(this).hasClass('active')) {
-				classNotFound = true;
-			}
-		});
-
-		if (classNotFound == false) {
-			if (jQuery('.training-course-steps .course-step#step-5').is(':hidden')) {
-				jQuery('.training-course-steps .course-step#step-5').slideDown();
-			}
-
-			if (
-				jQuery(
-					'.training-sidebar .sidebar-selections .meta#qualifications-meta'
-				).is(':hidden')
-			) {
-				jQuery(
-					'.training-sidebar .sidebar-selections .meta#qualifications-meta'
-				).slideDown();
-			}
-
-			jQuery('html, body').animate(
-				{
-					scrollTop:
-						jQuery('.training-course-steps .course-step#step-5').offset().top -
-						160,
-				},
-				2000
-			);
-
-			var spaces_remaining = jQuery(
-				'.brxe-wc-section.training-course-product'
-			).attr('data-spaces-remaining');
-			var people_attending = jQuery(
-				'.brxe-wc-section.training-course-product'
-			).attr('data-people-attending');
-
-			if (parseInt(people_attending) > parseInt(spaces_remaining)) {
-				jQuery('#cannotBookCourse')
-					.html(
-						'We only have ' +
-							spaces_remaining +
-							' spaces left on this date. Please call us to book this date on <br /> 0113 257 0842. '
-					)
-					.slideDown();
-				jQuery('#confirm-boooking').slideUp();
-			} else {
-				jQuery('#cannotBookCourse').slideUp();
-				jQuery('#confirm-boooking').slideDown();
-			}
-		} else {
-			if (jQuery('.training-course-steps .course-step#step-5').not(':hidden')) {
-				jQuery('.training-course-steps .course-step#step-5').slideUp();
-			}
-		}
-	});
-
 	///////////////////////////////////
 	///// People Dropdown Hover Intent //////
 	///////////////////////////////////
