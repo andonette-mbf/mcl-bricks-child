@@ -29,106 +29,31 @@ if ( post_password_required () ) {
 
   <div id="product-<?php the_ID (); ?>" <?php wc_product_class ( '', $product ); ?>>
 
-    <?php if ( has_term ( 'training-courses', 'product_cat' ) ) {
-      if ( $product->is_type ( 'booking' ) ) {
-        $product_group_id = parent_grouped_id ( $product->id );
-        $parent_group     = wc_get_product ( $product_group_id );
-        $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
+  <?php
+if (has_term('training-courses', 'product_cat')) {
+    // Initialize common variables
+    $product_group_id = $product->is_type('booking') ? parent_grouped_id($product->id) : $product->id;
+    $parent_group = wc_get_product($product_group_id);
+    $comments = get_comments(array('post_id' => $product_group_id));
+    
+    if ($product->is_type('booking')) {
+        $duarionType = get_post_meta($product->id, '_wc_booking_duration_unit', true);
+        $duarionTime = get_post_meta($product->id, '_wc_booking_duration', true);
+        $price_2023 = get_field('2023_price', $product->id);
+    }
+?>
 
-        $duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit' );
-        $duarionTime = get_post_meta ( $product->id, '_wc_booking_duration' );
 
-        $price_2023 = get_field ( '2023_price', $product->id );
-        } else {
-        $product_group_id = $product->id;
-        $parent_group     = $product;
-        $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
-        }
-      ?>
 
       <!--Header section -->
-      <section class="brxe-section brxe-wc-section mcl-hero">
-        <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
-          <div class="brxe-div mcl-hero__content mcl-flex--col">
-            <h1 class="brxe-heading mcl-hero__title"><?php if ( get_field ( 'display_title' ) ) { ?>
-                <?php the_field ( 'display_title' ); ?>
-              </h1>
-            <?php } else { ?>
-              <h1 class="brxe-heading mcl-hero__title"><?php the_title (); ?></h1>
-            <?php } ?>
-
-            <h5>
-              Duration: <?php if ( get_field ( 'course_duration_custom' ) ) { ?>
-                <span><?php the_field ( 'course_duration_custom' ); ?></span>
-              <?php } else { ?>
-                <span class="float-left w-100"><?php echo $duarionTime[ 0 ]; ?>     <?php echo $duarionType[ 0 ]; ?></span>
-              <?php } ?>
-              <br>
-              Certification:
-              <?php echo get_field ( 'certification_meta', $product_group_id ); ?>
-              <br>
-              Grants & Funding: <?php if ( get_field ( 'grants_funding', $product_group_id ) ) { ?>
-                <span>Options available</span>
-              <?php } else { ?>
-                <span>Options not available</span>
-              <?php } ?>
-              <br>
-              Availability: See dates below
-            </h5>
-          </div>
-        </div>
-
-        <div class="brxe-container mcl-hero__inner--absolute">
-          <div class="brxe-div mcl-hero__overlay mcl-absolute--full"></div>
-          <div class="brxe-div mcl-hero__image" style="background-image: url('<?php the_field ( 'hero_image' ); ?>');"></div>
-          <div class="brxe-div mcl-hero__tagline-box">
-            <h3 class="brxe-heading mcl-hero__tagline-box-heading">We've<br>got<br>you.</h3>
-          </div>
-        </div>
-      </section>
+      <!--partial-->
+      <?php get_template_part('woocommerce/template-parts/template', 'header'); ?>
 
       <!--Course Selection-->
       <section class="brxe-section brxe-wc-section training-course-product">
         <div class="brxe-container grid--1-3 gap--m">
-
-          <div class="training-sidebar">
-            <div class="sidebar-inner">
-              <div class="sidebar-selections">
-                <h3 class="brxe-heading">Your Selection</h3>
-                <?php if ( $product->is_type ( 'booking' ) ) { ?>
-                  <!-- meta class uses js --->
-              <div class="meta">
-                <b>Course: </b><br>
-                <span>
-                  <?php echo get_the_title ( $product_group_id ); ?>
-                </span>
-              </div>
-
-              <div class="meta">
-                <b>Venue</b>
-                <span>
-                  <?php the_field ( 'location' ); ?>
-                </span>
-              </div>
-
-              <div class="meta" id="course-date-meta">
-                <b>Course Date</b><br>
-                <span class="title">
-                  <span class="start-date">
-                    <div class="dd"></div>/<div class="mm">/</div>/<div class="yyyy"></div>
-                  </span>
-                </span>
-              </div>
-              <?php } ?>
-
-              <?php if ( $product->is_type ( 'booking' ) ) { ?>
-              <p class="from-price price"></p>
-              <p class="total-price price">
-                <span class="price title">Total - £<span id="total-cost"></span></span </p>
-                <?php } ?>
-            </div>
-          </div>
-        </div>
+        <!--sidebar partial -->
+        <?php get_template_part('woocommerce/template-parts/template', 'sidebar'); ?>
 
         <div class="brxe-block">
           <h3 class="brxe-heading">Confirm Venue</h3>
