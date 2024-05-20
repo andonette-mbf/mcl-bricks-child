@@ -128,7 +128,8 @@ if ( post_password_required () ) {
                               </thead>
                               <tbody>
                                 <?php foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) : ?>
-                                  <tr data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
+                                  <tr
+                                    data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
                                     data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
                                     <td><?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?></td>
                                     <td>
@@ -235,118 +236,80 @@ if ( post_password_required () ) {
         </div>
       </section>
 
-      <?php if ( $product->is_type ( 'booking' ) ) { ?>
-
+      <?php if ( $product->is_type ( 'booking' ) ) : ?>
         <?php
-        //Do we have any call to book dates?
-        if ( get_field ( 'additional_date_information' ) ) {
-          //Get the call to book dates
-          $additional_dates_information = json_decode ( get_field ( 'additional_date_information' ), true );
+        // Check for additional date information
+        if ( $additional_date_information_json = get_field ( 'additional_date_information' ) ) {
+          // Decode the JSON data
+          $additional_dates_information = json_decode ( $additional_date_information_json, true );
 
-          //Create an array of every day
+          // Initialize an array for per-day information
           $additional_dates_information_per_day = [];
 
-          $x = 0;
           foreach ( $additional_dates_information as $additional_date_information ) {
-
             if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] ) {
-
-              //1 day course
-              $period                                                                                 = new DateTime( $additional_date_information[ 'to' ] );
-              $additional_dates_information_per_day[ $period->format ( 'Y-m-d' ) ][ 'spaces_remain' ] = $additional_date_information[ 'spaces_remain' ];
-              $additional_dates_information_per_day[ $period->format ( 'Y-m-d' ) ][ 'call_to_book' ]  = $additional_date_information[ 'call_to_book' ];
+              // Single day course
+              $date                                                    = new DateTime( $additional_date_information[ 'to' ] );
+              $formatted_date                                          = $date->format ( 'Y-m-d' );
+              $additional_dates_information_per_day[ $formatted_date ] = [ 
+                'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
+                'call_to_book'  => $additional_date_information[ 'call_to_book' ],
+              ];
               } else {
-
-              //Add each day in the period
+              // Multi-day course
               $period = new DatePeriod(
                 new DateTime( $additional_date_information[ 'from' ] ),
                 new DateInterval( 'P1D' ),
-                new DateTime( $additional_date_information[ 'to' ] ),
+                ( new DateTime( $additional_date_information[ 'to' ] ) )->modify ( '+1 day' ) // include end date
               );
 
-              foreach ( $period as $key => $value ) {
-                $additional_dates_information_per_day[ $value->format ( 'Y-m-d' ) ][ 'spaces_remain' ] = $additional_date_information[ 'spaces_remain' ];
-                $additional_dates_information_per_day[ $value->format ( 'Y-m-d' ) ][ 'call_to_book' ]  = $additional_date_information[ 'call_to_book' ];
+              foreach ( $period as $date ) {
+                $formatted_date                                          = $date->format ( 'Y-m-d' );
+                $additional_dates_information_per_day[ $formatted_date ] = [ 
+                  'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
+                  'call_to_book'  => $additional_date_information[ 'call_to_book' ],
+                ];
                 }
               }
-            $x++;
             }
           ?>
           <script>
             jQuery(document).ready(function () {
+              var additionalDateInfo = <?php echo json_encode ( $additional_dates_information_per_day ); ?>;
 
-              //On selection of a booking date, check whether this is call to book
-              jQuery("body").on("click", ".calendar-list .table-section .table tbody td.add-td .book-now-button", function () {
-                console.log("change");
+              function updateBookingInfo () {
+                var bookingDateCheck = jQuery(".booking_date_year").val() + "-" +
+                  jQuery(".booking_date_month").val() + "-" +
+                  jQuery(".booking_date_day").val();
+                var bookingPersons = jQuery("#wc_bookings_field_persons").val();
+                var dateInfo = additionalDateInfo[ bookingDateCheck ];
 
-                //Reset
                 jQuery("#cannotBookCourse").hide();
                 jQuery("#confirm-boooking").show();
 
-                //Get all additional information in a format we can check
-                var additional_date_information = <?php echo json_encode ( $additional_dates_information_per_day ); ?>;
+                if (dateInfo !== undefined) {
+                  jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", dateInfo[ 'spaces_remain' ]);
 
-                //Construct the full booking date
-                var booking_date_check = jQuery(".booking_date_year").val() + "-" + jQuery(".booking_date_month").val() + "-" + jQuery(".booking_date_day").val();
-
-                //Do we have a number of persons set?
-                var booking_persons = jQuery("#wc_bookings_field_persons").val();
-
-                jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", "");
-                jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", additional_date_information[ booking_date_check ][ 'spaces_remain' ]);
-
-                //Check against array of call to book dates
-                if (additional_date_information[ booking_date_check ] !== undefined) {
-
-                  if (additional_date_information[ booking_date_check ][ 'call_to_book' ] == "yes") {
+                  if (dateInfo[ 'call_to_book' ] === "yes") {
                     jQuery("#cannotBookCourse").html('Please call us to book this date on <br /> 0113 257 0842').slideDown();
                     jQuery("#confirm-boooking").slideUp();
                   }
 
-                  if (parseInt(booking_persons) > parseInt(additional _ date_information[ booking_dat e_check][ 'spaces_r em ain' ])) {
-                    jQuery("#cannotBookCourse").html('We only have ' + additional_date_information[ booking_date_check ][ "spaces_remain" ] + ' spaces left on this date. Please call us to book this date on <br /> 0113 257 0842. ').slideDown();
+                  if (parseInt(bookingPersons) > parseInt(dateInfo[ 'spaces_remain' ])) {
+                    jQuery("#cannotBookCourse").html('We only have ' + dateInfo[ 'spaces_remain' ] + ' spaces left on this date. Please call us to book this date on <br /> 0113 257 0842.').slideDown();
                     jQuery("#confirm-boooking").slideUp();
                   }
                 }
-              });
-              //On selection of a booking date, check whether this is call to book
-              jQuery("#wc-bookings-booking-form.wc-bookings-booking-form").on("change", ".booking_date_day, #wc_bookings_field_persons", function () {
-                console.log("change");
+              }
 
-                //Reset
-                jQuery("#cannotBookCourse").hide();
-                jQuery("#confirm-boooking").show();
-
-                //Get all additional information in a format we can check
-                var additional_date_information = <?php echo json_encode ( $additional_dates_information_per_day ); ?>;
-
-                //Construct the full booking date
-                var booking_date_check = jQuery(".booking_date_year").val() + "-" + jQuery(".booking_date_month").val() + "-" + jQuery(".booking_date_day").val();
-
-                //Do we have a number of persons set?
-                var booking_persons = jQuery("#wc_bookings_field_persons").val();
-
-                jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", "");
-                jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", additional_date_information[ booking_date_check ][ 'spaces_remain' ]);
-
-                //Check against array of call to book dates
-                if (additional_date_information[ booking_date_check ] !== undefined) {
-                  if (additional_date_information[ booking_date_check ][ 'call_to_book' ] == "yes") {
-                    jQuery("#cannotBookCourse").html('Please call us to book this date on <br /> 0113 257 0842').slideDown();
-                    jQuery("#confirm-boooking").slideUp();
-                  }
-
-                  if (parseInt(booking_persons) > parseInt(additional_date_information[ booking_date_check ][ 'spaces_remain' ])) {
-                    jQuery("#cannotBookCourse").html('We only have ' + additional_date_information[ booking_date_check ][ "spaces_remain" ] + ' spaces left on this date. Please call us to book this date on <br /> 0113 257 0842. ').slideDown();
-                    jQuery("#confirm-boooking").slideUp();
-                  }
-                }
-              });
+              // Event listeners for booking date and persons change
+              jQuery("body").on("click", ".calendar-list .table-section .table tbody td.add-td .book-now-button", updateBookingInfo);
+              jQuery("#wc-bookings-booking-form.wc-bookings-booking-form").on("change", ".booking_date_day, #wc_bookings_field_persons", updateBookingInfo);
             });
-          <?php } ?>
-        </script>
+          </script>
+        <?php } ?>
+      <?php endif; ?>
 
-      <?php } ?>
     <?php } ?>
 
     <!--tabs partial -->
