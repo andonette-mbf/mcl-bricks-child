@@ -652,7 +652,7 @@ jQuery(document).ready(function () {
 					'][dob]"]'
 			).val();
 			jQuery(
-				'.single-product form.cart input[name="delegate[' +
+				'.single-product form.cart                                                                                                    input[name="delegate[' +
 					fieldNumber +
 					'][dob]"]'
 			).val(fieldValue);
@@ -665,6 +665,4 @@ jQuery(document).ready(function () {
         changeYear: true,
         yearRange: "-100:+0" // Allows selection from 100 years ago to the current year
     });
-
-
 });
