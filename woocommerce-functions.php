@@ -109,35 +109,6 @@ function parent_grouped_id ( $post_id = 0 ) {
     return $parent_grouped_id;
     }
 
-
-//Dont show booking products on front end
-add_action ( 'pre_get_posts', 'dont_show_booking' );
-function dont_show_booking ( $query ) {
-    if ( ! is_admin () && is_tax () && $query->is_main_query () ) {
-
-        $taxquery = array(
-            array(
-                'taxonomy' => 'product_type',
-                'field'    => 'slug',
-                'terms'    => 'booking',
-                'operator' => 'NOT IN',
-            ),
-        );
-
-        $query->set ( 'tax_query', $taxquery );
-        }
-    }
-
-
-// Change Woocommerce css breaktpoint from max width: 768px to 767px  
-add_filter ( 'woocommerce_style_smallscreen_breakpoint', 'woo_custom_breakpoint' );
-
-function woo_custom_breakpoint ( $px ) {
-    $px = '767px';
-    return $px;
-    }
-
-
 //Redirect training products to cart page on add to cart
 function training_custom_add_to_cart_redirect ( $url ) {
 
