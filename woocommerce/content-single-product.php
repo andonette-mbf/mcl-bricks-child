@@ -115,7 +115,7 @@ if ( post_password_required () ) {
                 <b>Course Date</b><br>
                 <span class="title">
                   <span class="start-date">
-                    <div class="dd"></div>/<div class="mm"></div>/<div class="yyyy"></div>
+                    <div class="dd"></div>/<div class="mm">/</div>/<div class="yyyy"></div>
                   </span>
                 </span>
               </div>
