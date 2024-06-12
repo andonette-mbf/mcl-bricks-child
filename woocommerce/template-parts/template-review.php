@@ -21,7 +21,7 @@ global $product;
   </div>
 
   <div class="review-booking-block">
-    <div class="meta"><b>Course Venue</b><span class="title"><?php the_field ( 'select_address' ); ?></span>
+    <div class="meta"><b>Course Venue </b><span class="title"><?php the_field ( 'select_address' ); ?></span>
     </div>
   </div>
 
@@ -37,7 +37,7 @@ global $product;
   </div>
 
   <div class="review-booking-block">
-    <div class="meta"><b>Number Of People</b><span class="title number-of-people"></span></div>
+    <div class="meta"><b>Number Of People </b><span class="title number-of-people"></span></div>
   </div>
 
   <div class="row confirm-row">
