@@ -113,7 +113,6 @@ if ( post_password_required () ) {
                     <div class="layouts" id="layout-list">
                       <div class="calendar-list">
                         <div class="table-section">
-
                           <?php
                           $select_address       = get_field ( 'location' );
                           $select_address_value = $select_address[ 'value' ];
@@ -129,8 +128,13 @@ if ( post_password_required () ) {
                                 </tr>
                               </thead>
                               <tbody>
-                                <?php foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) : ?>
-                                  <tr
+                                <?php
+                                $count = 0;
+                                foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) :
+                                  $count++;
+                                  $hiddenClass = $count > 6 ? 'hidden-row' : ''; // Hide rows after the first 6
+                                  ?>
+                                  <tr class="availability-date <?php echo $hiddenClass; ?>"
                                     data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
                                     data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
                                     <td><?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?></td>
@@ -161,6 +165,7 @@ if ( post_password_required () ) {
                                 <?php endforeach; ?>
                               </tbody>
                             </table>
+                            <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
                           <?php endif; ?>
                         </div>
                       </div>
