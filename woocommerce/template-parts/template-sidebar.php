@@ -38,7 +38,7 @@ global $product;
             <?php if ( $product->is_type ( 'booking' ) ) { ?>
             <p class="from-price price"></p>
             <p class="total-price price">
-                <span class="price title">Total - £<span id="total-cost"></span></span </p>
+                <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span </p>
                 <?php } ?>
         </div>
     </div>

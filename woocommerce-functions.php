@@ -166,6 +166,8 @@ function delegate_output_fields () {
                 <input type="hidden" id="delegate-level-select-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][level_select]">
                 <input type="hidden" id="delegate-number-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][number]">
                 <input type="hidden" id="delegate-dob-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][dob]">
+                <input type="hidden" id="delegate-phone-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][phone]">
+                <input type="hidden" id="delegate-email-<?php echo $i; ?>" name="delegate[<?php echo $i; ?>][email]">
 
             </div>
             <?php
@@ -232,8 +234,14 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
             );
 
             $item_data[] = array(
-                'key'     => __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ),
-                'value'   => wc_clean ( $delegate[ 'NI' ] ),
+                'key'     => __ ( 'Delegate ' . $i . ' Phone', 'delegates' ),
+                'value'   => wc_clean ( $delegate[ 'phone' ] ),
+                'display' => '',
+            );
+
+            $item_data[] = array(
+                'key'     => __ ( 'Delegate ' . $i . ' Email', 'delegates' ),
+                'value'   => wc_clean ( $delegate[ 'email' ] ),
                 'display' => '',
             );
 
@@ -268,7 +276,8 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level Select', 'delegates' ), $delegate[ 'level_select' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Number', 'delegates' ), $delegate[ 'number' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' DOB', 'delegates' ), $delegate[ 'dob' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' NI Number', 'delegates' ), $delegate[ 'NI' ] );
+            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Phone', 'delegates' ), $delegate[ 'phone' ] );
+            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Email', 'delegates' ), $delegate[ 'email' ] );
             }
         }
 

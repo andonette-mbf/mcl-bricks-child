@@ -12,27 +12,27 @@ global $product;
 
   <div class="step-field person-field">
     <a href="#" data-bookingPerson="1">1 Person <p class="price">(£<span
-          id="price-1"><?php echo $product->get_price (); ?></span>)</p></a>
+          id="price-1"><?php echo $product->get_price (); ?> Inc VAT</span>)</p></a>
   </div>
 
   <div class="step-field person-field">
     <a href="#" data-bookingPerson="2">2 People <p class="price">(£<span
-          id="price-2"><?php echo $product->get_price () * 2; ?></span>)</p></a>
+          id="price-2"><?php echo $product->get_price () * 2; ?> Inc VAT</span>)</p></a>
   </div>
 
   <div class="step-field person-field">
     <a href="#" data-bookingPerson="3">3 People <p class="price">(£<span
-          id="price-3"><?php echo $product->get_price () * 3; ?></span>)</p></a>
+          id="price-3"><?php echo $product->get_price () * 3; ?> Inc VAT</span>)</p></a>
   </div>
 
   <div class="step-field person-field">
     <a href="#" data-bookingPerson="4">4 People <p class="price">(£<span
-          id="price-4"><?php echo $product->get_price () * 4; ?></span>)</p></a>
+          id="price-4"><?php echo $product->get_price () * 4; ?> Inc VAT</span>)</p></a>
   </div>
 
   <div class="step-field person-field">
     <a href="#" data-bookingPerson="5">5 People <p class="price">(£<span
-          id="price-5"><?php echo $product->get_price () * 5; ?></span>)</p></a>
+          id="price-5"><?php echo $product->get_price () * 5; ?> Inc VAT</span>)</p></a>
   </div>
 
   <div class="step-field person-dropdown">
@@ -67,15 +67,20 @@ global $product;
           <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
             placeholder="Delegate {X} Name">
           <select name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select">
-            <option value="" disabled selected>Choose Your Level</option>
+            <option value="" disabled selected>Irata Course Required</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
           <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
             placeholder="Delegate {X} Number" style="display:none;">
-          <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-            placeholder="Delegate {X} DOB">
+          <label style="color: black; font-weight: bold" for="delegate_dob_{X}">Delegate Date of Birth</label>
+          <input type="date" id="delegate_dob{X}" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob"
+            value="" placeholder="Delegate {X} DOB">
+          <input type="text" id="delegate_phone{X}" name="delegate_phone[{X}]" data-number="{X}" required
+            class="delegate_phone" value="" placeholder="Delegate {X} Phone Number">
+          <input type="email" id="delegate_email{X}" name="delegate_email[{X}]" data-number="{X}" required
+            class="delegate_email" value="" placeholder="Delegate {X} Email">
         </div>
         <div class="outputted-fields"></div>
         <span class="alert alert-danger float-left mt-4" id="delegate_info_error" style="display: none;">Please enter all
