@@ -72,7 +72,7 @@ global $product;
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
-          <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
+          <input name="delegate_number[{X}]" data-number="{X}" class="delegate_number" value=""
             placeholder="Delegate {X} Number" style="display:none;">
           <label style="color: black; font-weight: bold" for="delegate_dob_{X}">Delegate Date of Birth</label>
           <input type="date" id="delegate_dob{X}" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob"

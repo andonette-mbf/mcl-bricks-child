@@ -81,7 +81,7 @@ if ( post_password_required () ) {
                 //Notices
                 do_action ( 'woocommerce_before_single_product' ); ?>
                 <div class="course-step" id="step-1">
-                  <div class="step-title"><span class="title">Step 1 - Check Your Venue</span></div>
+                  <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
                   <div>
                     <?php
                     $locations = $parent_group->get_children ();

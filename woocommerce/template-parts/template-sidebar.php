@@ -21,7 +21,11 @@ global $product;
             <div class="meta">
                 <b>Venue</b>
                 <span>
-                    <?php the_field ( 'location' ); ?>
+
+                    <p>Location:
+                        <?php echo esc_html ( get_field ( 'location' ) ); ?>
+                    </p>
+
                 </span>
             </div>
 
@@ -29,7 +33,9 @@ global $product;
                 <b>Course Date</b><br>
                 <span class="title">
                     <span class="start-date">
-                        <div class="dd"></div>/<div class="mm">/</div>/<div class="yyyy"></div>
+                        <div class="dd"></div>
+                        <div class="mm"></div>
+                        <div class="yyyy"></div>
                     </span>
                 </span>
             </div>

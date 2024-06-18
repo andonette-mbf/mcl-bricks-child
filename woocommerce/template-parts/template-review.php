@@ -25,15 +25,13 @@ global $product;
     </div>
   </div>
 
-  <div class="review-booking-block">
-    <div class="meta">
-      <b>Course Date</b>
-      <span class="title">Start - <span class="start-date">
-          <div class="dd"></div>/<div class="mm"></div>/<div class="yyyy"></div>
-        </span>
-      </span>
-      <span class="title">End - <span class="end-date"></span></span>
-    </div>
+  <div class="meta" id="course-date-meta">
+    <b>Course Date</b>
+    <span class="start-date">
+      <div class="dd"></div>
+      <div class="mm"></div>
+      <div class="yyyy"></div>
+    </span>
   </div>
 
   <div class="review-booking-block">
@@ -41,8 +39,13 @@ global $product;
   </div>
 
   <div class="row confirm-row">
-    <p class="total-cost title float-left">Total Cost - <span class="price title">£<span
-          id="total-cost"><?php echo $product->get_price (); ?> Inc VAT</span></span></p>
+    <?php if ( $product->is_type ( 'booking' ) ) { ?>
+      <p class="from-price price"></p>
+      <p class="total-price price">
+        <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span>
+      </p>
+    <?php } ?>
+
     <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
     <a href="tel:<?php echo get_field ( 'main_telephone_number', 'options' ); ?>" id="cannotBookCourse"
       class="cta-button float-right w-auto" style="display: none;"></a>
