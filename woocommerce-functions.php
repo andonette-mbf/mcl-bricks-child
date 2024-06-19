@@ -219,3 +219,95 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
 
     }
 add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
+
+// Function to get booking data
+function get_booking_data ( $product_id ) {
+    $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
+    $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
+    $base_url        = get_site_url (); // Dynamic root URL
+
+    $request_url = $base_url . '/wp-json/wc-bookings/v1/bookings';
+    $params      = [ 
+        'product_id' => $product_id,
+        'status'     => 'confirmed',
+    ];
+
+    // Setup the request
+    $url      = add_query_arg ( $params, $request_url );
+    $response = wp_remote_get ( $url, [ 
+        'headers' => [ 
+            'Authorization' => 'Basic ' . base64_encode ( $consumer_key . ':' . $consumer_secret )
+        ],
+    ] );
+
+    if ( is_wp_error ( $response ) ) {
+        return [];
+        }
+
+    $body = wp_remote_retrieve_body ( $response );
+    return json_decode ( $body, true );
+    }
+
+// Function to calculate remaining spaces
+function calculate_remaining_spaces ( $product_id ) {
+    $bookings     = get_booking_data ( $product_id );
+    $total_spaces = intval ( get_post_meta ( $product_id, '_wc_booking_max_persons_group', true ) ); // Ensure total spaces is an integer
+
+    $date_ranges = []; // To store date ranges and remaining spaces
+
+    foreach ( $bookings as $booking ) {
+        // Filter out cancelled bookings only
+        if ( $booking[ 'status' ] === 'cancelled' ) {
+            continue;
+            }
+
+        $start_date     = $booking[ 'start' ];
+        $end_date       = $booking[ 'end' ];
+        $persons_booked = array_sum ( array_map ( 'intval', $booking[ 'person_counts' ] ) ); // Sum the persons booked and ensure they are integers
+
+        $date_range_key = $start_date . ' - ' . $end_date;
+
+        if ( ! isset ( $date_ranges[ $date_range_key ] ) ) {
+            $date_ranges[ $date_range_key ] = $total_spaces;
+            }
+
+        $date_ranges[ $date_range_key ] -= $persons_booked;
+
+        // Ensure remaining spaces do not go below zero
+        if ( $date_ranges[ $date_range_key ] < 0 ) {
+            $date_ranges[ $date_range_key ] = 0;
+            }
+        }
+
+    return $date_ranges;
+    }
+
+// Function to display remaining spaces on the product page
+// Function to display remaining spaces on the product page
+function display_remaining_spaces ( $product_id ) {
+    $remaining_spaces = calculate_remaining_spaces ( $product_id );
+
+    if ( ! empty ( $remaining_spaces ) ) {
+        echo '<ul class="remaining-spaces">';
+        foreach ( $remaining_spaces as $date_range => $spaces ) {
+            echo '<li>' . esc_html ( $date_range ) . ': ' . intval ( $spaces ) . ' spaces left</li>';
+            }
+        echo '</ul>';
+        }
+    }
+
+// Hook to display remaining spaces before the product content
+add_action ( 'woocommerce_before_single_product', function () {
+    global $product;
+    if ( $product->get_type () === 'booking' ) {
+        display_remaining_spaces ( $product->get_id () );
+        }
+    }, 10 );
+
+// Add to the single product page (adjust the hook as needed)
+add_action ( 'woocommerce_single_product_summary', function () {
+    global $product;
+    if ( $product->get_type () === 'booking' ) {
+        display_remaining_spaces ( $product->get_id () );
+        }
+    }, 25 );
