@@ -3,15 +3,9 @@
  * The template for displaying product content in the single-product.php template
  *
  */
-
 defined ( 'ABSPATH' ) || exit;
-
 global $product;
 
-if ( post_password_required () ) {
-  echo get_the_password_form (); // WPCS: XSS ok.
-  return;
-  }
 ?>
 
 <main id="brx-content">
@@ -93,11 +87,23 @@ if ( post_password_required () ) {
               <div class="meta">
                 <b>Venue</b>
                 <span>
-
                   <p>Location:
-                    <?php echo esc_html ( get_field ( 'location' ) ); ?>
+                    <?php
+                    $location = get_field ( 'location' );
+                    if ( is_array ( $location ) ) {
+                      // Handle if location is an array
+                      if ( isset ( $location[ 'label' ] ) ) {
+                        $location_label = $location[ 'label' ];
+                        echo esc_html ( $location_label );
+                        } else {
+                        echo 'Location data is not properly set';
+                        }
+                      } else {
+                      // Output directly if location is not an array
+                      echo esc_html ( $location );
+                      }
+                    ?>
                   </p>
-
                 </span>
               </div>
 
@@ -112,16 +118,15 @@ if ( post_password_required () ) {
                 </span>
               </div>
               <?php } ?>
-
               <?php if ( $product->is_type ( 'booking' ) ) { ?>
               <p class="from-price price"></p>
               <p class="total-price price">
-                <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span </p>
-                <?php } ?>
+                <span class="price title">Total: <span id="total-cost"></span></span>
+              </p>
+              <?php } ?>
             </div>
           </div>
         </div>
-
         <div class="brxe-block">
           <h3 class="brxe-heading">Confirm Venue</h3>
           <?php if ( $product->is_type ( 'booking' ) ) { ?>
@@ -212,7 +217,6 @@ if ( post_password_required () ) {
                     <span class="toggle-label">Calendar</span></a>
                 </div>
               </div>
-
               <div class="step-layouts">
                 <div class="layouts" id="layout-list">
                   <div class="calendar-list">
