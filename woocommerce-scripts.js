@@ -1,5 +1,38 @@
-/// <reference types="jquery" />  
-// Multiply function. This is responsible for cloning delegates on select
+//Scrolling section handler.
+jQuery(document).ready(function () {
+  // Bind a click event handler to elements with the class 'scollingToSection'
+  jQuery('.scollingToSection').click(function (e) {
+      // Prevent the default action of the click event (e.g., following a link)
+      e.preventDefault();
+      
+      // Get the value of the 'data-scrollingModule' attribute of the clicked element
+      var scrollingModule = jQuery(this).attr('data-scrollingModule');
+      
+      // Find the target element by constructing the ID using the 'scrollingModule' value
+      var targetElement = jQuery('#scroll' + scrollingModule);
+      
+      // Check if the target element exists in the DOM
+      if (targetElement.length) {
+          // Animate the scroll of the page to the target element
+          jQuery('html, body').animate({
+              // Scroll to the top offset of the target element minus 70 pixels
+              scrollTop: targetElement.offset().top - 70,
+          // Set the duration of the scroll animation to 200 milliseconds
+          }, 200);
+      }
+  });
+});
+
+// •	Document Ready Check: Ensures the code runs after the document has fully loaded to prevent errors from trying to interact with elements that may not yet exist in the DOM.
+// •	Click Event Binding: Attaches a click event handler to all elements with the class scollingToSection.
+// •	Prevent Default Action: Stops the default behavior of the anchor tag, such as navigating to a new URL.
+// •	Retrieve Data Attribute: Gets the value of the data-scrollingModule attribute from the clicked element, which identifies which section to scroll to.
+// •	Find Target Element: Constructs the ID of the target section by prefixing scroll to the value from the data attribute and finds this element in the DOM.
+// •	Check If Target Exists: Ensures the target element exists before attempting to scroll to it.
+// •	Animate Scroll: Smoothly scrolls the page to the top position of the target element minus 70 pixels, over 200 milliseconds.
+  
+
+  // Multiply function. This is responsible for cloning delegates on select
   jQuery.fn.multiply = function (numCopies) {
       var newElements = this.clone().html(this.clone().html().replace(/{X}/g, 1));
       for (var i = 2; i <= numCopies; i++) {
@@ -31,9 +64,9 @@
       // Update people attending attribute
       jQuery('.training-course-product').attr('data-people-attending', personNumber);
 
-      // Update price fields
-      jQuery('#multi-cost-of-course').val(multipliedPrice);
-      jQuery('#total-cost').text(formattedPrice + " Inc VAT");
+     // Update price fields
+jQuery('#multi-cost-of-course').val(multipliedPrice);
+jQuery('#total-cost').text(formattedPrice + " Inc VAT");
 
       // Show and hide sidebar prices
       jQuery('.from-price.price').hide();
