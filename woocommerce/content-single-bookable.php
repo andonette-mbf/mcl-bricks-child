@@ -43,16 +43,15 @@ $cost_of_course = $product->get_price ();
 $scrollStep     = isset ( $_GET[ 'scrollStep' ] ) ? $_GET[ 'scrollStep' ] : '';
 
 // Step 2 - Dates
+// Step 2 - Dates
 $availabilityInFuture = false;
 $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
 $availabilityTest     = array_filter ( $availability );
-
 
 // Store availability dates and remaining spaces
 $futureAvailabilityDates = [];
 $current_date            = new DateTime();
 $date_ranges             = calculate_remaining_spaces ( $product->id );
-
 
 // Debugging: Print date ranges
 echo '<pre>';
