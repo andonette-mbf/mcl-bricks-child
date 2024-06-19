@@ -1,47 +1,19 @@
-//Scrolling section handler.
 jQuery(document).ready(function () {
-  // Bind a click event handler to elements with the class 'scollingToSection'
-  jQuery('.scollingToSection').click(function (e) {
-      // Prevent the default action of the click event (e.g., following a link)
-      e.preventDefault();
-      
-      // Get the value of the 'data-scrollingModule' attribute of the clicked element
-      var scrollingModule = jQuery(this).attr('data-scrollingModule');
-      
-      // Find the target element by constructing the ID using the 'scrollingModule' value
-      var targetElement = jQuery('#scroll' + scrollingModule);
-      
-      // Check if the target element exists in the DOM
-      if (targetElement.length) {
-          // Animate the scroll of the page to the target element
-          jQuery('html, body').animate({
-              // Scroll to the top offset of the target element minus 70 pixels
-              scrollTop: targetElement.offset().top - 70,
-          // Set the duration of the scroll animation to 200 milliseconds
-          }, 200);
-      }
-  });
-});
 
-// •	Document Ready Check: Ensures the code runs after the document has fully loaded to prevent errors from trying to interact with elements that may not yet exist in the DOM.
-// •	Click Event Binding: Attaches a click event handler to all elements with the class scollingToSection.
-// •	Prevent Default Action: Stops the default behavior of the anchor tag, such as navigating to a new URL.
-// •	Retrieve Data Attribute: Gets the value of the data-scrollingModule attribute from the clicked element, which identifies which section to scroll to.
-// •	Find Target Element: Constructs the ID of the target section by prefixing scroll to the value from the data attribute and finds this element in the DOM.
-// •	Check If Target Exists: Ensures the target element exists before attempting to scroll to it.
-// •	Animate Scroll: Smoothly scrolls the page to the top position of the target element minus 70 pixels, over 200 milliseconds.
-  
-
-  // Multiply function. This is responsible for cloning delegates on select
-  jQuery.fn.multiply = function (numCopies) {
-      var newElements = this.clone().html(this.clone().html().replace(/{X}/g, 1));
-      for (var i = 2; i <= numCopies; i++) {
-          newElements = newElements.add(
-              this.clone()[0].outerHTML.replace(/{X}/g, i)
-          );
-      }
-      return newElements;
-  };
+// Define a custom jQuery plugin named 'multiply'
+jQuery.fn.multiply = function (numCopies) {
+    // Clone the original element and replace {X} in the HTML with 1
+    var newElements = this.clone().html(this.clone().html().replace(/{X}/g, 1));
+    // Loop to create additional clones starting from 2 up to numCopies
+    for (var i = 2; i <= numCopies; i++) {
+        // Add the cloned element to newElements, replacing {X} with the current value of i
+        newElements = newElements.add(
+            this.clone()[0].outerHTML.replace(/{X}/g, i)
+        );
+    }
+    // Return the combined set of new elements
+    return newElements;
+};
 
   // Persons clickable
   jQuery('.step-field.person-field a').click(function (e) {
@@ -135,10 +107,11 @@ jQuery('#total-cost').text(formattedPrice + " Inc VAT");
       jQuery('#delegate-details .outputted-fields').html(jQuery('#delegate-details .step-inputs-split').multiply(personNumber));
   });
 
-  // Prevent default action on person dropdown link click
-  jQuery('.step-field.person-dropdown a').click(function (e) {
-      e.preventDefault();
-  });
+    // Prevent default action on person dropdown link click
+    jQuery('.step-field.person-dropdown a').click(function (e) {
+        // Prevent the default action of the click event (e.g., navigating to a link)
+        e.preventDefault();
+    });
 
   // Initialize hoverIntent for person dropdown
   jQuery('.step-field.person-dropdown a').hoverIntent({
@@ -147,40 +120,33 @@ jQuery('#total-cost').text(formattedPrice + " Inc VAT");
       out: slideUpPeople,
   });
 
-  // Function to slide down the people select menu
-  function slideDownPeople() {
-      jQuery(this).nextAll('.people-select-menu').slideDown();
-  }
+    // Function to handle mouse over event
+    function slideDownPeople() {
+        // Slide down the next people-select-menu element
+        jQuery(this).nextAll('.people-select-menu').stop(true, true).slideDown();
+    }
 
-  // Function to slide up the people select menu
-  function slideUpPeople() {
-      // This function is intentionally left empty
-  }
+    // Function to handle mouse out event
+    function slideUpPeople() {
+        // Intentionally left empty
+    }
 
-  // Keep the people select menu visible on mouseover
-  jQuery('.people-select-menu').mouseover(function () {
-      jQuery(this).stop(true, true).show();
-  });
+    // Initialize hoverIntent for person dropdown
+    jQuery('.step-field.person-dropdown a').hoverIntent({
+        over: slideDownPeople,
+        timeout: 0,
+        out: slideUpPeople,
+    });
 
-  // Hide the people select menu on mouseleave
-  jQuery('.step-field.person-dropdown a, .people-select-menu').mouseleave(function () {
-      jQuery('.people-select-menu').delay(300).slideUp();
-  });
+    // Keep the people select menu visible on mouseover
+    jQuery('.people-select-menu').mouseover(function () {
+        jQuery(this).stop(true, true).show();
+    });
 
-  // Product calendar layout select
-  jQuery('.toggle-style-block a.course-style').click(function (e) {
-      e.preventDefault();
-
-      // Toggle active class on the labels and identifiers
-      jQuery('.toggle-style-block a.course-style span.toggle-label').toggleClass('active');
-      jQuery('.toggle-style-block a.course-style span.toggle-identifier').toggleClass('active');
-
-      // Toggle active class on the clicked link
-      jQuery(this).toggleClass('active');
-
-      // Slide toggle the layouts
-      jQuery('.training-course-steps .course-step .step-layouts .layouts').slideToggle();
-  });
+    // Hide the people select menu on mouseleave
+    jQuery('.step-field.person-dropdown a, .people-select-menu').mouseleave(function () {
+        jQuery('.people-select-menu').delay(300).slideUp();
+    });
 
 
   // On click of book now table button
