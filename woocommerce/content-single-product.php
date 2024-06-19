@@ -235,82 +235,114 @@ global $product;
                           </tr>
                         </thead>
                         <tbody>
-                          <?php
-                          $count = 0;
-                          foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) :
-                            $count++;
-                            $hiddenClass = $count > 6 ? 'hidden-row' : ''; // Hide rows after the first 6
-                            ?>
-                          <tr class="availability-date <?php echo $hiddenClass; ?>"
-                            data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
-                            data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
-                            <td>
-                              <?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>
-                            </td>
-                            <td>
-                              <?php
-                              switch ( $select_address_value ) {
-                                case 'grimsby':
-                                  echo 'Humber Training Centre';
-                                  break;
-                                case 'wandsworth':
-                                  echo 'South London Training Centre';
-                                  break;
-                                default:
-                                  echo 'East London Training Centre';
-                                  break;
-                                }
-                              ?>
-                            </td>
+                          <tr class="availability-date hidden-row" data-start="" data-end="">
+                            <td></td>
+                            <td></td>
                             <td>Bookings Available</td>
                             <td class="add-td">
-                              <a href="#"
-                                data-day="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'j' ) ); ?>"
-                                data-month="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'n' ) ); ?>"
-                                data-year="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'Y' ) ); ?>"
+                              <a href="#" data-day="" data-month="" data-year=""
                                 class="cta-button book-now-button float-right">Select Date</a>
                             </td>
                           </tr>
-                          <?php endforeach; ?>
-                        </tbody>
-                      </table>
-                      <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
-                      <?php endif; ?>
+                          <tr class="availability-date hidden-row" data-start="" data-end="">
+                            <td></td>
+                            <td></td>
+                            <td>Bookings Available</td>
+                            <td class="add-td">
+                              <a href="#" data-day="" data-month="" data-year=""
+                                class="cta-button book-now-button float-right">Select Date</a>
+                            </td>
+                          </tr>
+                          <!-- Repeat as needed -->
+                              </tbody>
+                            </table>
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>Start Date</th>
+                                  <th>Location</th>
+                                  <th>Availability</th>
+                                  <th class="add-td"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <?php
+                                $count = 0;
+                                foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) :
+                                  $count++;
+                                  $hiddenClass = $count > 6 ? 'hidden-row' : ''; // Hide rows after the first 6
+                                  ?>
+                                  <tr class="availability-date <?php echo $hiddenClass; ?>"
+                                    data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
+                                    data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
+                                    <td>
+                                      <?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>
+                                    </td>
+                                    <td>
+                                      <?php
+                                      switch ( $select_address_value ) {
+                                        case 'grimsby':
+                                          echo 'Humber Training Centre';
+                                          break;
+                                        case 'wandsworth':
+                                          echo 'South London Training Centre';
+                                          break;
+                                        default:
+                                          echo 'East London Training Centre';
+                                          break;
+                                        }
+                                      ?>
+                                    </td>
+                                    <td>Bookings Available</td>
+                                    <td class="add-td">
+                                      <a href="#"
+                                        data-day="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'j' ) ); ?>"
+                                        data-month="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'n' ) ); ?>"
+                                        data-year="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'Y' ) ); ?>"
+                                        class="cta-button book-now-button float-right">Select Date</a>
+                                    </td>
+                                  </tr>
+                                <?php endforeach; ?>
+                              </tbody>
+                            </table>
+                            <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
+                          <?php endif; ?>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="layouts float-left w-100 position-relative" id="layout-calendar">
+                      <?php
+                      /**
+                       * Hook: woocommerce_single_product_summary.
+                       *
+                       * @hooked woocommerce_template_single_title - 5
+                       * @hooked woocommerce_template_single_rating - 10
+                       * @hooked woocommerce_template_single_price - 10
+                       * @hooked woocommerce_template_single_excerpt - 20
+                       * @hooked woocommerce_template_single_add_to_cart - 30
+                       * @hooked woocommerce_template_single_meta - 40
+                       * @hooked woocommerce_template_single_sharing - 50
+                       * @hooked WC_Structured_Data::generate_product_data() - 60
+                       */
+                      do_action ( 'woocommerce_single_product_summary' );
+                      ?>
                     </div>
                   </div>
                 </div>
 
-                <div class="layouts float-left w-100 position-relative" id="layout-calendar">
-                  <?php
-                  /**
-                   * Hook: woocommerce_single_product_summary.
-                   *
-                   * @hooked woocommerce_template_single_title - 5
-                   * @hooked woocommerce_template_single_rating - 10
-                   * @hooked woocommerce_template_single_price - 10
-                   * @hooked woocommerce_template_single_excerpt - 20
-                   * @hooked woocommerce_template_single_add_to_cart - 30
-                   * @hooked woocommerce_template_single_meta - 40
-                   * @hooked woocommerce_template_single_sharing - 50
-                   * @hooked WC_Structured_Data::generate_product_data() - 60
-                   */
-                  do_action ( 'woocommerce_single_product_summary' );
-                  ?>
+                <div class="brxe-block mcl-dates">
+                  <div class="brxe-div mcl-flex--col">
+                    <h3 class="brxe-heading mcl-dates__heading">Can't see your desired date above? Get in touch with
+                      us!&nbsp;</h3>
+                  </div>
+                  <div class="brxe-div mcl-flex--col">
+                    <a class="brxe-button mcl-btn--white mcl-btn bricks-button" href="#contact">Contact Us</a>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="brxe-block mcl-dates">
-              <div class="brxe-div mcl-flex--col">
-                <h3 class="brxe-heading mcl-dates__heading">Can't see your desired date above? Get in touch with
-                  us!&nbsp;</h3>
-              </div>
-              <div class="brxe-div mcl-flex--col">
-                <a class="brxe-button mcl-btn--white mcl-btn bricks-button" href="#contact">Contact Us</a>
-              </div>
-            </div>
-
-            <!--persons partial -->
+                <!--persons partial -->
                 <div class="course-step" id="step-3">
                   <div class="step-title">
                     <span class="title">Step 3 - Select The Number Of People</span>
