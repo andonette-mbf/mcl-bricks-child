@@ -20,8 +20,6 @@ $location                         = get_field ( 'location' );
 $main_telephone_number            = get_field ( 'main_telephone_number', 'options' );
 $additional_date_information_json = get_field ( 'additional_date_information' );
 
-
-
 ?>
 
 <main id="brx-content">

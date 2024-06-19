@@ -40,9 +40,6 @@ do_action ( 'woocommerce_before_main_content' );
 	if ( has_term ( 'training-courses', 'product_cat', $product->get_id () ) && $product->is_type ( 'booking' ) ) {
 		// Load custom template for bookable training courses
 		get_template_part ( 'woocommerce/content', 'single-bookable' );
-		} else {
-		// Load default template for other products
-		get_template_part ( 'content', 'single-product' );
 		}
 ?>
 <?php endwhile; // end of the loop. ?>
