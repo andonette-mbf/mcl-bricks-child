@@ -1,5 +1,5 @@
-jQuery(document).ready(function () {
-
+/// <reference types="jquery" />
+jQuery(function () {
 // Define a custom jQuery plugin named 'multiply'
 jQuery.fn.multiply = function (numCopies) {
     // Clone the original element and replace {X} in the HTML with 1
@@ -16,7 +16,7 @@ jQuery.fn.multiply = function (numCopies) {
 };
 
   // Persons clickable
-  jQuery('.step-field.person-field a').click(function (e) {
+  jQuery('.step-field.person-field').on('click', 'a', function (e) {
       e.preventDefault();
 
       // Toggle active class on person links
