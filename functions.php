@@ -32,6 +32,16 @@ add_filter ( 'bricks/builder/i18n', function ($i18n) {
     return $i18n;
     } );
 
+add_filter ( 'bricks/code/echo_function_names', function () {
+    return [ 
+        'woocommerce_get_loop_display_mode',
+        'get_queried_object_id',
+        'date',
+    ];
+    } );
+
+//Functions Added By Andonette 
+//woocommerce theme support
 function mytheme_add_woocommerce_support () {
     add_theme_support ( 'woocommerce' );
     }
@@ -41,10 +51,16 @@ add_action ( 'after_setup_theme', 'mytheme_add_woocommerce_support' );
 //Include woocommerce custom functions comment out if not being used
 include ( 'woocommerce-functions.php' );
 
-add_filter ( 'bricks/code/echo_function_names', function () {
-    return [ 
-        'woocommerce_get_loop_display_mode',
-        'get_queried_object_id',
-        'date',
-    ];
-    } );
+//Include JavaScript 
+function enqueue_custom_scripts () {
+    // Enqueue the custom JS file
+    wp_enqueue_script (
+        'custom-js', // Handle for the script
+        get_stylesheet_directory_uri () . '/woocommerce-scripts.js', // Path to the JS file
+        array( 'jquery' ), // Dependencies (if any)
+        '1.0.0', // Version number
+        true // Load in the footer
+    );
+    }
+add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
+
