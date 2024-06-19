@@ -1,16 +1,36 @@
+//Scrolling section handler.
 jQuery(document).ready(function () {
-  // Animate scrolling to sections
+  // Bind a click event handler to elements with the class 'scollingToSection'
   jQuery('.scollingToSection').click(function (e) {
+      // Prevent the default action of the click event (e.g., following a link)
       e.preventDefault();
+      
+      // Get the value of the 'data-scrollingModule' attribute of the clicked element
       var scrollingModule = jQuery(this).attr('data-scrollingModule');
+      
+      // Find the target element by constructing the ID using the 'scrollingModule' value
       var targetElement = jQuery('#scroll' + scrollingModule);
-
+      
+      // Check if the target element exists in the DOM
       if (targetElement.length) {
+          // Animate the scroll of the page to the target element
           jQuery('html, body').animate({
+              // Scroll to the top offset of the target element minus 70 pixels
               scrollTop: targetElement.offset().top - 70,
-          }, 500);
+          // Set the duration of the scroll animation to 200 milliseconds
+          }, 200);
       }
   });
+});
+
+// •	Document Ready Check: Ensures the code runs after the document has fully loaded to prevent errors from trying to interact with elements that may not yet exist in the DOM.
+// •	Click Event Binding: Attaches a click event handler to all elements with the class scollingToSection.
+// •	Prevent Default Action: Stops the default behavior of the anchor tag, such as navigating to a new URL.
+// •	Retrieve Data Attribute: Gets the value of the data-scrollingModule attribute from the clicked element, which identifies which section to scroll to.
+// •	Find Target Element: Constructs the ID of the target section by prefixing scroll to the value from the data attribute and finds this element in the DOM.
+// •	Check If Target Exists: Ensures the target element exists before attempting to scroll to it.
+// •	Animate Scroll: Smoothly scrolls the page to the top position of the target element minus 70 pixels, over 200 milliseconds.
+  
 
   // Multiply function. This is responsible for cloning delegates on select
   jQuery.fn.multiply = function (numCopies) {
@@ -162,51 +182,6 @@ jQuery('#total-cost').text(formattedPrice + " Inc VAT");
       jQuery('.training-course-steps .course-step .step-layouts .layouts').slideToggle();
   });
 
-  // Calendar Click events
-  jQuery('#wc-bookings-booking-form > fieldset').on('date-selected', function (event, fdate) {
-      var date = new Date(Date.parse(fdate)),
-          year = date.getFullYear(),
-          month = date.getMonth() + 1,
-          day = date.getDate();
-
-      // Get the price from the input field
-      var price_cost = jQuery('input#cost-of-course').val();
-      console.log(price_cost);
-      jQuery('input#changed-cost-of-course').attr('value', price_cost);
-
-      // Calculate and update prices
-      var multipliedPrices = [price_cost, price_cost * 2, price_cost * 3, price_cost * 4, price_cost * 5];
-      multipliedPrices.forEach((price, index) => {
-          jQuery(`.training-course-steps .course-step .step-field a[data-bookingperson] .price #price-${index + 1}`).text(price.toFixed(2));
-      });
-
-      // Add leading zeros
-      month = (month <= 9) ? '0' + month : month;
-      day = (day <= 9) ? '0' + day : day;
-
-      // Show step 3 and course date meta if hidden
-      jQuery('.training-course-steps .course-step#step-3').slideDown();
-      jQuery('.training-sidebar .sidebar-selections .meta#course-date-meta').slideDown();
-
-      // Update date elements
-      jQuery('.meta .title span.start-date .dd').text(day);
-      jQuery('.meta .title span.start-date .mm').text(month);
-      jQuery('.meta .title span.start-date .yyyy').text(year);
-
-      // Get end date
-      var end_date = jQuery(`tr[data-start='${day}/${month}/${year}']`).attr('data-end');
-      jQuery('.meta .title span.end-date').text(end_date);
-
-      // Update booking date inputs
-      jQuery('.single-product form.cart input.booking_date_month').val(month);
-      jQuery('.single-product form.cart input.booking_date_day').val(day);
-      jQuery('.single-product form.cart input.booking_date_year').val(year);
-
-      // Scroll to step 3
-      jQuery('html, body').animate({
-          scrollTop: jQuery('.training-course-steps .course-step#step-3').offset().top - 160,
-      }, 2000);
-  });
 
   // On click of book now table button
   jQuery('.table-section a.book-now-button').click(function (e) {
