@@ -219,6 +219,3 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
 
     }
 add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
-
-
-?>
