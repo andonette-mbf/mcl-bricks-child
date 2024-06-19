@@ -19,6 +19,7 @@ global $product;
         $duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
         $duarionTime = get_post_meta ( $product->id, '_wc_booking_duration', true );
         }
+      echo "<div>success</div>";
       ?>
 
       <!--Header section partial -->

@@ -42,11 +42,10 @@ add_filter ( 'bricks/code/echo_function_names', function () {
 
 //Functions Added By Andonette 
 //woocommerce theme support
-function mytheme_add_woocommerce_support () {
+function yourtheme_add_woocommerce_support () {
     add_theme_support ( 'woocommerce' );
     }
-
-add_action ( 'after_setup_theme', 'mytheme_add_woocommerce_support' );
+add_action ( 'after_setup_theme', 'yourtheme_add_woocommerce_support' );
 
 //Include woocommerce custom functions comment out if not being used
 include ( 'woocommerce-functions.php' );
