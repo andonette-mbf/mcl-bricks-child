@@ -172,6 +172,26 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
       }
     }
   }
+//tabs
+$course_details            = get_field ( 'course_details' );
+$included_in_course        = get_field ( 'included_in_course' );
+$pre_training_requirements = get_field ( 'pre_training_requirements' );
+
+$training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
+$terms               = get_the_terms ( $product->id, 'product_cat' );
+$cat_name_first      = '';
+
+if ( $terms ) {
+  foreach ( $terms as $term ) {
+    if ( $term->parent === $training_courses_id->term_id ) {
+      $cat_name_first = $term->name;
+      break;
+      }
+    }
+  }
+
+$training_courses_link = get_term_link ( 'training-courses', 'product_cat' );
+
 //echo 'SUCCESS';
 ?>
 
@@ -470,16 +490,14 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
               <div class="review-booking-block">
                 <div class="meta">
                   <b>Course Selection</b>
-                  <span class="title"><?php echo get_the_title ( $product_group_id ); ?></span>
-                  <span class="title duration"><i class="far fa-clock"></i> <?php echo $duarionTime[ 0 ]; ?>
-                    <?php echo $duarionType[ 0 ]; ?> course</span>
+                  <span class="title"><?php echo $product_group_title; ?></span>
+                  <span class="title duration"><i class="far fa-clock"></i> <?php echo $duration_time; ?>
+                    <?php echo $duration_type; ?> course</span>
                 </div>
               </div>
 
               <div class="review-booking-block">
-                <div class="meta"><b>Course Venue </b><span
-                    class="title"><?php the_field ( 'select_address' ); ?></span>
-                </div>
+                <div class="meta"><b>Course Venue </b><span class="title"><?php echo $select_address; ?></span></div>
               </div>
 
               <div class="meta" id="course-date-meta">
@@ -502,7 +520,7 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
                 </p>
 
                 <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
-                <a href="tel:<?php echo get_field ( 'main_telephone_number', 'options' ); ?>" id="cannotBookCourse"
+                <a href="tel:<?php echo $main_telephone_number; ?>" id="cannotBookCourse"
                   class="cta-button float-right w-auto" style="display: none;"></a>
               </div>
             </div>
@@ -514,80 +532,48 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
       </div>
     </section>
 
-    <div class="course-step" id="step-4">
-      <div class="title-row step-title">
-        <span class="title">Step 4 - Review Your Booking</span>
-        <a href="#" data-step="4" class="previous-step float-right to-animate"></a>
-      </div>
-
-      <div class="review-booking-block">
-        <div class="meta">
-          <b>Course Selection</b>
-          <span class="title"><?php echo $product_group_title; ?></span>
-          <span class="title duration"><i class="far fa-clock"></i> <?php echo $duration_time; ?>
-            <?php echo $duration_type; ?> course</span>
+    <!--tabs section -->
+    <section class="brxe-section brxe-wc-section">
+      <div class="brxe-container">
+        <div id="brxe-tabs" data-script-id="tabs" class="brxe-tabs-nested">
+          <div id="brxe-pljtos" class="brxe-block tab-menu">
+            <div class="brxe-div tab-title brx-open">
+              <div class="brxe-text-basic">Course Details</div>
+            </div>
+            <div class="brxe-div tab-title">
+              <div class="brxe-text-basic">Included In Course</div>
+            </div>
+            <div class="brxe-div tab-title">
+              <div class="brxe-text-basic">Pre Training Requirements</div>
+            </div>
+          </div>
+          <div class="brxe-block tab-content">
+            <div class="brxe-block tab-pane fade active show brx-open">
+              <div class="brxe-text">
+                <p><?php echo $course_details; ?></p>
+              </div>
+            </div>
+            <div class="brxe-block tab-pane">
+              <div class="brxe-text">
+                <p><?php echo $included_in_course; ?></p>
+              </div>
+            </div>
+            <div class="brxe-block tab-pane">
+              <div class="brxe-text">
+                <p><?php echo $pre_training_requirements; ?></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="review-booking-block">
-        <div class="meta">
-          <b>Course Venue </b>
-          <span class="title"><?php echo $select_address; ?></span>
-        </div>
-      </div>
-
-      <div class="meta" id="course-date-meta">
-        <b>Course Date</b>
-        <span class="start-date">
-          <div class="dd"></div>
-          <div class="mm"></div>
-          <div class="yyyy"></div>
-        </span>
-      </div>
-
-      <div class="review-booking-block">
-        <div class="meta">
-          <b>Number Of People </b>
-          <span class="title number-of-people"></span>
-        </div>
-      </div>
-
-      <div class="row confirm-row">
-        <p class="from-price price"></p>
-        <p class="total-price price">
-          <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span>
-        </p>
-
-        <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
-        <a href="tel:<?php echo $main_telephone_number; ?>" id="cannotBookCourse" class="cta-button float-right w-auto"
-          style="display: none;"></a>
-      </div>
-    </div>
-
-
-
-    <!--tabs partial -->
-
+    </section>
 
     <!--related courses partial -->
 
     <section class="brxe-section brxe-wc-section related-products">
       <div class="related-title">
-        <?php
-        $training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-        $terms               = get_the_terms ( $product->id, 'product_cat' );
-        foreach ( $terms as $term ) {
-          if ( $term->parent === $training_courses_id->term_id ) {
-            $cat_name_first = $term->name;
-            break;
-            }
-          } ?>
-
         <span class="title to-animate">Other <?php echo $cat_name_first; ?> you may be interested in</span>
-
-        <a href="<?php echo get_term_link ( 'training-courses', 'product_cat' ); ?>" class="float-right title-link">See
-          all
-          training courses</a>
+        <a href="<?php echo $training_courses_link; ?>" class="float-right title-link">See all training courses</a>
       </div>
 
       <?php
@@ -600,8 +586,8 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
        */
       do_action ( 'woocommerce_after_single_product_summary' );
       ?>
-
     </section>
+  </div>
 </main>
 
 <?php do_action ( 'woocommerce_after_single_product' ); ?>
