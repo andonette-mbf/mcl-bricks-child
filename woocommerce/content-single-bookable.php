@@ -61,6 +61,83 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
     }
   }
 
+//step 1 for locations 
+$locations          = $parent_group->get_children ();
+$current_product_id = $product->id;
+$location_data      = [];
+
+foreach ( $locations as $location ) {
+  $location_data[] = [ 
+    'id'        => $location,
+    'permalink' => get_permalink ( $location ),
+    'address'   => get_field ( 'select_address', $location ),
+    'is_active' => ( $location === $current_product_id ),
+  ];
+  }
+
+//STep 2 for date table 
+$select_address       = get_field ( 'location' );
+$select_address_value = $select_address[ 'value' ];
+$select_address_label = $select_address[ 'choices' ][ $select_address_value ];
+
+$future_availability_rows = [];
+if ( ! empty ( $futureAvailabilityDates ) ) {
+  $count = 0;
+  foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
+    $count++;
+    $hidden_class = $count > 6 ? 'hidden-row' : '';
+    $from_date    = $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' );
+    $to_date      = $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' );
+    $data_day     = $futureAvailabilityDate[ 'from' ]->format ( 'j' );
+    $data_month   = $futureAvailabilityDate[ 'from' ]->format ( 'n' );
+    $data_year    = $futureAvailabilityDate[ 'from' ]->format ( 'Y' );
+
+    $location_name = '';
+    switch ( $select_address_value ) {
+      case 'grimsby':
+        $location_name = 'Humber Training Centre';
+        break;
+      case 'wandsworth':
+        $location_name = 'South London Training Centre';
+        break;
+      default:
+        $location_name = 'East London Training Centre';
+        break;
+      }
+
+    $future_availability_rows[] = [ 
+      'hidden_class'  => $hidden_class,
+      'from_date'     => $from_date,
+      'to_date'       => $to_date,
+      'location_name' => $location_name,
+      'data_day'      => $data_day,
+      'data_month'    => $data_month,
+      'data_year'     => $data_year,
+    ];
+    }
+  }
+//Step 3 variables
+$product_price = $product->get_price ();
+$prices        = [ 
+  1 => $product_price,
+  2 => $product_price * 2,
+  3 => $product_price * 3,
+  4 => $product_price * 4,
+  5 => $product_price * 5,
+];
+
+$delegate_info_type = '';
+if ( has_term ( 'irata-courses', 'product_cat' ) ) {
+  $delegate_info_type = 'irata';
+  } elseif ( has_term ( 'gwo-courses', 'product_cat' ) ) {
+  $delegate_info_type = 'gwo';
+  }
+//step 4 
+$product_group_title   = get_the_title ( $product_group_id );
+$duration_time         = $duarionTime[ 0 ];
+$duration_type         = $duarionType[ 0 ];
+$select_address        = get_field ( 'select_address' );
+$main_telephone_number = get_field ( 'main_telephone_number', 'options' );
 //echo 'SUCCESS';
 ?>
 
@@ -157,25 +234,24 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
             <?php
             //Notices
             do_action ( 'woocommerce_before_single_product' ); ?>
+
             <div class="course-step" id="step-1">
               <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
               <div>
-                <?php
-                $locations = $parent_group->get_children ();
-                foreach ( $locations as $location ) {
-                  ?>
+                <?php foreach ( $location_data as $location ) : ?>
                   <div class="step-field location">
-                    <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>"
-                      href="<?php echo get_permalink ( $location ); ?>?scrollStep=2">
-                      <?php echo get_field ( 'select_address', $location ); ?>
+                    <a class="<?php echo $location[ 'is_active' ] ? 'active' : ''; ?>"
+                      href="<?php echo $location[ 'permalink' ]; ?>?scrollStep=2">
+                      <?php echo $location[ 'address' ]; ?>
                     </a>
                   </div>
-                <?php } ?>
+                <?php endforeach; ?>
               </div>
             </div>
 
             <div class="course-step" id="step-2">
-              <div class="step-title"><span class="title">Step 2 - Choose The Date</span>
+              <div class="step-title">
+                <span class="title">Step 2 - Choose The Date</span>
                 <a href="#" data-step="2" class="previous-step"></a>
               </div>
 
@@ -184,18 +260,16 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
                   <a href="#" class="title course-style">
                     <span class="toggle-label active">List</span>
                     <span class="toggle-identifier"></span>
-                    <span class="toggle-label">Calendar</span></a>
+                    <span class="toggle-label">Calendar</span>
+                  </a>
                 </div>
               </div>
+
               <div class="step-layouts">
                 <div class="layouts" id="layout-list">
                   <div class="calendar-list">
                     <div class="table-section">
-                      <?php
-                      $select_address       = get_field ( 'location' );
-                      $select_address_value = $select_address[ 'value' ];
-                      $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
-                      if ( ! empty ( $futureAvailabilityDates ) ) : ?>
+                      <?php if ( ! empty ( $future_availability_rows ) ) : ?>
                         <table class="table">
                           <thead>
                             <tr>
@@ -206,39 +280,17 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
                             </tr>
                           </thead>
                           <tbody>
-                            <?php
-                            $count = 0;
-                            foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) :
-                              $count++;
-                              $hiddenClass = $count > 6 ? 'hidden-row' : ''; // Hide rows after the first 6
-                              ?>
-                              <tr class="availability-date <?php echo $hiddenClass; ?>"
-                                data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
-                                data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
-                                <td>
-                                  <?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>
-                                </td>
-                                <td>
-                                  <?php
-                                  switch ( $select_address_value ) {
-                                    case 'grimsby':
-                                      echo 'Humber Training Centre';
-                                      break;
-                                    case 'wandsworth':
-                                      echo 'South London Training Centre';
-                                      break;
-                                    default:
-                                      echo 'East London Training Centre';
-                                      break;
-                                    }
-                                  ?>
-                                </td>
+                            <?php foreach ( $future_availability_rows as $row ) : ?>
+                              <tr class="availability-date <?php echo $row[ 'hidden_class' ]; ?>"
+                                data-start="<?php echo esc_attr ( $row[ 'from_date' ] ); ?>"
+                                data-end="<?php echo esc_attr ( $row[ 'to_date' ] ); ?>">
+                                <td><?php echo esc_html ( $row[ 'from_date' ] ); ?></td>
+                                <td><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
                                 <td>Bookings Available</td>
                                 <td class="add-td">
-                                  <a href="#"
-                                    data-day="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'j' ) ); ?>"
-                                    data-month="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'n' ) ); ?>"
-                                    data-year="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'Y' ) ); ?>"
+                                  <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
+                                    data-month="<?php echo esc_attr ( $row[ 'data_month' ] ); ?>"
+                                    data-year="<?php echo esc_attr ( $row[ 'data_year' ] ); ?>"
                                     class="cta-button book-now-button float-right">Select Date</a>
                                 </td>
                               </tr>
@@ -253,18 +305,6 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
 
                 <div class="layouts float-left w-100 position-relative" id="layout-calendar">
                   <?php
-                  /**
-                   * Hook: woocommerce_single_product_summary.
-                   *
-                   * @hooked woocommerce_template_single_title - 5
-                   * @hooked woocommerce_template_single_rating - 10
-                   * @hooked woocommerce_template_single_price - 10
-                   * @hooked woocommerce_template_single_excerpt - 20
-                   * @hooked woocommerce_template_single_add_to_cart - 30
-                   * @hooked woocommerce_template_single_meta - 40
-                   * @hooked woocommerce_template_single_sharing - 50
-                   * @hooked WC_Structured_Data::generate_product_data() - 60
-                   */
                   do_action ( 'woocommerce_single_product_summary' );
                   ?>
                 </div>
@@ -281,51 +321,31 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
               </div>
             </div>
 
-            <!--persons partial -->
+            <!--Choose number-->
             <div class="course-step" id="step-3">
               <div class="step-title">
                 <span class="title">Step 3 - Select The Number Of People</span>
                 <a href="#" data-step="3" class="previous-step">Previous step</a>
               </div>
 
-              <div class="step-field person-field">
-                <a href="#" data-bookingPerson="1">1 Person <p class="price">(£<span
-                      id="price-1"><?php echo $product->get_price (); ?> Inc VAT</span>)</p></a>
-              </div>
-
-              <div class="step-field person-field">
-                <a href="#" data-bookingPerson="2">2 People <p class="price">(£<span
-                      id="price-2"><?php echo $product->get_price () * 2; ?> Inc VAT</span>)</p></a>
-              </div>
-
-              <div class="step-field person-field">
-                <a href="#" data-bookingPerson="3">3 People <p class="price">(£<span
-                      id="price-3"><?php echo $product->get_price () * 3; ?> Inc VAT</span>)</p></a>
-              </div>
-
-              <div class="step-field person-field">
-                <a href="#" data-bookingPerson="4">4 People <p class="price">(£<span
-                      id="price-4"><?php echo $product->get_price () * 4; ?> Inc VAT</span>)</p></a>
-              </div>
-
-              <div class="step-field person-field">
-                <a href="#" data-bookingPerson="5">5 People <p class="price">(£<span
-                      id="price-5"><?php echo $product->get_price () * 5; ?> Inc VAT</span>)</p></a>
-              </div>
+              <?php foreach ( $prices as $people => $price ) : ?>
+                <div class="step-field person-field">
+                  <a href="#" data-bookingPerson="<?php echo $people; ?>">
+                    <?php echo $people; ?> Person<?php echo $people > 1 ? 's' : ''; ?>
+                    <p class="price">(£<span id="price-<?php echo $people; ?>"><?php echo $price; ?> Inc VAT</span>)</p>
+                  </a>
+                </div>
+              <?php endforeach; ?>
 
               <div class="step-field person-dropdown">
-                <a href="#" class="people-over-5-content">
-                  5+ People
-                </a>
-
+                <a href="#" class="people-over-5-content">5+ People</a>
                 <div class="people-select-menu">
                   <select id="groupBookingMenu">
                     <option>Select No. People</option>
-                    <option value="6" data-bookingPerson="6">6 People</option>
-                    <option value="7" data-bookingPerson="7">7 People</option>
-                    <option value="8" data-bookingPerson="8">8 People</option>
-                    <option value="9" data-bookingPerson="9">9 People</option>
-                    <option value="10" data-bookingPerson="10">10 People</option>
+                    <?php for ( $i = 6; $i <= 10; $i++ ) : ?>
+                      <option value="<?php echo $i; ?>" data-bookingPerson="<?php echo $i; ?>"><?php echo $i; ?> People
+                      </option>
+                    <?php endfor; ?>
                   </select>
                 </div>
               </div>
@@ -334,11 +354,8 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
                 <div class="title-row step-title">
                   <span class="title smaller-title to-animate">Please enter delegate information</span>
                 </div>
-                <?php
 
-                // Check if the current product belongs to the 'irata' category
-                if ( has_term ( 'irata-courses', 'product_cat' ) ) {
-                  ?>
+                <?php if ( $delegate_info_type === 'irata' ) : ?>
                   <div class="delegate-fields">
                     <div class="step-inputs-split">
                       <b>Delegate <span class="number">{X}</span> Information</b>
@@ -362,11 +379,9 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
                     </div>
                     <div class="outputted-fields"></div>
                     <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                      style="display: none;">Please enter all
-                      delegate information.</span>
+                      style="display: none;">Please enter all delegate information.</span>
                   </div>
                   <script>
-                    // Function to handle changes for delegate level select
                     jQuery('body').on('change', 'select.delegate_level_select', function () {
                       var fieldNumber = jQuery(this).attr('data-number');
                       var selectedValue = jQuery(this).val();
@@ -377,45 +392,36 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
                         jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
                       }
                     });
-
                   </script>
-                  <?php
-                  } else if ( has_term ( 'gwo-courses', 'product_cat' ) ) {
-                  ?>
-                    <div class="delegate-fields">
-                      <div class="step-inputs-split">
-                        <b>Delegate <span class="number">{X}</span> Information</b>
-                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
-                          placeholder="Delegate {X} Name">
-                        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
-                          placeholder="Delegate {X} GWO Number">
-                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-                          placeholder="Delegate {X} DOB">
-                      </div>
-                      <div class="outputted-fields"></div>
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all
-                        delegate information.</span>
+                <?php elseif ( $delegate_info_type === 'gwo' ) : ?>
+                  <div class="delegate-fields">
+                    <div class="step-inputs-split">
+                      <b>Delegate <span class="number">{X}</span> Information</b>
+                      <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
+                        placeholder="Delegate {X} Name">
+                      <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
+                        placeholder="Delegate {X} GWO Number">
+                      <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
+                        placeholder="Delegate {X} DOB">
                     </div>
-                  <?php
-                  } else {
-                  ?>
-                    <div class="delegate-fields">
-                      <div class="step-inputs-split">
-                        <b>Delegate <span class="number">{X}</span> Information</b>
-                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
-                          placeholder="Delegate {X} Name">
-                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-                          placeholder="Delegate {X} DOB">
-                      </div>
-                      <div class="outputted-fields"></div>
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all
-                        delegate information.</span>
+                    <div class="outputted-fields"></div>
+                    <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
+                      style="display: none;">Please enter all delegate information.</span>
+                  </div>
+                <?php else : ?>
+                  <div class="delegate-fields">
+                    <div class="step-inputs-split">
+                      <b>Delegate <span class="number">{X}</span> Information</b>
+                      <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
+                        placeholder="Delegate {X} Name">
+                      <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
+                        placeholder="Delegate {X} DOB">
                     </div>
-                  <?
-                  }
-                ?>
+                    <div class="outputted-fields"></div>
+                    <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
+                      style="display: none;">Please enter all delegate information.</span>
+                  </div>
+                <?php endif; ?>
               </div>
             </div>
 
