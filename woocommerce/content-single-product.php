@@ -12,7 +12,6 @@ global $product;
     <?php
     if ( has_term ( 'training-courses', 'product_cat' ) ) {
       // Initialize common variables
-      echo "<div>fail</div>";
       $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->id ) : $product->id;
       $parent_group     = wc_get_product ( $product_group_id );
 
@@ -20,7 +19,7 @@ global $product;
         $duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
         $duarionTime = get_post_meta ( $product->id, '_wc_booking_duration', true );
         }
-
+      echo "<div>success</div>";
       ?>
 
       <!--Header section partial -->

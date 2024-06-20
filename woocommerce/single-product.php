@@ -15,9 +15,10 @@
  * @version     1.6.4
  */
 
-if ( ! defined ( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-	}
+ echo "Custom Single Product Template";
+ if ( ! defined( 'ABSPATH' ) ) {
+		 exit; // Exit if accessed directly
+ }
 
 get_header ( 'shop' ); ?>
 
@@ -33,18 +34,21 @@ do_action ( 'woocommerce_before_main_content' );
 
 <?php while ( have_posts () ) : ?>
 	<?php the_post (); ?>
-	<?php
-	global $product;
 
-	// Check if the product belongs to the 'training-courses' category and is of type 'booking'
-	if ( has_term ( 'training-courses', 'product_cat', $product->get_id () ) && $product->is_type ( 'booking' ) ) {
-		// Load custom template for bookable training courses
-		get_template_part ( 'woocommerce/content', 'single-bookable' );
-		} else {
-		// Load default template for other products
-		get_template_part ( 'content', 'single-product' );
+	<?php
+	echo '<h1>TEST</h1>'
+
+	if ( has_term( 'training-courses', 'product_cat' ) ) {
+		if ( $product->is_type( 'booking' ) ) {
+				// Load custom template for bookable training courses
+
+				wc_get_template_part( 'content', 'single-bookable' );
+				continue;
 		}
-?>
+	}
+	
+	?>
+
 <?php endwhile; // end of the loop. ?>
 
 <?php
@@ -65,7 +69,6 @@ do_action ( 'woocommerce_after_main_content' );
 do_action ( 'woocommerce_sidebar' );
 ?>
 
-<?php
-get_footer ( 'shop' );
+<?php get_footer ( 'shop' );
 
 /* Omit closing PHP tag at the end of PHP files to avoid "headers already sent" issues. */
