@@ -76,11 +76,6 @@ if ( $product ) {
         </div>
         <div class="brxe-block">
           <h3 class="brxe-heading">Confirm Venue</h3>
-
-          <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
-          <input type="hidden" id="multi-cost-of-course" value="" />
-          <input type="hidden" id="changed-cost-of-course" value="" />
-
           <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
             $scrollStep = $_GET[ 'scrollStep' ]; ?>
 
@@ -294,6 +289,9 @@ if ( $product ) {
 
 
             <!--review block partial -->
+            <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
+            <input type="hidden" id="multi-cost-of-course" value="" />
+            <input type="hidden" id="changed-cost-of-course" value="" />
             <div class="course-step" id="step-4">
               <div class="title-row step-title">
                 <span class="title">Step 4 - Review Your Booking</span>
