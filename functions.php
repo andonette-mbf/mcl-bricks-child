@@ -63,4 +63,21 @@ function enqueue_custom_scripts () {
     );
     }
 add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
+// Include the Composer autoload file
+require_once get_stylesheet_directory () . '/vendor/autoload.php';
 
+use Automattic\WooCommerce\Client;
+
+function initialize_woocommerce_client () {
+    $woocommerce = new Client(
+        site_url (), // Your store URL
+        WC_BOOKINGS_CONSUMER_KEY,
+        WC_BOOKINGS_CONSUMER_SECRET,
+        [ 
+            'wp_api'  => true, // Enable the WP REST API integration
+            'version' => 'wc/v3', // WooCommerce WP REST API version
+        ],
+    );
+
+    return $woocommerce;
+    }
