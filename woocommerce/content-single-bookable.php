@@ -6,14 +6,6 @@
 defined ( 'ABSPATH' ) || exit;
 global $product;
 
-
-// Debugging: Print the booking data
-$bookings_data = get_booking_data ( $product->id );
-echo '<pre>';
-print_r ( $bookings_data );
-echo '</pre>';
-
-
 // Initialize necessary variables
 echo "<div>success</div>";
 $product_group_id                 = parent_grouped_id ( $product->id );
@@ -42,54 +34,35 @@ if ( is_array ( $location ) ) {
 $cost_of_course = $product->get_price ();
 $scrollStep     = isset ( $_GET[ 'scrollStep' ] ) ? $_GET[ 'scrollStep' ] : '';
 
-// Step 2 - Dates
+//Variables for form 
 $availabilityInFuture = false;
 $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
 $availabilityTest     = array_filter ( $availability );
-
-
-// Store availability dates and remaining spaces
+// Store availability dates
 $futureAvailabilityDates = [];
 $current_date            = new DateTime();
-$date_ranges             = calculate_remaining_spaces ( $product->id );
-
-
-// Debugging: Print date ranges
-echo '<pre>';
-print_r ( $date_ranges );
-echo '</pre>';
 
 foreach ( $availabilityTest as $availabilityTestRange ) {
   foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
+    // Determine the opening and closing dates
     $from_date = $availabilityTestRangeSingle[ "from_date" ] ?? $availabilityTestRangeSingle[ "from" ];
     $to_date   = $availabilityTestRangeSingle[ "to_date" ] ?? $availabilityTestRangeSingle[ "to" ];
 
     $opening_date = new DateTime( $from_date );
     $closing_date = new DateTime( $to_date );
 
+    // Check if the opening date is in the future
     if ( $opening_date > $current_date ) {
       $availabilityInFuture = true;
 
-      // Get the remaining spaces for the date range
-      $date_range_key   = $opening_date->format ( 'Y-m-d' ) . ' - ' . $closing_date->format ( 'Y-m-d' );
-      $remaining_spaces = $date_ranges[ $date_range_key ] ?? 0;
-
-      // Debugging: Print each date range key and remaining spaces
-      echo "Template Date Range: $date_range_key, Remaining Spaces: $remaining_spaces\n";
-
       // Add to array to display in list
       $futureAvailabilityDates[] = [ 
-        "from"             => $opening_date,
-        "to"               => $closing_date,
-        "remaining_spaces" => $remaining_spaces,
+        "from" => $opening_date,
+        "to"   => $closing_date,
       ];
       }
     }
   }
-//locations for form - 
-$select_address       = get_field ( 'location' );
-$select_address_value = $select_address[ 'value' ];
-$select_address_label = $select_address[ 'choices' ][ $select_address_value ];
 ?>
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php wc_product_class ( '', $product ); ?>>
@@ -207,15 +180,18 @@ $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
                   <a href="#" class="title course-style">
                     <span class="toggle-label active">List</span>
                     <span class="toggle-identifier"></span>
-                    <span class="toggle-label">Calendar</span>
-                  </a>
+                    <span class="toggle-label">Calendar</span></a>
                 </div>
               </div>
               <div class="step-layouts">
                 <div class="layouts" id="layout-list">
                   <div class="calendar-list">
                     <div class="table-section">
-                      <?php if ( ! empty ( $futureAvailabilityDates ) ) : ?>
+                      <?php
+                      $select_address       = get_field ( 'location' );
+                      $select_address_value = $select_address[ 'value' ];
+                      $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
+                      if ( ! empty ( $futureAvailabilityDates ) ) : ?>
                         <table class="table">
                           <thead>
                             <tr>
@@ -226,11 +202,49 @@ $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
                             </tr>
                           </thead>
                           <tbody>
-                            <?php foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) : ?>
-                              <tr class="availability-date"
+                            <tr class="availability-date hidden-row" data-start="" data-end="">
+                              <td></td>
+                              <td></td>
+                              <td>Bookings Available</td>
+                              <td class="add-td">
+                                <a href="#" data-day="" data-month="" data-year=""
+                                  class="cta-button book-now-button float-right">Select Date</a>
+                              </td>
+                            </tr>
+                            <tr class="availability-date hidden-row" data-start="" data-end="">
+                              <td></td>
+                              <td></td>
+                              <td>Bookings Available</td>
+                              <td class="add-td">
+                                <a href="#" data-day="" data-month="" data-year=""
+                                  class="cta-button book-now-button float-right">Select Date</a>
+                              </td>
+                            </tr>
+                            <!-- Repeat as needed -->
+                          </tbody>
+                        </table>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Start Date</th>
+                              <th>Location</th>
+                              <th>Availability</th>
+                              <th class="add-td"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php
+                            $count = 0;
+                            foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) :
+                              $count++;
+                              $hiddenClass = $count > 6 ? 'hidden-row' : ''; // Hide rows after the first 6
+                              ?>
+                              <tr class="availability-date <?php echo $hiddenClass; ?>"
                                 data-start="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>"
                                 data-end="<?php echo esc_attr ( $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' ) ); ?>">
-                                <td><?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?></td>
+                                <td>
+                                  <?php echo esc_html ( $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' ) ); ?>
+                                </td>
                                 <td>
                                   <?php
                                   switch ( $select_address_value ) {
@@ -246,8 +260,7 @@ $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
                                     }
                                   ?>
                                 </td>
-                                <td>Bookings Available (<?php echo $futureAvailabilityDate[ 'remaining_spaces' ]; ?> spaces
-                                  left)</td>
+                                <td>Bookings Available</td>
                                 <td class="add-td">
                                   <a href="#"
                                     data-day="<?php echo esc_attr ( $futureAvailabilityDate[ 'from' ]->format ( 'j' ) ); ?>"
@@ -262,28 +275,30 @@ $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
                         <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
                       <?php endif; ?>
                     </div>
-                  </div>
 
-                  <div class="layouts float-left w-100 position-relative" id="layout-calendar">
-                    <?php
-                    /**
-                     * Hook: woocommerce_single_product_summary.
-                     *
-                     * @hooked woocommerce_template_single_title - 5
-                     * @hooked woocommerce_template_single_rating - 10
-                     * @hooked woocommerce_template_single_price - 10
-                     * @hooked woocommerce_template_single_excerpt - 20
-                     * @hooked woocommerce_template_single_add_to_cart - 30
-                     * @hooked woocommerce_template_single_meta - 40
-                     * @hooked woocommerce_template_single_sharing - 50
-                     * @hooked WC_Structured_Data::generate_product_data() - 60
-                     */
-                    do_action ( 'woocommerce_single_product_summary' );
-                    ?>
                   </div>
+                </div>
+
+                <div class="layouts float-left w-100 position-relative" id="layout-calendar">
+                  <?php
+                  /**
+                   * Hook: woocommerce_single_product_summary.
+                   *
+                   * @hooked woocommerce_template_single_title - 5
+                   * @hooked woocommerce_template_single_rating - 10
+                   * @hooked woocommerce_template_single_price - 10
+                   * @hooked woocommerce_template_single_excerpt - 20
+                   * @hooked woocommerce_template_single_add_to_cart - 30
+                   * @hooked woocommerce_template_single_meta - 40
+                   * @hooked woocommerce_template_single_sharing - 50
+                   * @hooked WC_Structured_Data::generate_product_data() - 60
+                   */
+                  do_action ( 'woocommerce_single_product_summary' );
+                  ?>
                 </div>
               </div>
             </div>
+
             <div class="brxe-block mcl-dates">
               <div class="brxe-div mcl-flex--col">
                 <h3 class="brxe-heading mcl-dates__heading">Can't see your desired date above? Get in touch with

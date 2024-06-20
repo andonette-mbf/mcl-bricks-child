@@ -261,9 +261,8 @@ function calculate_remaining_spaces ( $product_id ) {
             continue;
             }
 
-        // Convert Unix timestamps to date strings
-        $start_date     = ( new DateTime() )->setTimestamp ( $booking[ 'start' ] )->format ( 'Y-m-d' );
-        $end_date       = ( new DateTime() )->setTimestamp ( $booking[ 'end' ] )->format ( 'Y-m-d' );
+        $start_date     = $booking[ 'start' ];
+        $end_date       = $booking[ 'end' ];
         $persons_booked = array_sum ( array_map ( 'intval', $booking[ 'person_counts' ] ) ); // Sum the persons booked and ensure they are integers
 
         $date_range_key = $start_date . ' - ' . $end_date;
@@ -278,13 +277,12 @@ function calculate_remaining_spaces ( $product_id ) {
         if ( $date_ranges[ $date_range_key ] < 0 ) {
             $date_ranges[ $date_range_key ] = 0;
             }
-
-        // Debugging: Print each date range key and remaining spaces
-        echo "Date Range Key: $date_range_key, Remaining Spaces: {$date_ranges[ $date_range_key ]}\n";
         }
 
     return $date_ranges;
     }
+
+// Function to display remaining spaces on the product page
 // Function to display remaining spaces on the product page
 function display_remaining_spaces ( $product_id ) {
     $remaining_spaces = calculate_remaining_spaces ( $product_id );
