@@ -14,10 +14,12 @@ global $product;
       // Initialize common variables
       $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->id ) : $product->id;
       $parent_group     = wc_get_product ( $product_group_id );
+      $comments         = get_comments ( array( 'post_id' => $product_group_id ) );
 
       if ( $product->is_type ( 'booking' ) ) {
         $duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
         $duarionTime = get_post_meta ( $product->id, '_wc_booking_duration', true );
+        $price_2023  = get_field ( '2023_price', $product->id );
         }
       ?>
 
