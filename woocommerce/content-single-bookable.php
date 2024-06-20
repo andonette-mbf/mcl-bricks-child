@@ -27,6 +27,11 @@ $title                  = $display_title ? $display_title : get_the_title ();
 $duration               = $course_duration_custom ? $course_duration_custom : $duarionTime[ 0 ] . ' ' . $duarionType[ 0 ];
 $grants_funding_options = $grants_funding ? 'Options available' : 'Options not available';
 
+//Sidebar Summary Variables 
+$product_group_title = get_the_title ( $product_group_id );
+$location            = get_field ( 'location' );
+$location_label      = is_array ( $location ) && isset ( $location[ 'label' ] ) ? $location[ 'label' ] : ( is_array ( $location ) ? 'Location data is not properly set' : esc_html ( $location ) );
+
 //echo 'SUCCESS';
 ?>
 
@@ -61,8 +66,7 @@ $grants_funding_options = $grants_funding ? 'Options available' : 'Options not a
     <!--Course Selection-->
     <section class="brxe-section brxe-wc-section training-course-product">
       <div class="brxe-container grid--1-3 gap--m">
-        <!--sidebar partial -->
-
+        <!--Sidebar Summary-->
         <div class="training-sidebar">
           <div class="sidebar-inner">
             <div class="sidebar-selections">
@@ -70,31 +74,13 @@ $grants_funding_options = $grants_funding ? 'Options available' : 'Options not a
               <!-- meta class uses js -->
               <div class="meta">
                 <b>Course: </b><br>
-                <span>
-                  <?php echo get_the_title ( $product_group_id ); ?>
-                </span>
+                <span><?php echo $product_group_title; ?></span>
               </div>
 
               <div class="meta">
                 <b>Venue</b>
                 <span>
-                  <p>Location:
-                    <?php
-                    $location = get_field ( 'location' );
-                    if ( is_array ( $location ) ) {
-                      // Handle if location is an array
-                      if ( isset ( $location[ 'label' ] ) ) {
-                        $location_label = $location[ 'label' ];
-                        echo esc_html ( $location_label );
-                        } else {
-                        echo 'Location data is not properly set';
-                        }
-                      } else {
-                      // Output directly if location is not an array
-                      echo esc_html ( $location );
-                      }
-                    ?>
-                  </p>
+                  <p>Location: <?php echo $location_label; ?></p>
                 </span>
               </div>
 
