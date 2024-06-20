@@ -32,6 +32,35 @@ $product_group_title = get_the_title ( $product_group_id );
 $location            = get_field ( 'location' );
 $location_label      = is_array ( $location ) && isset ( $location[ 'label' ] ) ? $location[ 'label' ] : ( is_array ( $location ) ? 'Location data is not properly set' : esc_html ( $location ) );
 
+//GET THE DATES
+$availabilityInFuture = false;
+$availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
+$availabilityTest     = array_filter ( $availability );
+
+// Store availability dates
+$futureAvailabilityDates = [];
+$current_date            = new DateTime();
+
+// Loop through and check dates in the future
+foreach ( $availabilityTest as $availabilityTestRange ) {
+  foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
+    // Determine the opening and closing dates
+    $opening_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "from_date" ] ) ? $availabilityTestRangeSingle[ "from_date" ] : $availabilityTestRangeSingle[ "from" ] );
+    $closing_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "to_date" ] ) ? $availabilityTestRangeSingle[ "to_date" ] : $availabilityTestRangeSingle[ "to" ] );
+
+    // Check if the opening date is in the future
+    if ( $opening_date > $current_date ) {
+      $availabilityInFuture = true;
+
+      // Add to array to display in list
+      $futureAvailabilityDates[] = [ 
+        "from" => $opening_date,
+        "to"   => $closing_date,
+      ];
+      }
+    }
+  }
+
 //echo 'SUCCESS';
 ?>
 
@@ -123,38 +152,6 @@ $location_label      = is_array ( $location ) && isset ( $location[ 'label' ] ) 
 
             </script>
           <?php } ?>
-
-          <?php
-          $availabilityInFuture = false;
-          $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
-          $availabilityTest     = array_filter ( $availability );
-
-
-          // Store availability dates
-          $futureAvailabilityDates = [];
-          $current_date            = new DateTime();
-
-
-          // Loop through and check dates in the future
-          foreach ( $availabilityTest as $availabilityTestRange ) {
-            foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
-              // Determine the opening and closing dates
-              $opening_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "from_date" ] ) ? $availabilityTestRangeSingle[ "from_date" ] : $availabilityTestRangeSingle[ "from" ] );
-              $closing_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "to_date" ] ) ? $availabilityTestRangeSingle[ "to_date" ] : $availabilityTestRangeSingle[ "to" ] );
-
-              // Check if the opening date is in the future
-              if ( $opening_date > $current_date ) {
-                $availabilityInFuture = true;
-
-                // Add to array to display in list
-                $futureAvailabilityDates[] = [ 
-                  "from" => $opening_date,
-                  "to"   => $closing_date,
-                ];
-                }
-              }
-            }
-          ?>
 
           <div class="training-course-steps">
             <?php
