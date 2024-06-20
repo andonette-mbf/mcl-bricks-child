@@ -20,17 +20,8 @@ $location                         = get_field ( 'location' );
 $main_telephone_number            = get_field ( 'main_telephone_number', 'options' );
 $additional_date_information_json = get_field ( 'additional_date_information' );
 
-// Additional variables for Course Selection
-$course_title   = get_the_title ( $product_group_id );
-$location       = get_field ( 'location' );
-$location_label = '';
-if ( is_array ( $location ) ) {
-  $location_label = isset ( $location[ 'label' ] ) ? esc_html ( $location[ 'label' ] ) : 'Location data is not properly set';
-  } else {
-  $location_label = esc_html ( $location );
-  }
-
 ?>
+
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php wc_product_class ( '', $product ); ?>>
     <section class="brxe-section brxe-wc-section mcl-hero">
@@ -64,26 +55,44 @@ if ( is_array ( $location ) ) {
       </div>
     </section>
 
-
     <!--Course Selection-->
     <section class="brxe-section brxe-wc-section training-course-product">
       <div class="brxe-container grid--1-3 gap--m">
         <!--sidebar partial -->
+
         <div class="training-sidebar">
           <div class="sidebar-inner">
             <div class="sidebar-selections">
               <h3 class="brxe-heading">Your Selection</h3>
-
+              <?php if ( $product->is_type ( 'booking' ) ) { ?>
+                <!-- meta class uses js --->
               <div class="meta">
                 <b>Course: </b><br>
-                <span><?php echo $course_title; ?></span>
+                <span>
+                  <?php echo get_the_title ( $product_group_id ); ?>
+                </span>
               </div>
-
 
               <div class="meta">
                 <b>Venue</b>
                 <span>
-                  <p>Location: <?php echo $location_label; ?></p>
+                  <p>Location:
+                    <?php
+                    $location = get_field ( 'location' );
+                    if ( is_array ( $location ) ) {
+                      // Handle if location is an array
+                      if ( isset ( $location[ 'label' ] ) ) {
+                        $location_label = $location[ 'label' ];
+                        echo esc_html ( $location_label );
+                        } else {
+                        echo 'Location data is not properly set';
+                        }
+                      } else {
+                      // Output directly if location is not an array
+                      echo esc_html ( $location );
+                      }
+                    ?>
+                  </p>
                 </span>
               </div>
 
@@ -97,11 +106,13 @@ if ( is_array ( $location ) ) {
                   </span>
                 </span>
               </div>
-
+              <?php } ?>
+              <?php if ( $product->is_type ( 'booking' ) ) { ?>
               <p class="from-price price"></p>
               <p class="total-price price">
                 <span class="price title">Total: <span id="total-cost"></span></span>
               </p>
+              <?php } ?>
             </div>
           </div>
         </div>
@@ -109,130 +120,130 @@ if ( is_array ( $location ) ) {
           <h3 class="brxe-heading">Confirm Venue</h3>
           <?php if ( $product->is_type ( 'booking' ) ) { ?>
 
-            <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
-            <input type="hidden" id="multi-cost-of-course" value="" />
-            <input type="hidden" id="changed-cost-of-course" value="" />
+          <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
+          <input type="hidden" id="multi-cost-of-course" value="" />
+          <input type="hidden" id="changed-cost-of-course" value="" />
 
-            <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
-              $scrollStep = $_GET[ 'scrollStep' ]; ?>
+          <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
+            $scrollStep = $_GET[ 'scrollStep' ]; ?>
 
-              <script type="text/javascript">
+          <script type="text/javascript">
 
-                jQuery(document).ready(function () {
-                  var scrollStep = "<?php echo $scrollStep; ?>";
-                  //custom scrolling function - use common sense to see how it all fits together
-                  jQuery('html, body').animate({
-                    scrollTop: jQuery(".training-course-steps .course-step#step-" + scrollStep).offset().top - 160
-                  }, 2000);
-                });
+            jQuery(document).ready(function () {
+              var scrollStep = "<?php echo $scrollStep; ?>";
+              //custom scrolling function - use common sense to see how it all fits together
+              jQuery('html, body').animate({
+                scrollTop: jQuery(".training-course-steps .course-step#step-" + scrollStep).offset().top - 160
+              }, 2000);
+            });
 
-              </script>
-            <?php } ?>
+          </script>
+          <?php } ?>
 
-            <?php
-            $availabilityInFuture = false;
-            $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
-            $availabilityTest     = array_filter ( $availability );
-
-
-            // Store availability dates
-            $futureAvailabilityDates = [];
-            $current_date            = new DateTime();
+          <?php
+          $availabilityInFuture = false;
+          $availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
+          $availabilityTest     = array_filter ( $availability );
 
 
-            // Loop through and check dates in the future
-            foreach ( $availabilityTest as $availabilityTestRange ) {
-              foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
-                // Determine the opening and closing dates
-                $opening_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "from_date" ] ) ? $availabilityTestRangeSingle[ "from_date" ] : $availabilityTestRangeSingle[ "from" ] );
-                $closing_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "to_date" ] ) ? $availabilityTestRangeSingle[ "to_date" ] : $availabilityTestRangeSingle[ "to" ] );
+          // Store availability dates
+          $futureAvailabilityDates = [];
+          $current_date            = new DateTime();
 
-                // Check if the opening date is in the future
-                if ( $opening_date > $current_date ) {
-                  $availabilityInFuture = true;
 
-                  // Add to array to display in list
-                  $futureAvailabilityDates[] = [ 
-                    "from" => $opening_date,
-                    "to"   => $closing_date,
-                  ];
-                  }
+          // Loop through and check dates in the future
+          foreach ( $availabilityTest as $availabilityTestRange ) {
+            foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
+              // Determine the opening and closing dates
+              $opening_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "from_date" ] ) ? $availabilityTestRangeSingle[ "from_date" ] : $availabilityTestRangeSingle[ "from" ] );
+              $closing_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "to_date" ] ) ? $availabilityTestRangeSingle[ "to_date" ] : $availabilityTestRangeSingle[ "to" ] );
+
+              // Check if the opening date is in the future
+              if ( $opening_date > $current_date ) {
+                $availabilityInFuture = true;
+
+                // Add to array to display in list
+                $futureAvailabilityDates[] = [ 
+                  "from" => $opening_date,
+                  "to"   => $closing_date,
+                ];
                 }
               }
-            ?>
+            }
+          ?>
 
-            <div class="training-course-steps">
-              <?php
-              //Notices
-              do_action ( 'woocommerce_before_single_product' ); ?>
-              <div class="course-step" id="step-1">
-                <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
-                <div>
-                  <?php
-                  $locations = $parent_group->get_children ();
-                  foreach ( $locations as $location ) {
-                    ?>
-                    <div class="step-field location">
-                      <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>"
-                        href="<?php echo get_permalink ( $location ); ?>?scrollStep=2">
-                        <?php echo get_field ( 'select_address', $location ); ?>
-                      </a>
-                    </div>
-                  <?php } ?>
+          <div class="training-course-steps">
+            <?php
+            //Notices
+            do_action ( 'woocommerce_before_single_product' ); ?>
+            <div class="course-step" id="step-1">
+              <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
+              <div>
+                <?php
+                $locations = $parent_group->get_children ();
+                foreach ( $locations as $location ) {
+                  ?>
+                <div class="step-field location">
+                  <a class="<?php if ( $location === $product->id ) { ?>active<?php } ?>"
+                    href="<?php echo get_permalink ( $location ); ?>?scrollStep=2">
+                    <?php echo get_field ( 'select_address', $location ); ?>
+                  </a>
                 </div>
+                <?php } ?>
+              </div>
+            </div>
+
+            <div class="course-step" id="step-2">
+              <div class="step-title"><span class="title">Step 2 - Choose The Date</span>
+                <a href="#" data-step="2" class="previous-step"></a>
               </div>
 
-              <div class="course-step" id="step-2">
-                <div class="step-title"><span class="title">Step 2 - Choose The Date</span>
-                  <a href="#" data-step="2" class="previous-step"></a>
+              <div class="course-layout-select">
+                <div class="toggle-style-block">
+                  <a href="#" class="title course-style">
+                    <span class="toggle-label active">List</span>
+                    <span class="toggle-identifier"></span>
+                    <span class="toggle-label">Calendar</span></a>
                 </div>
-
-                <div class="course-layout-select">
-                  <div class="toggle-style-block">
-                    <a href="#" class="title course-style">
-                      <span class="toggle-label active">List</span>
-                      <span class="toggle-identifier"></span>
-                      <span class="toggle-label">Calendar</span></a>
-                  </div>
-                </div>
-                <div class="step-layouts">
-                  <div class="layouts" id="layout-list">
-                    <div class="calendar-list">
-                      <div class="table-section">
-                        <?php
-                        $select_address       = get_field ( 'location' );
-                        $select_address_value = $select_address[ 'value' ];
-                        $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
-                        if ( ! empty ( $futureAvailabilityDates ) ) : ?>
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th>Start Date</th>
-                                <th>Location</th>
-                                <th>Availability</th>
-                                <th class="add-td"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr class="availability-date hidden-row" data-start="" data-end="">
-                                <td></td>
-                                <td></td>
-                                <td>Bookings Available</td>
-                                <td class="add-td">
-                                  <a href="#" data-day="" data-month="" data-year=""
-                                    class="cta-button book-now-button float-right">Select Date</a>
-                                </td>
-                              </tr>
-                              <tr class="availability-date hidden-row" data-start="" data-end="">
-                                <td></td>
-                                <td></td>
-                                <td>Bookings Available</td>
-                                <td class="add-td">
-                                  <a href="#" data-day="" data-month="" data-year=""
-                                    class="cta-button book-now-button float-right">Select Date</a>
-                                </td>
-                              </tr>
-                              <!-- Repeat as needed -->
+              </div>
+              <div class="step-layouts">
+                <div class="layouts" id="layout-list">
+                  <div class="calendar-list">
+                    <div class="table-section">
+                      <?php
+                      $select_address       = get_field ( 'location' );
+                      $select_address_value = $select_address[ 'value' ];
+                      $select_address_label = $select_address[ 'choices' ][ $select_address_value ];
+                      if ( ! empty ( $futureAvailabilityDates ) ) : ?>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Start Date</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th class="add-td"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="availability-date hidden-row" data-start="" data-end="">
+                            <td></td>
+                            <td></td>
+                            <td>Bookings Available</td>
+                            <td class="add-td">
+                              <a href="#" data-day="" data-month="" data-year=""
+                                class="cta-button book-now-button float-right">Select Date</a>
+                            </td>
+                          </tr>
+                          <tr class="availability-date hidden-row" data-start="" data-end="">
+                            <td></td>
+                            <td></td>
+                            <td>Bookings Available</td>
+                            <td class="add-td">
+                              <a href="#" data-day="" data-month="" data-year=""
+                                class="cta-button book-now-button float-right">Select Date</a>
+                            </td>
+                          </tr>
+                          <!-- Repeat as needed -->
                             </tbody>
                           </table>
                           <table class="table">
