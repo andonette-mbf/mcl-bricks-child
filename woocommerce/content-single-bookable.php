@@ -8,22 +8,15 @@ global $product;
 // Initialize common variables
 $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->id ) : $product->id;
 $parent_group     = wc_get_product ( $product_group_id );
-$comments         = get_comments ( array( 'post_id' => $product_group_id ) );
-
-
-$duarionType = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
-$duarionTime = get_post_meta ( $product->id, '_wc_booking_duration', true );
-$price_2023  = get_field ( '2023_price', $product->id );
+$duarionType      = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
+$duarionTime      = get_post_meta ( $product->id, '_wc_booking_duration', true );
 
 //Hero Variables
 $product_id             = get_the_ID ();
 $display_title          = get_field ( 'display_title' );
 $course_duration_custom = get_field ( 'course_duration_custom' );
 $certification_meta     = get_field ( 'certification_meta', $product_group_id );
-$grants_funding         = get_field ( 'grants_funding', $product_group_id );
 $hero_image             = get_field ( 'hero_image' );
-
-$title                  = $display_title ? $display_title : get_the_title ();
 $duration               = $course_duration_custom ? $course_duration_custom : $duarionTime[ 0 ] . ' ' . $duarionType[ 0 ];
 $grants_funding_options = $grants_funding ? 'Options available' : 'Options not available';
 
@@ -176,10 +169,9 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
 $course_details            = get_field ( 'course_details' );
 $included_in_course        = get_field ( 'included_in_course' );
 $pre_training_requirements = get_field ( 'pre_training_requirements' );
-
-$training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-$terms               = get_the_terms ( $product->id, 'product_cat' );
-$cat_name_first      = '';
+$training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_cat' );
+$terms                     = get_the_terms ( $product->id, 'product_cat' );
+$cat_name_first            = '';
 
 if ( $terms ) {
   foreach ( $terms as $term ) {
@@ -201,14 +193,12 @@ $training_courses_link = get_term_link ( 'training-courses', 'product_cat' );
     <section class="brxe-section brxe-wc-section mcl-hero">
       <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
         <div class="brxe-div mcl-hero__content mcl-flex--col">
-          <h1 class="brxe-heading mcl-hero__title"><?php echo $title; ?></h1>
+          <h1 class="brxe-heading mcl-hero__title"><?php echo $display_title; ?></h1>
 
           <h5>
             Duration: <span><?php echo $duration; ?></span>
             <br>
             Certification: <?php echo $certification_meta; ?>
-            <br>
-            Grants & Funding: <span><?php echo $grants_funding_options; ?></span>
             <br>
             Availability: See dates below
           </h5>
