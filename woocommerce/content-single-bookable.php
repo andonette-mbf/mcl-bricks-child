@@ -138,6 +138,40 @@ $duration_time         = $duarionTime[ 0 ];
 $duration_type         = $duarionType[ 0 ];
 $select_address        = get_field ( 'select_address' );
 $main_telephone_number = get_field ( 'main_telephone_number', 'options' );
+
+$additional_dates_information_per_day = [];
+
+if ( $additional_date_information_json = get_field ( 'additional_date_information' ) ) {
+  // Decode the JSON data
+  $additional_dates_information = json_decode ( $additional_date_information_json, true );
+
+  foreach ( $additional_dates_information as $additional_date_information ) {
+    if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] ) {
+      // Single day course
+      $date                                                    = new DateTime( $additional_date_information[ 'to' ] );
+      $formatted_date                                          = $date->format ( 'Y-m-d' );
+      $additional_dates_information_per_day[ $formatted_date ] = [ 
+        'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
+        'call_to_book'  => $additional_date_information[ 'call_to_book' ],
+      ];
+      } else {
+      // Multi-day course
+      $period = new DatePeriod(
+        new DateTime( $additional_date_information[ 'from' ] ),
+        new DateInterval( 'P1D' ),
+        ( new DateTime( $additional_date_information[ 'to' ] ) )->modify ( '+1 day' ) // include end date
+      );
+
+      foreach ( $period as $date ) {
+        $formatted_date                                          = $date->format ( 'Y-m-d' );
+        $additional_dates_information_per_day[ $formatted_date ] = [ 
+          'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
+          'call_to_book'  => $additional_date_information[ 'call_to_book' ],
+        ];
+        }
+      }
+    }
+  }
 //echo 'SUCCESS';
 ?>
 
@@ -480,117 +514,60 @@ $main_telephone_number = get_field ( 'main_telephone_number', 'options' );
       </div>
     </section>
 
-    <?php
-    // Check for additional date information
-    if ( $additional_date_information_json = get_field ( 'additional_date_information' ) ) {
-      // Decode the JSON data
-      $additional_dates_information = json_decode ( $additional_date_information_json, true );
+    <div class="course-step" id="step-4">
+      <div class="title-row step-title">
+        <span class="title">Step 4 - Review Your Booking</span>
+        <a href="#" data-step="4" class="previous-step float-right to-animate"></a>
+      </div>
 
-      // Initialize an array for per-day information
-      $additional_dates_information_per_day = [];
+      <div class="review-booking-block">
+        <div class="meta">
+          <b>Course Selection</b>
+          <span class="title"><?php echo $product_group_title; ?></span>
+          <span class="title duration"><i class="far fa-clock"></i> <?php echo $duration_time; ?>
+            <?php echo $duration_type; ?> course</span>
+        </div>
+      </div>
 
-      foreach ( $additional_dates_information as $additional_date_information ) {
-        if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] ) {
-          // Single day course
-          $date                                                    = new DateTime( $additional_date_information[ 'to' ] );
-          $formatted_date                                          = $date->format ( 'Y-m-d' );
-          $additional_dates_information_per_day[ $formatted_date ] = [ 
-            'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
-            'call_to_book'  => $additional_date_information[ 'call_to_book' ],
-          ];
-          } else {
-          // Multi-day course
-          $period = new DatePeriod(
-            new DateTime( $additional_date_information[ 'from' ] ),
-            new DateInterval( 'P1D' ),
-            ( new DateTime( $additional_date_information[ 'to' ] ) )->modify ( '+1 day' ) // include end date
-          );
+      <div class="review-booking-block">
+        <div class="meta">
+          <b>Course Venue </b>
+          <span class="title"><?php echo $select_address; ?></span>
+        </div>
+      </div>
 
-          foreach ( $period as $date ) {
-            $formatted_date                                          = $date->format ( 'Y-m-d' );
-            $additional_dates_information_per_day[ $formatted_date ] = [ 
-              'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
-              'call_to_book'  => $additional_date_information[ 'call_to_book' ],
-            ];
-            }
-          }
-        }
-      ?>
-      <script>
-        jQuery(document).ready(function () {
-          var additionalDateInfo = <?php echo json_encode ( $additional_dates_information_per_day ); ?>;
+      <div class="meta" id="course-date-meta">
+        <b>Course Date</b>
+        <span class="start-date">
+          <div class="dd"></div>
+          <div class="mm"></div>
+          <div class="yyyy"></div>
+        </span>
+      </div>
 
-          function updateBookingInfo () {
-            var bookingDateCheck = jQuery(".booking_date_year").val() + "-" +
-              jQuery(".booking_date_month").val() + "-" +
-              jQuery(".booking_date_day").val();
-            var bookingPersons = jQuery("#wc_bookings_field_persons").val();
-            var dateInfo = additionalDateInfo[ bookingDateCheck ];
+      <div class="review-booking-block">
+        <div class="meta">
+          <b>Number Of People </b>
+          <span class="title number-of-people"></span>
+        </div>
+      </div>
 
-            jQuery("#cannotBookCourse").hide();
-            jQuery("#confirm-boooking").show();
+      <div class="row confirm-row">
+        <p class="from-price price"></p>
+        <p class="total-price price">
+          <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span>
+        </p>
 
-            if (dateInfo !== undefined) {
-              jQuery(".container-fluid.training-course-product").attr("data-spaces-remaining", dateInfo[ 'spaces_remain' ]);
-
-              if (dateInfo[ 'call_to_book' ] === "yes") {
-                jQuery("#cannotBookCourse").html('Please call us to book this date on <br /> 0113 257 0842').slideDown();
-                jQuery("#confirm-boooking").slideUp();
-              }
-
-              if (parseInt(bookingPersons) > parseInt(dateInfo[ 'spaces_remain' ])) {
-                jQuery("#cannotBookCourse").html('We only have ' + dateInfo[ 'spaces_remain' ] + ' spaces left on this date. Please call us to book this date on <br /> 0113 257 0842.').slideDown();
-                jQuery("#confirm-boooking").slideUp();
-              }
-            }
-          }
-
-          // Event listeners for booking date and persons change
-          jQuery("body").on("click", ".calendar-list .table-section .table tbody td.add-td .book-now-button", updateBookingInfo);
-          jQuery("#wc-bookings-booking-form.wc-bookings-booking-form").on("change", ".booking_date_day, #wc_bookings_field_persons", updateBookingInfo);
-        });
-      </script>
-      <?php
-      }
-    ?>
+        <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
+        <a href="tel:<?php echo $main_telephone_number; ?>" id="cannotBookCourse" class="cta-button float-right w-auto"
+          style="display: none;"></a>
+      </div>
+    </div>
 
 
 
     <!--tabs partial -->
-    <section class="brxe-section brxe-wc-section">
-      <div class="brxe-container">
-        <div id="brxe-tabs" data-script-id="tabs" class="brxe-tabs-nested">
-          <div id="brxe-pljtos" class="brxe-block tab-menu">
-            <div class="brxe-div tab-title brx-open">
-              <div class="brxe-text-basic">Course Details</div>
-            </div>
-            <div class="brxe-div tab-title">
-              <div class="brxe-text-basic">Included In Course</div>
-            </div>
-            <div class="brxe-div tab-title">
-              <div class="brxe-text-basic">Pre Training Requirements</div>
-            </div>
-          </div>
-          <div class="brxe-block tab-content">
-            <div class="brxe-block tab-pane fade active show brx-open">
-              <div class="brxe-text">
-                <p><?php the_field ( 'course_details' ); ?></p>
-              </div>
-            </div>
-            <div class="brxe-block tab-pane">
-              <div class="brxe-text">
-                <p><?php the_field ( 'included_in_course' ); ?></p>
-              </div>
-            </div>
-            <div class="brxe-block tab-pane">
-              <div class="brxe-text">
-                <p><?php the_field ( 'pre_training_requirements' ); ?></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+
 
     <!--related courses partial -->
 
