@@ -133,10 +133,18 @@ if ( $product ) {
                     <div class="table-section">
                       <?php if ( ! empty ( $future_availability_rows ) ) : ?>
                         <table class="table">
+                          <style>
+                            /* CSS to hide columns on mobile devices */
+                            @media only screen and (max-width: 767px) {
+                              .mobile-hide {
+                                display: none;
+                              }
+                            }
+                          </style>
                           <thead>
                             <tr>
                               <th>Start Date</th>
-                              <th>Location</th>
+                              <th class="mobile-hide">Location</th>
                               <th>Availability</th>
                               <th class="add-td"></th>
                             </tr>
@@ -147,7 +155,7 @@ if ( $product ) {
                                 data-start="<?php echo esc_attr ( $row[ 'from_date' ] ); ?>"
                                 data-end="<?php echo esc_attr ( $row[ 'to_date' ] ); ?>">
                                 <td><?php echo esc_html ( $row[ 'from_date' ] ); ?></td>
-                                <td><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
+                                <td class="mobile-hide"><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
                                 <td>Bookings Available</td>
                                 <td class="add-td">
                                   <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
@@ -231,7 +239,8 @@ if ( $product ) {
                       </select>
                       <input name="delegate_number[{X}]" data-number="{X}" class="delegate_number" value=""
                         placeholder="Delegate {X} IRATA Number" style="display:none;">
-                      <label style="color: black; font-weight: bold" for="delegate_dob_{X}">Delegate Date of Birth</label>
+                      <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
+                        Birth</label>
                       <input type="date" id="delegate_dob{X}" name="delegate_dob[{X}]" data-number="{X}" required
                         class="delegate_dob" value="" placeholder="Delegate {X} DOB">
                       <input type="text" id="delegate_phone{X}" name="delegate_phone[{X}]" data-number="{X}" required
@@ -247,11 +256,14 @@ if ( $product ) {
                     jQuery('body').on('change', 'select.delegate_level_select', function () {
                       var fieldNumber = jQuery(this).attr('data-number');
                       var selectedValue = jQuery(this).val();
+                      var delegateNumberField = jQuery('input[name="delegate_number[' + fieldNumber + ']"]');
 
                       if (selectedValue === "2" || selectedValue === "3") {
-                        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').show();
+                        delegateNumberField.show();
+                        delegateNumberField.attr('required', 'required');
                       } else {
-                        jQuery('input[name="delegate_number[' + fieldNumber + ']"]').hide();
+                        delegateNumberField.hide();
+                        delegateNumberField.removeAttr('required');
                       }
                     });
                   </script>
@@ -263,6 +275,8 @@ if ( $product ) {
                         placeholder="Delegate {X} Name">
                       <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
                         placeholder="Delegate {X} WINDA Number">
+                      <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
+                        Birth</label>
                       <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
                         placeholder="Delegate {X} DOB">
                     </div>
@@ -276,6 +290,8 @@ if ( $product ) {
                       <b>Delegate <span class="number">{X}</span> Information</b>
                       <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                         placeholder="Delegate {X} Name">
+                      <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
+                        Birth</label>
                       <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
                         placeholder="Delegate {X} DOB">
                     </div>
