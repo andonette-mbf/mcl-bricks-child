@@ -224,13 +224,13 @@ if ( $product ) {
                       <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                         placeholder="Delegate {X} Name">
                       <select name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select">
-                        <option value="" disabled selected>Irata Course Required</option>
+                        <option value="" disabled selected>IRATA Course Required</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                       </select>
                       <input name="delegate_number[{X}]" data-number="{X}" class="delegate_number" value=""
-                        placeholder="Delegate {X} Number" style="display:none;">
+                        placeholder="Delegate {X} IRATA Number" style="display:none;">
                       <label style="color: black; font-weight: bold" for="delegate_dob_{X}">Delegate Date of Birth</label>
                       <input type="date" id="delegate_dob{X}" name="delegate_dob[{X}]" data-number="{X}" required
                         class="delegate_dob" value="" placeholder="Delegate {X} DOB">
@@ -262,7 +262,7 @@ if ( $product ) {
                       <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
                         placeholder="Delegate {X} Name">
                       <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
-                        placeholder="Delegate {X} GWO Number">
+                        placeholder="Delegate {X} WINDA Number">
                       <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
                         placeholder="Delegate {X} DOB">
                     </div>

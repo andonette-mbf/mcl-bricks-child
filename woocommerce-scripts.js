@@ -37,13 +37,13 @@ jQuery.fn.multiply = function (numCopies) {
       jQuery('.training-course-product').attr('data-people-attending', personNumber);
 
      // Update price fields
-jQuery('#multi-cost-of-course').val(multipliedPrice);
+jQuery('#multi-cost-of-course').val(multipliedPrice  + " Inc VAT");
 jQuery('#total-cost').text(formattedPrice + " Inc VAT");
 
       // Show and hide sidebar prices
       jQuery('.from-price.price').hide();
       jQuery('.total-price.price').show();
-      jQuery('.total-price.price #total-cost').text(formattedPrice);
+      jQuery('.total-price.price #total-cost').text(formattedPrice  + " Inc VAT");
 
       // Check spaces remaining
       var spaces_remaining = jQuery('.training-course-product').attr('data-spaces-remaining');
