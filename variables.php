@@ -10,7 +10,7 @@ $duarionTime      = get_post_meta ( $product->id, '_wc_booking_duration', true )
 //Hero Variables
 $product_id             = get_the_ID ();
 $display_title          = get_field ( 'display_title' );
-$course_duration_custom = get_field ( 'course_duration_custom' );
+$course_duration_custom = get_field ( 'number_of_days' );
 $certification_meta     = get_field ( 'certification_meta', $product_group_id );
 $hero_image             = get_field ( 'hero_image' );
 $duration               = $course_duration_custom ? $course_duration_custom : $duarionTime[ 0 ] . ' ' . $duarionType[ 0 ];
