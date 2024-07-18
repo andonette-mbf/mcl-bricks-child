@@ -130,6 +130,26 @@ if ( $product ) {
               <div class="step-layouts">
                 <div class="layouts" id="layout-list">
                   <div class="calendar-list">
+
+                    <?php
+                    // Assuming $future_availability_rows is fetched and contains data
+// Fetch the manual_dates repeater field data for the current product
+                    $manual_dates          = get_field ( 'manual_dates' );
+                    $available_spaces_list = [];
+
+                    // Create a list of available spaces in order and check the dates
+                    $current_date = date ( 'Ymd' ); // Get the current date in 'YYYYMMDD' format
+                    
+                    if ( $manual_dates ) {
+                      foreach ( $manual_dates as $row ) {
+                        $start_date = $row[ 'start_date' ]; // Assuming 'start_date' is in 'YYYYMMDD' format
+                        if ( $start_date >= $current_date ) { // Check if the start date is today or in the future
+                          $available_spaces_list[] = $row[ 'available_spaces' ];
+                          }
+                        }
+                      }
+                    ?>
+
                     <div class="table-section">
                       <?php if ( ! empty ( $future_availability_rows ) ) : ?>
                         <table class="table">
@@ -150,13 +170,18 @@ if ( $product ) {
                             </tr>
                           </thead>
                           <tbody>
-                            <?php foreach ( $future_availability_rows as $row ) : ?>
-                              <tr class="availability-date <?php echo $row[ 'hidden_class' ]; ?>"
+                            <?php
+                            $i = 0; // Initialize a counter to access available spaces
+                            foreach ( $future_availability_rows as $row ) :
+                              $available_spaces = isset ( $available_spaces_list[ $i ] ) ? $available_spaces_list[ $i ] : 'N/A';
+                              $i++; // Increment the counter
+                              ?>
+                              <tr class="availability-date <?php echo esc_attr ( $row[ 'hidden_class' ] ); ?>"
                                 data-start="<?php echo esc_attr ( $row[ 'from_date' ] ); ?>"
                                 data-end="<?php echo esc_attr ( $row[ 'to_date' ] ); ?>">
                                 <td><?php echo esc_html ( $row[ 'from_date' ] ); ?></td>
                                 <td class="mobile-hide"><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
-                                <td>Bookings Available</td>
+                                <td><?php echo esc_html ( $available_spaces ); ?></td>
                                 <td class="add-td">
                                   <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
                                     data-month="<?php echo esc_attr ( $row[ 'data_month' ] ); ?>"
@@ -170,6 +195,7 @@ if ( $product ) {
                         <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
                       <?php endif; ?>
                     </div>
+
                   </div>
                 </div>
 

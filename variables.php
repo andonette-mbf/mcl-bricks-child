@@ -169,12 +169,17 @@ $training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_
 $terms                     = get_the_terms ( $product->id, 'product_cat' );
 $cat_name_first            = '';
 
-
 //manual date table ACF fields
-$acf_start_date = '';
-$acf_end_date   = '';
-$acf_places     = '';
-$acf_full       = '';
+$manual_dates = get_field ( 'manual_dates' );
+
+if ( $manual_dates ) {
+  $first_row = $manual_dates[ 0 ];
+
+  $acf_start_date = $first_row[ 'start_date' ];
+  $acf_end_date   = $first_row[ 'end_date' ];
+  $acf_places     = $first_row[ 'available_spaces' ];
+  $acf_full       = $first_row[ 'course_full' ];
+  }
 
 
 
