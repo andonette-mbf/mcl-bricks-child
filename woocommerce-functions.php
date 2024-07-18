@@ -241,3 +241,11 @@ function redirect_grouped_to_first_bookable_child () {
         }
     }
 add_action ( 'template_redirect', 'redirect_grouped_to_first_bookable_child' );
+
+function enqueue_woocommerce_scripts () {
+    if ( is_product () ) {
+        wp_enqueue_script ( 'wc-add-to-cart' );
+        wp_enqueue_script ( 'wc-single-product' );
+        }
+    }
+add_action ( 'wp_enqueue_scripts', 'enqueue_woocommerce_scripts' );

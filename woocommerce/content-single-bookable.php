@@ -12,6 +12,7 @@ if ( $product ) {
 
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php wc_product_class ( '', $product ); ?>>
+
     <!--Header Section -->
     <section class="brxe-section brxe-wc-section mcl-hero">
       <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
@@ -28,6 +29,7 @@ if ( $product ) {
         </div>
       </div>
       <div class="brxe-container mcl-hero__inner--absolute">
+
         <div class="brxe-div mcl-hero__overlay mcl-absolute--full"></div>
         <div class="brxe-div mcl-hero__image" style="background-image: url('<?php echo $hero_image; ?>');"></div>
         <div class="brxe-div mcl-hero__tagline-box">
@@ -35,9 +37,15 @@ if ( $product ) {
         </div>
       </div>
     </section>
+    <section class="brxe-section brxe-wc-section">
+      <div class="brxe-container">
+        <?php wc_print_notices (); // Add this to display WooCommerce notices ?>
+      </div>
+    </section>
 
     <!--Course Selection-->
     <section class="brxe-section brxe-wc-section training-course-product">
+
       <div class="brxe-container grid--1-3 gap--m">
         <!--Sidebar Summary-->
         <div class="training-sidebar">
@@ -95,7 +103,8 @@ if ( $product ) {
           <div class="training-course-steps">
             <?php
             //Notices
-            do_action ( 'woocommerce_before_single_product' ); ?>
+            do_action ( 'woocommerce_before_single_product' );
+            ?>
 
             <div class="course-step" id="step-1">
               <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
