@@ -80,4 +80,4 @@ function initialize_woocommerce_client () {
     );
 
     return $woocommerce;
-}
+
