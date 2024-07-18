@@ -169,6 +169,13 @@ $training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_
 $terms                     = get_the_terms ( $product->id, 'product_cat' );
 $cat_name_first            = '';
 
+//manual date table ACF fields
+$acf_start_date = '';
+$acf_end_date   = '';
+$acf_places     = '';
+$acf_full       = '';
+
+
 if ( $terms ) {
   foreach ( $terms as $term ) {
     if ( $term->parent === $training_courses_id->term_id ) {

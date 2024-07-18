@@ -91,24 +91,24 @@ function parent_grouped_id ( $post_id = 0 ) {
     return 0;
     }
 
-// Redirect training products to cart page on add to cart
-add_filter ( 'woocommerce_add_to_cart_redirect', 'training_custom_add_to_cart_redirect' );
+// // Redirect training products to cart page on add to cart
+// add_filter ( 'woocommerce_add_to_cart_redirect', 'training_custom_add_to_cart_redirect' );
 
-function training_custom_add_to_cart_redirect ( $url ) {
-    if ( ! isset ( $_REQUEST[ 'add-to-cart' ] ) || ! is_numeric ( $_REQUEST[ 'add-to-cart' ] ) ) {
-        return $url;
-        }
+// function training_custom_add_to_cart_redirect ( $url ) {
+//     if ( ! isset ( $_REQUEST[ 'add-to-cart' ] ) || ! is_numeric ( $_REQUEST[ 'add-to-cart' ] ) ) {
+//         return $url;
+//         }
 
-    $product_id = absint ( $_REQUEST[ 'add-to-cart' ] );
-    $product_id = apply_filters ( 'woocommerce_add_to_cart_product_id', $product_id );
+//     $product_id = absint ( $_REQUEST[ 'add-to-cart' ] );
+//     $product_id = apply_filters ( 'woocommerce_add_to_cart_product_id', $product_id );
 
-    // Only redirect products that have the 'training-courses' category
-    if ( has_term ( 'training-courses', 'product_cat', $product_id ) ) {
-        return get_permalink ( 123 ); // Replace 123 with the ID of the cart page or desired redirect page
-        }
+//     // Only redirect products that have the 'training-courses' category
+//     if ( has_term ( 'training-courses', 'product_cat', $product_id ) ) {
+//         return get_permalink ( 123 ); // Replace 123 with the ID of the cart page or desired redirect page
+//         }
 
-    return $url;
-    }
+//     return $url;
+//     }
 
 
 function delegate_output_fields () {
