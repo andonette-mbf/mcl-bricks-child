@@ -32,13 +32,13 @@ add_filter ( 'bricks/builder/i18n', function ($i18n) {
     return $i18n;
     } );
 
-add_filter ( 'bricks/code/echo_function_names', function () {
-    return [ 
-        'woocommerce_get_loop_display_mode',
-        'get_queried_object_id',
-        'date',
-    ];
-    } );
+add_filter( 'bricks/code/echo_function_names', function() {
+  return [
+    'date',
+    'get_queried_object_id',
+    'woocommerce_get_loop_display_mode',
+  ];
+} );
 
 //Functions Added By Andonette 
 //woocommerce theme support
@@ -63,4 +63,21 @@ function enqueue_custom_scripts () {
     );
     }
 add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
+// Include the Composer autoload file
+require_once get_stylesheet_directory () . '/vendor/autoload.php';
 
+use Automattic\WooCommerce\Client;
+
+function initialize_woocommerce_client () {
+    $woocommerce = new Client(
+        site_url (), // Your store URL
+        WC_BOOKINGS_CONSUMER_KEY,
+        WC_BOOKINGS_CONSUMER_SECRET,
+        [ 
+            'wp_api'  => true, // Enable the WP REST API integration
+            'version' => 'wc/v3', // WooCommerce WP REST API version
+        ],
+    );
+
+    return $woocommerce;
+}

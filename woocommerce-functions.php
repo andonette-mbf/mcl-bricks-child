@@ -219,3 +219,25 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
 
     }
 add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
+
+function redirect_grouped_to_first_bookable_child () {
+    if ( is_product () ) {
+        global $post;
+
+        $product = wc_get_product ( $post->ID );
+
+        if ( $product && $product->is_type ( 'grouped' ) ) {
+            $children = $product->get_children ();
+
+            foreach ( $children as $child_id ) {
+                $child_product = wc_get_product ( $child_id );
+
+                if ( $child_product && $child_product->is_type ( 'booking' ) ) {
+                    wp_safe_redirect ( get_permalink ( $child_id ) );
+                    exit;
+                    }
+                }
+            }
+        }
+    }
+add_action ( 'template_redirect', 'redirect_grouped_to_first_bookable_child' );
