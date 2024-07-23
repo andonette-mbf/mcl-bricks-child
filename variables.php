@@ -2,10 +2,10 @@
 defined ( 'ABSPATH' ) || exit;
 global $product;
 // Initialize common variables
-$product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->id ) : $product->id;
+$product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
 $parent_group     = wc_get_product ( $product_group_id );
-$duarionType      = get_post_meta ( $product->id, '_wc_booking_duration_unit', true );
-$duarionTime      = get_post_meta ( $product->id, '_wc_booking_duration', true );
+$durationType     = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
+$duarionTime      = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
 
 //Hero Variables
 $grants_funding         = '';
@@ -24,7 +24,7 @@ $location_label      = is_array ( $location ) && isset ( $location[ 'label' ] ) 
 
 //GET THE DATES
 $availabilityInFuture = false;
-$availability         = get_post_meta ( $product->id, '_wc_booking_availability' );
+$availability         = get_post_meta ( $product->get_id (), '_wc_booking_availability' );
 $availabilityTest     = array_filter ( $availability );
 
 // Store availability dates
@@ -53,7 +53,7 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
 
 //step 1 for locations 
 $locations          = $parent_group->get_children ();
-$current_product_id = $product->id;
+$current_product_id = $product->get_id ();
 $location_data      = [];
 
 foreach ( $locations as $location ) {
@@ -167,22 +167,19 @@ $course_details            = get_field ( 'course_details' );
 $included_in_course        = get_field ( 'included_in_course' );
 $pre_training_requirements = get_field ( 'pre_training_requirements' );
 $training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-$terms                     = get_the_terms ( $product->id, 'product_cat' );
+$terms                     = get_the_terms ( $product->get_id (), 'product_cat' );
 $cat_name_first            = '';
 
 //manual date table ACF fields
 $manual_dates = get_field ( 'manual_dates' );
 
 if ( $manual_dates ) {
-  $first_row = $manual_dates[ 0 ];
-
+  $first_row      = $manual_dates[ 0 ];
   $acf_start_date = $first_row[ 'start_date' ];
   $acf_end_date   = $first_row[ 'end_date' ];
   $acf_places     = $first_row[ 'available_spaces' ];
   $acf_full       = $first_row[ 'course_full' ];
   }
-
-
 
 if ( $terms ) {
   foreach ( $terms as $term ) {

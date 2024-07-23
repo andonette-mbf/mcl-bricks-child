@@ -115,7 +115,7 @@ function delegate_output_fields () {
     global $product;
 
     if ( $product->is_type ( 'booking' ) ) {
-        for ( $i = 1; $i <= 10; $i++ ) {
+        for ( $i = 1; $i <= 6; $i++ ) {
             echo '<div class="delegate-name-email-field hidden">';
             echo '<input type="hidden" id="delegate-name-' . $i . '" name="delegate[' . $i . '][name]">';
             echo '<input type="hidden" id="delegate-level-select-' . $i . '" name="delegate[' . $i . '][level_select]">';
@@ -150,7 +150,7 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
     if ( ! empty ( $cart_item[ 'delegates' ] ) ) {
         $delegates = $cart_item[ 'delegates' ];
         foreach ( $delegates as $i => $delegate ) {
-            $i++;
+            $i = 1;
             if ( ! empty ( $delegate[ 'name' ] ) ) {
                 $item_data[] = array(
                     'key'     => __ ( 'Delegate ' . $i . ' Name', 'delegates' ),
@@ -183,6 +183,7 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
                     'display' => '',
                 );
                 }
+            $i++;
             }
         }
     return $item_data;
@@ -203,10 +204,8 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
     $item->add_meta_data ( __ ( 'delegates', 'delegates', 'delegates', 'delegates', 'delegates' ), $delegates );
 
     //Split out delegates for display
-    $i = 0;
+    $i = 1;
     foreach ( $delegates as $delegate ) {
-        $i++;
-
         if ( ! empty ( $delegate[ 'name' ] ) ) {
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Name', 'delegates' ), $delegate[ 'name' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level Select', 'delegates' ), $delegate[ 'level_select' ] );
@@ -215,6 +214,7 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Phone', 'delegates' ), $delegate[ 'phone' ] );
             $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Email', 'delegates' ), $delegate[ 'email' ] );
             }
+        $i++;
         }
 
     }

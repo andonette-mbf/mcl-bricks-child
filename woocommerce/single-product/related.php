@@ -28,7 +28,7 @@ $related = $product->get_related ( $posts_per_page );
 $cats_array = array( 0 );
 
 // get categories
-$terms = wp_get_post_terms ( $product->id, 'product_cat' );
+$terms = wp_get_post_terms ( $product->get_id (), 'product_cat' );
 
 // select only the category which doesn't have any children
 foreach ( $terms as $term ) {

@@ -36,11 +36,14 @@ do_action ( 'woocommerce_before_main_content' );
 
 	<?php
 	global $product;
-	//echo 'single template success';
+
 	// Check if the product belongs to the 'training-courses' category and is of type 'booking'
 	if ( has_term ( 'training-courses', 'product_cat', $product->get_id () ) && $product->is_type ( 'booking' ) ) {
 		// Load custom template for bookable training courses
 		get_template_part ( 'woocommerce/content', 'single-bookable' );
+		} else {
+		// Load default single product template
+		wc_get_template_part ( 'content', 'single-product' );
 		}
 	?>
 
