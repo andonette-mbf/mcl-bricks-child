@@ -8,6 +8,7 @@ $duarionType      = get_post_meta ( $product->id, '_wc_booking_duration_unit', t
 $duarionTime      = get_post_meta ( $product->id, '_wc_booking_duration', true );
 
 //Hero Variables
+$grants_funding         = '';
 $product_id             = get_the_ID ();
 $display_title          = get_field ( 'display_title' );
 $course_duration_custom = get_field ( 'number_of_days' );
@@ -67,7 +68,7 @@ foreach ( $locations as $location ) {
 //STep 2 for date table 
 $select_address       = get_field ( 'location' );
 $select_address_value = $select_address[ 'value' ];
-$select_address_label = $select_address[ 'choices' ][ $select_address_value ];
+//$select_address_label = $select_address[ 'choices' ][ $select_address_value ];
 
 $future_availability_rows = [];
 if ( ! empty ( $futureAvailabilityDates ) ) {
