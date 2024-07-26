@@ -32,13 +32,13 @@ add_filter ( 'bricks/builder/i18n', function ($i18n) {
     return $i18n;
     } );
 
-add_filter( 'bricks/code/echo_function_names', function() {
-  return [
-    'date',
-    'get_queried_object_id',
-    'woocommerce_get_loop_display_mode',
-  ];
-} );
+add_filter ( 'bricks/code/echo_function_names', function () {
+    return [ 
+        'date',
+        'get_queried_object_id',
+        'woocommerce_get_loop_display_mode',
+    ];
+    } );
 
 //Functions Added By Andonette 
 //woocommerce theme support
@@ -75,9 +75,9 @@ function initialize_woocommerce_client () {
         WC_BOOKINGS_CONSUMER_SECRET,
         [ 
             'wp_api'  => true, // Enable the WP REST API integration
-            'version' => 'wc/v3', // WooCommerce WP REST API version
+            'version' => 'wc/v1', // WooCommerce WP REST API version
         ],
     );
 
     return $woocommerce;
-}
+    }

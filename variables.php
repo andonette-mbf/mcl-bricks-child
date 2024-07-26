@@ -1,6 +1,11 @@
 <?php
 defined ( 'ABSPATH' ) || exit;
 global $product;
+// Use the constants defined in wp-config.php
+$consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
+$consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
+$api_url         = WC_BOOKINGS_API_URL . 'bookings';
+
 // Initialize common variables
 $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
 $parent_group     = wc_get_product ( $product_group_id );
@@ -125,7 +130,7 @@ if ( has_term ( 'irata-courses', 'product_cat' ) ) {
 //step 4 
 $product_group_title   = get_the_title ( $product_group_id );
 $duration_time         = $duarionTime[ 0 ];
-$duration_type         = $duarionType[ 0 ];
+$duration_type         = $durationType[ 0 ];
 $select_address        = get_field ( 'select_address' );
 $main_telephone_number = get_field ( 'main_telephone_number', 'options' );
 
