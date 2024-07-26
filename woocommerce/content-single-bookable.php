@@ -27,28 +27,233 @@ $response = wp_remote_get (
   ),
 );
 
-// Check for errors
 
 // Decode the JSON response body
 $bookings = json_decode ( wp_remote_retrieve_body ( $response ), true );
 
 // Store person counts in a variable
 $person_count = 0;
-if ( ! empty ( $bookings ) ) {
-  foreach ( $bookings as $booking ) {
-    if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
-      $person_count = array_sum ( $booking[ 'person_counts' ] );
-      break; // Only need the person count once, so break after first
-      }
+
+foreach ( $bookings as $booking ) {
+  if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
+    $person_count = array_sum ( $booking[ 'person_counts' ] );
+    // Only need the person count once, so break after first
     }
-  } else {
-  echo 'No bookings found.';
   }
+
 
 // Perform the subtraction and print the result
 $result_count = 8 - $person_count;
 echo $result_count;
 
+
+?>
+<?php
+
+// Check if bookings are not empty
+if ( empty ( $bookings ) ) {
+  echo 'No bookings found.';
+  } else {
+  // Loop through each availability row
+  foreach ( $future_availability_rows as $row ) {
+    // Initialize person count for each date range
+    $person_count = 0;
+
+    // Convert availability dates to timestamps
+    $from_date = strtotime ( $row[ 'from_date' ] );
+    $to_date   = strtotime ( $row[ 'to_date' ] );
+
+    foreach ( $bookings as $booking ) {
+      // Convert booking dates to timestamps
+      $booking_start = isset ( $booking[ 'start' ] ) ? strtotime ( $booking[ 'start' ] ) : null;
+      $booking_end   = isset ( $booking[ 'end' ] ) ? strtotime ( $booking[ 'end' ] ) : null;
+
+      // Check if booking is within the date range
+      if ( $booking_start && $booking_end && $booking_start >= $from_date && $booking_end <= $to_date ) {
+
+        }
+      }
+
+    // Perform the subtraction and print the result for each date range
+
+    echo "From: " . esc_attr ( $row[ 'from_date' ] ) . " To: " . esc_attr ( $row[ 'to_date' ] ) . "<br>";
+    }
+  }
+?>
+<?php
+// Function to get bookings by date
+function get_bookings_by_date ( $start_date, $end_date ) {
+  $args = array(
+    'post_type'      => 'wc_booking',
+    'posts_per_page' => -1,
+    'post_status'    => 'any',
+    'meta_query'     => array(
+      'relation' => 'AND',
+      array(
+        'key'     => '_booking_start',
+        'value'   => $start_date,
+        'compare' => '>=',
+        'type'    => 'DATETIME',
+      ),
+      array(
+        'key'     => '_booking_end',
+        'value'   => $end_date,
+        'compare' => '<=',
+        'type'    => 'DATETIME',
+      ),
+    ),
+  );
+
+  $bookings = new WP_Query( $args );
+  return $bookings->posts;
+  }
+
+// Example usage within a template
+$start_date = '2024-01-01 00:00:00'; // Modify as needed
+$end_date   = '2024-12-31 23:59:59'; // Modify as needed
+
+$bookings = get_bookings_by_date ( $start_date, $end_date );
+
+if ( ! empty ( $bookings ) ) {
+  echo '<ul>';
+  foreach ( $bookings as $booking ) {
+
+    $booking_id    = $booking->ID;
+    $booking_start = get_post_meta ( $booking_id, '_booking_start', true );
+    $booking_end   = get_post_meta ( $booking_id, '_booking_end', true );
+    $customer_name = get_post_meta ( $booking_id, '_booking_customer_name', true );
+    $person_count  = get_post_meta ( $booking_id, 'person_counts', true );
+
+    echo '<li>';
+    echo 'Booking ID: ' . $booking_id . '<br>';
+    echo 'Start: ' . $booking_start . '<br>';
+    echo 'End: ' . $booking_end . '<br>';
+    echo 'Customer: ' . $customer_name;
+    echo 'Count: ' . $person_count;
+    echo '</li>';
+    }
+  echo '</ul>';
+  } else {
+  echo 'No bookings found for the selected date range.';
+  }
+?>
+
+<?php
+// Function to get bookings by date range and product ID
+function get_bookings_by_date_range_and_product ( $start_date, $end_date, $product_id ) {
+  $args = array(
+    'post_type'      => 'wc_booking',
+    'posts_per_page' => -1,
+    'post_status'    => 'any',
+    'meta_query'     => array(
+      'relation' => 'AND',
+      array(
+        'key'     => '_booking_start',
+        'value'   => $start_date,
+        'compare' => '>=',
+        'type'    => 'DATETIME',
+      ),
+      array(
+        'key'     => '_booking_end',
+        'value'   => $end_date,
+        'compare' => '<=',
+        'type'    => 'DATETIME',
+      ),
+      array(
+        'key'     => '_booking_product_id',
+        'value'   => $product_id,
+        'compare' => '=',
+        'type'    => 'NUMERIC',
+      ),
+    ),
+  );
+
+  $bookings = new WP_Query( $args );
+  return $bookings->posts;
+  }
+
+// Function to check if a date is booked for a specific product
+function is_date_booked ( $date, $bookings ) {
+  foreach ( $bookings as $booking ) {
+    $booking_start = get_post_meta ( $booking->ID, '_booking_start', true );
+    $booking_end   = get_post_meta ( $booking->ID, '_booking_end', true );
+
+    if ( $date >= $booking_start && $date <= $booking_end ) {
+      return true;
+      }
+    }
+  return false;
+  }
+
+// Example usage within a template
+global $product;
+$product_id      = $product->get_id (); // Get the current product ID
+$start_date      = '2024-07-01 00:00:00'; // Modify as needed
+$end_date        = '2024-07-31 23:59:59'; // Modify as needed
+$available_dates = array( '2024-07-10', '2024-07-15', '2024-07-20' ); // List of available dates
+
+$bookings = get_bookings_by_date_range_and_product ( $start_date, $end_date, $product_id );
+
+echo '<ul>';
+foreach ( $available_dates as $available_date ) {
+  $available_date_start = $available_date . ' 00:00:00';
+  $available_date_end   = $available_date . ' 23:59:59';
+
+  if ( is_date_booked ( $available_date_start, $bookings ) ) {
+    echo '<li>' . $available_date . ': Booked</li>';
+    } else {
+    echo '<li>' . $available_date . ': Available</li>';
+    }
+  }
+echo '</ul>';
+?>
+<?php
+// Function to get bookings by product ID
+function get_bookings_by_product_id ( $product_id ) {
+  $args = array(
+    'post_type'      => 'wc_booking',
+    'posts_per_page' => -1,
+    'post_status'    => 'any',
+    'meta_query'     => array(
+      array(
+        'key'     => '_booking_product_id',
+        'value'   => $product_id,
+        'compare' => '=',
+        'type'    => 'NUMERIC',
+      ),
+    ),
+  );
+
+  $bookings = new WP_Query( $args );
+  return $bookings->posts;
+  }
+
+// Example usage within a template
+global $product;
+$product_id = $product->get_id (); // Get the current product ID
+
+$bookings = get_bookings_by_product_id ( $product_id );
+
+if ( ! empty ( $bookings ) ) {
+  echo '<ul>';
+  foreach ( $bookings as $booking ) {
+    $booking_id    = $booking->ID;
+    $booking_start = get_post_meta ( $booking_id, '_booking_start', true );
+    $booking_end   = get_post_meta ( $booking_id, '_booking_end', true );
+    $customer_id   = get_post_meta ( $booking_id, '_booking_customer_id', true );
+    $customer      = get_userdata ( $customer_id );
+
+    echo '<li>';
+    echo 'Booking ID: ' . $booking_id . '<br>';
+    echo 'Start: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_start ) ) . '<br>';
+    echo 'End: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_end ) ) . '<br>';
+    echo 'Customer: ' . ( $customer ? $customer->display_name : 'N/A' );
+    echo '</li>';
+    }
+  echo '</ul>';
+  } else {
+  echo 'No bookings found for this product.';
+  }
 ?>
 
 <main id="brx-content">
