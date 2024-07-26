@@ -4,7 +4,8 @@ global $product;
 // Use the constants defined in wp-config.php
 $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
 $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
-$api_url         = WC_BOOKINGS_API_URL . 'bookings';
+$api_url         = WC_BOOKINGS_API_URL . 'wp-json/wc-bookings/v1/bookings';
+$site_url        = 'https://mcl.local';
 
 // Initialize common variables
 $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
@@ -14,7 +15,7 @@ $duarionTime      = get_post_meta ( $product->get_id (), '_wc_booking_duration',
 
 //Hero Variables
 $grants_funding         = '';
-$product_id             = get_the_ID ();
+$product_id             = $product->get_id ();
 $display_title          = get_field ( 'display_title' );
 $course_duration_custom = get_field ( 'number_of_days' );
 $certification_meta     = get_field ( 'certification_meta', $product_group_id );

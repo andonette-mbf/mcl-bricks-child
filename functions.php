@@ -75,9 +75,17 @@ function initialize_woocommerce_client () {
         WC_BOOKINGS_CONSUMER_SECRET,
         [ 
             'wp_api'  => true, // Enable the WP REST API integration
-            'version' => 'wc/v1', // WooCommerce WP REST API version
+            'version' => 'wc/v3', // WooCommerce WP REST API version
         ],
     );
 
     return $woocommerce;
     }
+function add_woocommerce_capabilities () {
+    $role = get_role ( 'shop_manager' ); // Change to 'administrator' if needed
+    if ( $role ) {
+        $role->add_cap ( 'manage_woocommerce' );
+        $role->add_cap ( 'view_woocommerce_reports' );
+        }
+    }
+add_action ( 'admin_init', 'add_woocommerce_capabilities' );

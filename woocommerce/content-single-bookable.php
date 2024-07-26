@@ -8,6 +8,90 @@ global $product;
 if ( $product ) {
   include get_stylesheet_directory () . '/variables.php';
   }
+// Include the WooCommerce API library if it's not already included
+if ( ! class_exists ( 'WooCommerce' ) ) {
+  require_once ( dirname ( __FILE__ ) . '/woocommerce/woocommerce.php' );
+  }
+?>
+<?php
+// Function to get the maximum person count for a specific booking ID
+function get_max_person_count ( $bookings, $booking_id ) {
+  foreach ( $bookings as $booking ) {
+    if ( $booking[ 'id' ] == $booking_id ) {
+      if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
+        return max ( $booking[ 'person_counts' ] );
+        } else {
+        return 'N/A';
+        }
+      }
+    }
+  return 'Booking ID not found';
+  }
+
+// Set up the authentication header
+$headers = array(
+  'Authorization' => 'Basic ' . base64_encode ( $consumer_key . ':' . $consumer_secret ),
+);
+
+// Define the API endpoint
+$api_endpoint = $site_url . '/wp-json/wc-bookings/v1/bookings';
+
+// Make the request
+$response = wp_remote_get (
+  $api_endpoint,
+  array(
+    'headers' => $headers,
+  ),
+);
+
+// Check for errors
+if ( is_wp_error ( $response ) ) {
+  echo 'Error: ' . $response->get_error_message ();
+  } else {
+  // Retrieve and display the response code and body for debugging
+  $response_code = wp_remote_retrieve_response_code ( $response );
+  $body          = wp_remote_retrieve_body ( $response );
+
+  echo 'Response Code: ' . $response_code . '<br>';
+
+  // Decode the JSON response body
+  $bookings = json_decode ( $body, true );
+
+  // Display bookings
+  if ( ! empty ( $bookings ) ) {
+    echo '<h2>Bookings:</h2>';
+    echo '<ul>';
+    foreach ( $bookings as $booking ) {
+      echo '<li>';
+      echo 'ID: ' . $booking[ 'id' ] . '<br>';
+      echo 'Cost: ' . $booking[ 'cost' ] . '<br>';
+      echo 'Customer ID: ' . $booking[ 'customer_id' ] . '<br>';
+      echo 'Status: ' . $booking[ 'status' ] . '<br>';
+      echo 'Start Date: ' . date ( 'Y-m-d H:i:s', $booking[ 'start' ] ) . '<br>';
+      echo 'End Date: ' . date ( 'Y-m-d H:i:s', $booking[ 'end' ] ) . '<br>';
+      echo 'Product ID: ' . $booking[ 'product_id' ] . '<br>';
+
+      // Display person count
+      if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
+        echo 'Person Count: ' . array_sum ( $booking[ 'person_counts' ] ) . '<br>';
+        echo 'Max Person Count: ' . max ( $booking[ 'person_counts' ] ) . '<br>';
+        } else {
+        echo 'Person Count: N/A<br>';
+        }
+
+      echo '</li>';
+      }
+    echo '</ul>';
+
+    // Example: Find the max person count for a specific booking ID
+    $specific_booking_id = 33991; // Change this to the booking ID you want to check
+    $max_person_count    = get_max_person_count ( $bookings, $specific_booking_id );
+    echo '<h3>Max Person Count for Booking ID ' . $specific_booking_id . ': ' . $max_person_count . '</h3>';
+
+    } else {
+    echo 'No bookings found.';
+    }
+  }
 ?>
 
 <main id="brx-content">
@@ -227,8 +311,6 @@ if ( $product ) {
               </div>
 
               <!--Choose number-->
-
-
 
               <div class="course-step" id="step-3">
                 <div class="step-title">
