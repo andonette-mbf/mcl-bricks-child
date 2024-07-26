@@ -8,26 +8,9 @@ global $product;
 if ( $product ) {
   include get_stylesheet_directory () . '/variables.php';
   }
-// Include the WooCommerce API library if it's not already included
-if ( ! class_exists ( 'WooCommerce' ) ) {
-  require_once ( dirname ( __FILE__ ) . '/woocommerce/woocommerce.php' );
-  }
+
 ?>
 <?php
-// Function to get the maximum person count for a specific booking ID
-function get_max_person_count ( $bookings, $booking_id ) {
-  foreach ( $bookings as $booking ) {
-    if ( $booking[ 'id' ] == $booking_id ) {
-      if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
-        return max ( $booking[ 'person_counts' ] );
-        } else {
-        return 'N/A';
-        }
-      }
-    }
-  return 'Booking ID not found';
-  }
-
 // Set up the authentication header
 $headers = array(
   'Authorization' => 'Basic ' . base64_encode ( $consumer_key . ':' . $consumer_secret ),
@@ -45,53 +28,27 @@ $response = wp_remote_get (
 );
 
 // Check for errors
-if ( is_wp_error ( $response ) ) {
-  echo 'Error: ' . $response->get_error_message ();
-  } else {
-  // Retrieve and display the response code and body for debugging
-  $response_code = wp_remote_retrieve_response_code ( $response );
-  $body          = wp_remote_retrieve_body ( $response );
 
-  echo 'Response Code: ' . $response_code . '<br>';
+// Decode the JSON response body
+$bookings = json_decode ( wp_remote_retrieve_body ( $response ), true );
 
-  // Decode the JSON response body
-  $bookings = json_decode ( $body, true );
-
-  // Display bookings
-  if ( ! empty ( $bookings ) ) {
-    echo '<h2>Bookings:</h2>';
-    echo '<ul>';
-    foreach ( $bookings as $booking ) {
-      echo '<li>';
-      echo 'ID: ' . $booking[ 'id' ] . '<br>';
-      echo 'Cost: ' . $booking[ 'cost' ] . '<br>';
-      echo 'Customer ID: ' . $booking[ 'customer_id' ] . '<br>';
-      echo 'Status: ' . $booking[ 'status' ] . '<br>';
-      echo 'Start Date: ' . date ( 'Y-m-d H:i:s', $booking[ 'start' ] ) . '<br>';
-      echo 'End Date: ' . date ( 'Y-m-d H:i:s', $booking[ 'end' ] ) . '<br>';
-      echo 'Product ID: ' . $booking[ 'product_id' ] . '<br>';
-
-      // Display person count
-      if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
-        echo 'Person Count: ' . array_sum ( $booking[ 'person_counts' ] ) . '<br>';
-        echo 'Max Person Count: ' . max ( $booking[ 'person_counts' ] ) . '<br>';
-        } else {
-        echo 'Person Count: N/A<br>';
-        }
-
-      echo '</li>';
+// Store person counts in a variable
+$person_count = 0;
+if ( ! empty ( $bookings ) ) {
+  foreach ( $bookings as $booking ) {
+    if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
+      $person_count = array_sum ( $booking[ 'person_counts' ] );
+      break; // Only need the person count once, so break after first
       }
-    echo '</ul>';
-
-    // Example: Find the max person count for a specific booking ID
-    $specific_booking_id = 33991; // Change this to the booking ID you want to check
-    $max_person_count    = get_max_person_count ( $bookings, $specific_booking_id );
-    echo '<h3>Max Person Count for Booking ID ' . $specific_booking_id . ': ' . $max_person_count . '</h3>';
-
-    } else {
-    echo 'No bookings found.';
     }
+  } else {
+  echo 'No bookings found.';
   }
+
+// Perform the subtraction and print the result
+$result_count = 8 - $person_count;
+echo $result_count;
+
 ?>
 
 <main id="brx-content">
@@ -274,7 +231,8 @@ if ( is_wp_error ( $response ) ) {
                                   data-end="<?php echo esc_attr ( $row[ 'to_date' ] ); ?>">
                                   <td><?php echo esc_html ( $row[ 'from_date' ] ); ?></td>
                                   <td class="mobile-hide"><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
-                                  <td><?php echo esc_html ( $available_spaces ); ?></td>
+                                  <td><?php echo esc_html ( $available_spaces ); ?><?php echo esc_html ( $result_count ); ?>
+                                  </td>
                                   <td class="add-td">
                                     <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
                                       data-month="<?php echo esc_attr ( $row[ 'data_month' ] ); ?>"
