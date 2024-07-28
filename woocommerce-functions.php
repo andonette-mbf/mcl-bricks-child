@@ -67,15 +67,11 @@ function parent_grouped_id ( $post_id = 0 ) {
 function redirect_grouped_to_first_bookable_child () {
     if ( is_product () ) {
         global $post;
-
         $product = wc_get_product ( $post->ID );
-
         if ( $product && $product->is_type ( 'grouped' ) ) {
             $children = $product->get_children ();
-
             foreach ( $children as $child_id ) {
                 $child_product = wc_get_product ( $child_id );
-
                 if ( $child_product && $child_product->is_type ( 'booking' ) ) {
                     wp_safe_redirect ( get_permalink ( $child_id ) );
                     exit;

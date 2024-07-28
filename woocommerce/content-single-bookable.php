@@ -156,12 +156,11 @@ if ( $additional_date_information_json = get_field ( 'additional_date_informatio
     }
   }
 //tabs
-$course_details            = get_field ( 'course_details' );
-$included_in_course        = get_field ( 'included_in_course' );
-$pre_training_requirements = get_field ( 'pre_training_requirements' );
-$training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-$product_cat               = get_the_terms ( $product_id, 'product_cat' );
-$cat_name_first            = '';
+
+
+$training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
+$product_cat         = get_the_terms ( $product_id, 'product_cat' );
+$cat_name_first      = '';
 
 //manual date table ACF fields
 $manual_dates = get_field ( 'manual_dates' );
@@ -174,9 +173,6 @@ if ( $manual_dates ) {
   $acf_full       = $first_row[ 'course_full' ];
   }
 
-
-
-$training_courses_link = get_term_link ( 'training-courses', 'product_cat' );
 
 // Set up the authentication header
 $headers = array(
@@ -446,9 +442,7 @@ if ( ! empty ( $bookings ) ) {
                   </div>
 
                   <div class="layouts float-left w-100 position-relative" id="layout-calendar">
-                    <?php
-                    do_action ( 'woocommerce_single_product_summary' );
-                    ?>
+                    <?php do_action ( 'woocommerce_single_product_summary' ); ?>
                   </div>
                 </div>
               </div>
@@ -644,46 +638,10 @@ if ( ! empty ( $bookings ) ) {
         </div>
       </div>
     </section>
-
     <!--tabs section -->
-    <section class="brxe-section brxe-wc-section">
-      <div class="brxe-container">
-        <div id="brxe-tabs" data-script-id="tabs" class="brxe-tabs-nested">
-          <div id="brxe-pljtos" class="brxe-block tab-menu">
-            <div class="brxe-div tab-title brx-open">
-              <div class="brxe-text-basic">Course Details</div>
-            </div>
-            <div class="brxe-div tab-title">
-              <div class="brxe-text-basic">Included In Course</div>
-            </div>
-            <div class="brxe-div tab-title">
-              <div class="brxe-text-basic">Pre Training Requirements</div>
-            </div>
-          </div>
-          <div class="brxe-block tab-content">
-            <div class="brxe-block tab-pane fade active show brx-open">
-              <div class="brxe-text">
-                <p><?php echo $course_details; ?></p>
-              </div>
-            </div>
-            <div class="brxe-block tab-pane">
-              <div class="brxe-text">
-                <p><?php echo $included_in_course; ?></p>
-              </div>
-            </div>
-            <div class="brxe-block tab-pane">
-              <div class="brxe-text">
-                <p><?php echo $pre_training_requirements; ?></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <?php get_template_part ( 'woocommerce/template-parts/block', 'tabs' ); ?>
     <!--related courses partial -->
     <?php get_template_part ( 'woocommerce/template-parts/block', 'related' ); ?>
   </div>
 </main>
-
 <?php do_action ( 'woocommerce_after_single_product' ); ?>
