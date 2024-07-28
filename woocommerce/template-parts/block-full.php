@@ -1,3 +1,11 @@
+<?php
+/**
+ * The template for displaying full message
+ */
+defined ( 'ABSPATH' ) || exit;
+global $product;
+
+?>
 <div class="brxe-block mcl-dates">
   <div class="brxe-div mcl-flex--col">
     <h3 class="brxe-heading mcl-dates__heading">Course fully booked. please try another venue or call us

@@ -45,16 +45,15 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
   }
 
 //step 1 for locations 
-$locations          = $parent_group->get_children ();
-$current_product_id = $product->get_id ();
-$location_data      = [];
+$locations     = $parent_group->get_children ();
+$location_data = [];
 
 foreach ( $locations as $location ) {
   $location_data[] = [ 
     'id'        => $location,
     'permalink' => get_permalink ( $location ),
     'address'   => get_field ( 'select_address', $location ),
-    'is_active' => ( $location === $current_product_id ),
+    'is_active' => ( $location === $product_id ),
   ];
   }
 
@@ -109,18 +108,12 @@ $prices        = [
   5 => $product_price * 5,
 ];
 
-$delegate_info_type = '';
-if ( has_term ( 'irata-courses', 'product_cat' ) ) {
-  $delegate_info_type = 'irata';
-  } elseif ( has_term ( 'gwo-courses', 'product_cat' ) ) {
-  $delegate_info_type = 'gwo';
-  }
+
 //step 4 
-$product_group_title   = get_the_title ( $product_group_id );
-$duration_time         = $duarionTime[ 0 ];
-$duration_type         = $durationType[ 0 ];
-$select_address        = get_field ( 'select_address' );
-$main_telephone_number = get_field ( 'main_telephone_number', 'options' );
+$product_group_title = get_the_title ( $product_group_id );
+$duration_time       = $duarionTime[ 0 ];
+$duration_type       = $durationType[ 0 ];
+$select_address      = get_field ( 'select_address' );
 
 $additional_dates_information_per_day = [];
 
@@ -333,23 +326,11 @@ if ( ! empty ( $bookings ) ) {
           <?php } ?>
 
           <div class="training-course-steps">
-            <?php
-            //Notices
-            do_action ( 'woocommerce_before_single_product' );
-            ?>
+            <?php do_action ( 'woocommerce_before_single_product' ); ?>
 
             <div class="course-step" id="step-1">
               <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
-              <div>
-                <?php foreach ( $location_data as $location ) : ?>
-                  <div class="step-field location">
-                    <a class="<?php echo $location[ 'is_active' ] ? 'active' : ''; ?>"
-                      href="<?php echo $location[ 'permalink' ]; ?>?scrollStep=2">
-                      <?php echo $location[ 'address' ]; ?>
-                    </a>
-                  </div>
-                <?php endforeach; ?>
-              </div>
+              //location
             </div>
             <?php if ( ! empty ( $future_availability_rows ) ) : ?>
               <div class="course-step" id="step-2">
@@ -486,88 +467,7 @@ if ( ! empty ( $bookings ) ) {
                   </select>
                 </div>
               </div> -->
-
-                <div id="delegate-details">
-                  <div class="title-row step-title">
-                    <span class="title smaller-title to-animate">Please enter delegate information</span>
-                  </div>
-
-                  <?php if ( $delegate_info_type === 'irata' ) : ?>
-                    <div class="delegate-fields">
-                      <div class="step-inputs-split">
-                        <b>Delegate <span class="number">{X}</span> Information</b>
-                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
-                          placeholder="Delegate {X} Name">
-                        <select name="delegate_level_select[{X}]" data-number="{X}" required class="delegate_level_select">
-                          <option value="" disabled selected>IRATA Course Required</option>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                        </select>
-                        <input name="delegate_number[{X}]" data-number="{X}" class="delegate_number" value=""
-                          placeholder="Delegate {X} IRATA Number" style="display:none;">
-                        <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
-                          Birth</label>
-                        <input type="date" id="delegate_dob{X}" name="delegate_dob[{X}]" data-number="{X}" required
-                          class="delegate_dob" value="" placeholder="Delegate {X} DOB">
-                        <input type="text" id="delegate_phone{X}" name="delegate_phone[{X}]" data-number="{X}" required
-                          class="delegate_phone" value="" placeholder="Delegate {X} Phone Number">
-                        <input type="email" id="delegate_email{X}" name="delegate_email[{X}]" data-number="{X}" required
-                          class="delegate_email" value="" placeholder="Delegate {X} Email">
-                      </div>
-                      <div class="outputted-fields"></div>
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all delegate information.</span>
-                    </div>
-                    <script>
-                      jQuery('body').on('change', 'select.delegate_level_select', function () {
-                        var fieldNumber = jQuery(this).attr('data-number');
-                        var selectedValue = jQuery(this).val();
-                        var delegateNumberField = jQuery('input[name="delegate_number[' + fieldNumber + ']"]');
-
-                        if (selectedValue === "2" || selectedValue === "3") {
-                          delegateNumberField.show();
-                          delegateNumberField.attr('required', 'required');
-                        } else {
-                          delegateNumberField.hide();
-                          delegateNumberField.removeAttr('required');
-                        }
-                      });
-                    </script>
-                  <?php elseif ( $delegate_info_type === 'gwo' ) : ?>
-                    <div class="delegate-fields">
-                      <div class="step-inputs-split">
-                        <b>Delegate <span class="number">{X}</span> Information</b>
-                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
-                          placeholder="Delegate {X} Name">
-                        <input name="delegate_number[{X}]" data-number="{X}" required class="delegate_number" value=""
-                          placeholder="Delegate {X} WINDA Number">
-                        <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
-                          Birth</label>
-                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-                          placeholder="Delegate {X} DOB">
-                      </div>
-                      <div class="outputted-fields"></div>
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all delegate information.</span>
-                    </div>
-                  <?php else : ?>
-                    <div class="delegate-fields">
-                      <div class="step-inputs-split">
-                        <b>Delegate <span class="number">{X}</span> Information</b>
-                        <input name="delegate_name[{X}]" data-number="{X}" required class="delegate_name" value=""
-                          placeholder="Delegate {X} Name">
-                        <label style="color: black; font-weight: bold" for="delegate_dob[{X}]">Delegate Date of
-                          Birth</label>
-                        <input type="date" name="delegate_dob[{X}]" data-number="{X}" required class="delegate_dob" value=""
-                          placeholder="Delegate {X} DOB">
-                      </div>
-                      <div class="outputted-fields"></div>
-                      <span class="alert alert-danger float-left mt-4" id="delegate_info_error"
-                        style="display: none;">Please enter all delegate information.</span>
-                    </div>
-                  <?php endif; ?>
-                </div>
+                <?php get_template_part ( 'woocommerce/template-parts/block', 'delegate' ); ?>
               </div>
 
 
@@ -602,30 +502,21 @@ if ( ! empty ( $bookings ) ) {
                     <div class="yyyy"></div>
                   </span>
                 </div>
-
                 <div class="review-booking-block">
                   <div class="meta"><b>Number Of People </b><span class="title number-of-people"></span></div>
                 </div>
-
                 <div class="row confirm-row">
                   <p class="from-price price"></p>
                   <p class="total-price price">
                     <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span>
                   </p>
-
                   <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
-                  <a href="tel:<?php echo $main_telephone_number; ?>" id="cannotBookCourse"
-                    class="cta-button float-right w-auto" style="display: none;"></a>
                 </div>
               <?php else : ?>
                 <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
               <?php endif; ?>
-
             </div>
-
-
           </div>
-
         </div>
       </div>
     </section>

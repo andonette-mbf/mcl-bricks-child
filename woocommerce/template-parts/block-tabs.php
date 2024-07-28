@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying the product sidebar
+ * The template for displaying the product information tabs
  */
 defined ( 'ABSPATH' ) || exit;
 global $product;
