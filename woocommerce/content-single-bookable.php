@@ -122,7 +122,7 @@ if ( ! empty ( $bookings ) ) {
     echo 'Booking ID: ' . $booking_id . '<br>';
     echo 'Start: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_start ) ) . '<br>';
     echo 'End: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_end ) ) . '<br>';
-    echo 'Customer: ' . ( $customer ? $customer->display_name : 'N/A' ) . '<br>';
+    //echo 'Customer: ' . ( $customer ? $customer->display_name : 'N/A' ) . '<br>';
     echo 'Persons Count: ' . ( $persons_count > 0 ? $persons_count : 'N/A' );
     echo '</li>';
     }
