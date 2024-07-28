@@ -6,9 +6,7 @@
 defined ( 'ABSPATH' ) || exit;
 global $product;
 
-/**
- * @suppress PHP0415
- */
+// @suppress PHP0415
 // Use the constants defined in wp-config.php
 $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
 $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
