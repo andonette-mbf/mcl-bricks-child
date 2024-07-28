@@ -34,9 +34,9 @@ add_filter ( 'bricks/builder/i18n', function ($i18n) {
 
 add_filter ( 'bricks/code/echo_function_names', function () {
     return [ 
-        'woocommerce_get_loop_display_mode',
-        'get_queried_object_id',
         'date',
+        'get_queried_object_id',
+        'woocommerce_get_loop_display_mode',
     ];
     } );
 
@@ -63,4 +63,29 @@ function enqueue_custom_scripts () {
     );
     }
 add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
+// Include the Composer autoload file
+require_once get_stylesheet_directory () . '/vendor/autoload.php';
 
+use Automattic\WooCommerce\Client;
+
+function initialize_woocommerce_client () {
+    $woocommerce = new Client(
+        site_url (), // Your store URL
+        WC_BOOKINGS_CONSUMER_KEY,
+        WC_BOOKINGS_CONSUMER_SECRET,
+        [ 
+            'wp_api'  => true, // Enable the WP REST API integration
+            'version' => 'wc/v3', // WooCommerce WP REST API version
+        ],
+    );
+
+    return $woocommerce;
+    }
+function add_woocommerce_capabilities () {
+    $role = get_role ( 'shop_manager' ); // Change to 'administrator' if needed
+    if ( $role ) {
+        $role->add_cap ( 'manage_woocommerce' );
+        $role->add_cap ( 'view_woocommerce_reports' );
+        }
+    }
+add_action ( 'admin_init', 'add_woocommerce_capabilities' );

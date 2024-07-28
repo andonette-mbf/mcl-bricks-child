@@ -37,13 +37,13 @@ jQuery.fn.multiply = function (numCopies) {
       jQuery('.training-course-product').attr('data-people-attending', personNumber);
 
      // Update price fields
-jQuery('#multi-cost-of-course').val(multipliedPrice);
+jQuery('#multi-cost-of-course').val(multipliedPrice  + " Inc VAT");
 jQuery('#total-cost').text(formattedPrice + " Inc VAT");
 
       // Show and hide sidebar prices
       jQuery('.from-price.price').hide();
       jQuery('.total-price.price').show();
-      jQuery('.total-price.price #total-cost').text(formattedPrice);
+      jQuery('.total-price.price #total-cost').text(formattedPrice  + " Inc VAT");
 
       // Check spaces remaining
       var spaces_remaining = jQuery('.training-course-product').attr('data-spaces-remaining');
@@ -195,54 +195,45 @@ jQuery('#course-date-meta .start-date').text(fullDate);
           scrollTop: jQuery('.training-course-steps .course-step#step-3').offset().top - 160,
       }, 2000);
   });
+    
 
-  // Submit Cart Button
-  jQuery('a#confirm-boooking').click(function (e) {
-      e.preventDefault();
-
-      // Check for delegate names and emails
-      var missing_delegate_info = jQuery('.outputted-fields input').filter(function () {
-          return this.value === '';
-      });
-
-      if (missing_delegate_info.length > 0) {
+    // Submit Cart Button
+    jQuery('a#confirm-boooking').click(function (e) {
+        e.preventDefault();
+  
+        // Check for missing delegate info
+        var missing_delegate_info = jQuery('.outputted-fields input').filter(function () {
+          return this.value === '' && jQuery(this).is(':visible');
+        });
+  
+        if (missing_delegate_info.length > 0) {
           jQuery('.outputted-fields input:empty').addClass('error');
           jQuery('#delegate_info_error').slideDown();
           jQuery('html, body').animate({
-              scrollTop: jQuery('#delegate_info_error').offset().top - 250,
+            scrollTop: jQuery('#delegate_info_error').offset().top - 250,
           }, 2000);
           return false;
-      }
+        }
+  
+        jQuery('div#layout-calendar form.cart').submit();
+      });
 
-      jQuery('div#layout-calendar form.cart').submit();
-  });
-
-  // Function to update delegate fields
-  function updateDelegateField(selector, event, fieldType) {
-      jQuery('body').on(event, selector, function (e) {
+    // Function to update delegate fields
+    function updateDelegateField(selector, event, fieldType) {
+        jQuery('body').on(event, selector, function (e) {
           var fieldNumber = jQuery(this).attr('data-number');
           var fieldValue = jQuery(this).val();
           var inputName = 'delegate[' + fieldNumber + '][' + fieldType + ']';
-
+  
           jQuery('.single-product form.cart input[name="' + inputName + '"]').val(fieldValue);
-      });
-  }
+        });
+      }
 
-  // Update delegate name field
-  updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_name', 'input', 'name');
-
-  // Update delegate level select field
-  updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split select.delegate_level_select', 'change', 'level_select');
-
-  // Update delegate number field
-  updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_number', 'input', 'number');
-
-  // Update delegate DOB field
-  updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_dob', 'input', 'dob');
-
-  // Update delegate phone number field
-updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_phone', 'input', 'phone');
-
-// Update delegate email field
-updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_email', 'input', 'email');
-});
+    // Update delegate fields
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_name', 'input', 'name');
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split select.delegate_level_select', 'change', 'level_select');
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_number', 'input', 'number');
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_dob', 'input', 'dob');
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_phone', 'input', 'phone');
+    updateDelegateField('div#delegate-details .delegate-fields .outputted-fields .step-inputs-split input.delegate_email', 'input', 'email');
+  });
