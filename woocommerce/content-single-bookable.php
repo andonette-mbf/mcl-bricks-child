@@ -83,19 +83,8 @@ if ( ! empty ( $futureAvailabilityDates ) ) {
     ];
     }
   }
-//Step 3 variables
-$product_price = $product->get_price ();
-$prices        = [ 
-  1 => $product_price,
-  2 => $product_price * 2,
-  3 => $product_price * 3,
-  4 => $product_price * 4,
-  5 => $product_price * 5,
-];
-
 
 //step 4 
-
 
 $additional_dates_information_per_day = [];
 
@@ -418,11 +407,11 @@ if ( ! empty ( $bookings ) ) {
               </div>
 
               <!--People select partial-->
-
-
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'persons' ); ?>
               <!--review block partial -->
               <?php get_template_part ( 'woocommerce/template-parts/block', 'review' ); ?>
             <?php else : ?>
+              <!--course full partial -->
               <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
             <?php endif; ?>
           </div>
