@@ -15,11 +15,6 @@ $duarionTime  = get_post_meta ( $product->get_id (), '_wc_booking_duration', tru
  * @suppress PHP0417
  */
 
-//Sidebar Summary Variables 
-
-$location       = get_field ( 'location' );
-$location_label = is_array ( $location ) && isset ( $location[ 'label' ] ) ? $location[ 'label' ] : ( is_array ( $location ) ? 'Location data is not properly set' : esc_html ( $location ) );
-
 //GET THE DATES
 $availabilityInFuture = false;
 $availability         = get_post_meta ( $product->get_id (), '_wc_booking_availability' );
@@ -165,7 +160,7 @@ $course_details            = get_field ( 'course_details' );
 $included_in_course        = get_field ( 'included_in_course' );
 $pre_training_requirements = get_field ( 'pre_training_requirements' );
 $training_courses_id       = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-$terms                     = get_the_terms ( $product->get_id (), 'product_cat' );
+$product_cat               = get_the_terms ( $product_id, 'product_cat' );
 $cat_name_first            = '';
 
 //manual date table ACF fields
@@ -179,14 +174,7 @@ if ( $manual_dates ) {
   $acf_full       = $first_row[ 'course_full' ];
   }
 
-if ( $terms ) {
-  foreach ( $terms as $term ) {
-    if ( $term->parent === $training_courses_id->term_id ) {
-      $cat_name_first = $term->name;
-      break;
-      }
-    }
-  }
+
 
 $training_courses_link = get_term_link ( 'training-courses', 'product_cat' );
 
@@ -694,24 +682,7 @@ if ( ! empty ( $bookings ) ) {
     </section>
 
     <!--related courses partial -->
-
-    <section class="brxe-section brxe-wc-section related-products">
-      <div class="related-title">
-        <span class="title to-animate">Other <?php echo $cat_name_first; ?> you may be interested in</span>
-        <a href="<?php echo $training_courses_link; ?>" class="float-right title-link">See all training courses</a>
-      </div>
-
-      <?php
-      /**
-       * Hook: woocommerce_after_single_product_summary.
-       *
-       * @hooked woocommerce_output_product_data_tabs - 10
-       * @hooked woocommerce_upsell_display - 15
-       * @hooked woocommerce_output_related_products - 20
-       */
-      do_action ( 'woocommerce_after_single_product_summary' );
-      ?>
-    </section>
+    <?php get_template_part ( 'woocommerce/template-parts/block', 'related' ); ?>
   </div>
 </main>
 
