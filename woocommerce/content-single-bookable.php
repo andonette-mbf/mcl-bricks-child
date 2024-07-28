@@ -7,8 +7,6 @@ defined ( 'ABSPATH' ) || exit;
 global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
 
-
-
 // Initialize common variables
 $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
 $parent_group     = wc_get_product ( $product_group_id );
@@ -17,15 +15,7 @@ $duarionTime      = get_post_meta ( $product->get_id (), '_wc_booking_duration',
 /**
  * @suppress PHP0417
  */
-//Hero Variables
-$grants_funding         = '';
-$product_id             = $product->get_id ();
-$display_title          = get_field ( 'display_title' );
-$course_duration_custom = get_field ( 'number_of_days' );
-$certification_meta     = get_field ( 'certification_meta', $product_group_id );
-$hero_image             = get_field ( 'hero_image' );
-$duration               = $course_duration_custom ? $course_duration_custom : $duarionTime[ 0 ] . ' ' . $duarionType[ 0 ];
-$grants_funding_options = $grants_funding ? 'Options available' : 'Options not available';
+
 
 //Sidebar Summary Variables 
 $product_group_title = get_the_title ( $product_group_id );
@@ -218,7 +208,6 @@ $response = wp_remote_get (
   ),
 );
 
-
 // Decode the JSON response body
 $json_bookings = json_decode ( wp_remote_retrieve_body ( $response ), true );
 
@@ -323,7 +312,6 @@ if ( ! empty ( $bookings ) ) {
   }
 ?>
 
-
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php
      /**
@@ -332,29 +320,8 @@ if ( ! empty ( $bookings ) ) {
      wc_product_class ( '', $product ); ?>>
 
     <!--Header Section -->
-    <section class="brxe-section brxe-wc-section mcl-hero">
-      <div class="brxe-container mcl-flex--col mcl-hero__inner mcl-padding">
-        <div class="brxe-div mcl-hero__content mcl-flex--col">
-          <h1 class="brxe-heading mcl-hero__title"><?php echo $display_title; ?></h1>
-
-          <h5>
-            Duration: <span><?php echo $duration; ?></span>
-            <br>
-            Certification: <?php echo $certification_meta; ?>
-            <br>
-            Availability: See dates below
-          </h5>
-        </div>
-      </div>
-      <div class="brxe-container mcl-hero__inner--absolute">
-
-        <div class="brxe-div mcl-hero__overlay mcl-absolute--full"></div>
-        <div class="brxe-div mcl-hero__image" style="background-image: url('<?php echo $hero_image; ?>');"></div>
-        <div class="brxe-div mcl-hero__tagline-box">
-          <h3 class="brxe-heading mcl-hero__tagline-box-heading">We've<br>got<br>you.</h3>
-        </div>
-      </div>
-    </section>
+    <?php $tp = get_template_part ( 'woocommerce/template-parts/block', 'hero' );
+    echo $tp ?>
     <section class="brxe-section brxe-wc-section">
       <div class="brxe-container">
         <?php wc_print_notices (); // Add this to display WooCommerce notices ?>
