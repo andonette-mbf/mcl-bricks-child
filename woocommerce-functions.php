@@ -8,7 +8,7 @@ add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
 use Automattic\WooCommerce\Client;
 
 /**
- * @suppress PHP0415
+ * @suppress PHP0413
  */
 function initialize_woocommerce_client () {
     $woocommerce = new Client(
