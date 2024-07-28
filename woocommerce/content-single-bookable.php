@@ -8,8 +8,6 @@ global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
 
 
-$durationType = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
-$duarionTime  = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
 /**
  * @suppress PHP0417
  */
@@ -42,7 +40,6 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
       }
     }
   }
-
 
 
 //STep 2 for date table 
@@ -98,10 +95,7 @@ $prices        = [
 
 
 //step 4 
-$product_group_title = get_the_title ( $product_group_id );
-$duration_time       = $duarionTime[ 0 ];
-$duration_type       = $durationType[ 0 ];
-$select_address      = get_field ( 'select_address' );
+
 
 $additional_dates_information_per_day = [];
 
@@ -423,44 +417,11 @@ if ( ! empty ( $bookings ) ) {
                 </div>
               </div>
 
-              <!--People select-->
-
-              <div class="course-step" id="step-3">
-                <div class="step-title">
-                  <span class="title">Step 3 - Select The Number Of People</span>
-                  <a href="#" data-step="3" class="previous-step">Previous step</a>
-                </div>
-
-                <?php foreach ( $prices as $people => $price ) : ?>
-                  <div class="step-field person-field">
-                    <a href="#" data-bookingPerson="<?php echo $people; ?>">
-                      <?php echo $people; ?> Person<?php echo $people > 1 ? 's' : ''; ?>
-                      <p class="price">(£<span id="price-<?php echo $people; ?>"><?php echo $price; ?> Inc VAT</span>)</p>
-                    </a>
-                  </div>
-                <?php endforeach; ?>
-
-                <!-- <div class="step-field person-dropdown">
-                <a href="#" class="people-over-5-content">5+ People</a>
-                <div class="people-select-menu">
-                  <select id="groupBookingMenu">
-                    <option>Select No. People</option>
-                    <?php //for ( $i = 6; $i <= 10; $i++ ) : ?>
-                      <option value="<?php //echo $i; ?>" data-bookingPerson="<?php //echo $i; ?>"><?php //echo $i; ?> People
-                      </option>
-                    <?php //endfor; ?>
-                  </select>
-                </div>
-              </div> -->
-                <?php get_template_part ( 'woocommerce/template-parts/block', 'delegate' ); ?>
-              </div>
+              <!--People select partial-->
 
 
               <!--review block partial -->
-              <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
-              <input type="hidden" id="multi-cost-of-course" value="" />
-              <input type="hidden" id="changed-cost-of-course" value="" />
-              //Review
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'review' ); ?>
             <?php else : ?>
               <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
             <?php endif; ?>
