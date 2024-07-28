@@ -8,9 +8,6 @@ function mytheme_add_woocommerce_support () {
 
 add_action ( 'after_setup_theme', 'mytheme_add_woocommerce_support' );
 
-//Include woocommerce custom functions comment out if not being used
-include ( 'woocommerce-functions.php' );
-
 //Include JavaScript 
 function enqueue_custom_scripts () {
     // Enqueue the custom JS file

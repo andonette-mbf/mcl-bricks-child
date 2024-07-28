@@ -32,3 +32,15 @@ add_filter ( 'bricks/builder/i18n', function ($i18n) {
     return $i18n;
     } );
 
+add_filter ( 'bricks/code/echo_function_names', function () {
+    return [ 
+        'date',
+        'get_queried_object_id',
+        'woocommerce_get_loop_display_mode',
+    ];
+    } );
+
+//Functions Added By Andonette 
+
+//Include woocommerce custom functions comment out if not being used
+include ( 'woocommerce-functions.php' );
