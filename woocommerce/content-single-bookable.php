@@ -7,8 +7,7 @@ defined ( 'ABSPATH' ) || exit;
 global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
 
-// Initialize common variables
-$parent_group = wc_get_product ( $product_group_id );
+
 $durationType = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
 $duarionTime  = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
 /**
@@ -44,18 +43,7 @@ foreach ( $availabilityTest as $availabilityTestRange ) {
     }
   }
 
-//step 1 for locations 
-$locations     = $parent_group->get_children ();
-$location_data = [];
 
-foreach ( $locations as $location ) {
-  $location_data[] = [ 
-    'id'        => $location,
-    'permalink' => get_permalink ( $location ),
-    'address'   => get_field ( 'select_address', $location ),
-    'is_active' => ( $location === $product_id ),
-  ];
-  }
 
 //STep 2 for date table 
 $select_address       = get_field ( 'location' );
@@ -327,11 +315,8 @@ if ( ! empty ( $bookings ) ) {
 
           <div class="training-course-steps">
             <?php do_action ( 'woocommerce_before_single_product' ); ?>
+            <?php get_template_part ( 'woocommerce/template-parts/block', 'location' ); ?>
 
-            <div class="course-step" id="step-1">
-              <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
-              //location
-            </div>
             <?php if ( ! empty ( $future_availability_rows ) ) : ?>
               <div class="course-step" id="step-2">
                 <div class="step-title">
@@ -475,55 +460,19 @@ if ( ! empty ( $bookings ) ) {
               <input type="hidden" id="cost-of-course" value="<?php echo $product->get_price (); ?>" />
               <input type="hidden" id="multi-cost-of-course" value="" />
               <input type="hidden" id="changed-cost-of-course" value="" />
-              <div class="course-step" id="step-4">
-                <div class="title-row step-title">
-                  <span class="title">Step 4 - Review Your Booking</span>
-                  <a href="#" data-step="4" class="previous-step float-right to-animate"></a>
-                </div>
-
-                <div class="review-booking-block">
-                  <div class="meta">
-                    <b>Course Selection</b>
-                    <span class="title"><?php echo $product_group_title; ?></span>
-                    <span class="title duration"><i class="far fa-clock"></i> <?php echo $duration_time; ?>
-                      <?php echo $duration_type; ?> course</span>
-                  </div>
-                </div>
-
-                <div class="review-booking-block">
-                  <div class="meta"><b>Course Venue </b><span class="title"><?php echo $select_address; ?></span></div>
-                </div>
-
-                <div class="meta" id="course-date-meta">
-                  <b>Course Date</b>
-                  <span class="start-date">
-                    <div class="dd"></div>
-                    <div class="mm"></div>
-                    <div class="yyyy"></div>
-                  </span>
-                </div>
-                <div class="review-booking-block">
-                  <div class="meta"><b>Number Of People </b><span class="title number-of-people"></span></div>
-                </div>
-                <div class="row confirm-row">
-                  <p class="from-price price"></p>
-                  <p class="total-price price">
-                    <span class="price title">Total - £<span id="total-cost"> Inc VAT</span></span>
-                  </p>
-                  <a href="#" class="cta-button float-right" id="confirm-boooking">Confirm Your Booking</a>
-                </div>
-              <?php else : ?>
-                <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
-              <?php endif; ?>
-            </div>
+              //Review
+            <?php else : ?>
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
+            <?php endif; ?>
           </div>
         </div>
       </div>
-    </section>
-    <!--tabs section -->
-    <?php get_template_part ( 'woocommerce/template-parts/block', 'tabs' ); ?>
-    <!--related courses partial -->
-    <?php get_template_part ( 'woocommerce/template-parts/block', 'related' ); ?>
+  </div>
+  </section>
+  <!--tabs section -->
+  <?php get_template_part ( 'woocommerce/template-parts/block', 'tabs' ); ?>
+  <!--related courses partial -->
+  <?php get_template_part ( 'woocommerce/template-parts/block', 'related' ); ?>
   </div>
 </main>
 <?php do_action ( 'woocommerce_after_single_product' ); ?>
