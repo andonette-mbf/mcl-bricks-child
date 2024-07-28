@@ -10,7 +10,11 @@
 
   <div>
     <?php
+
     // loop through the rows of data
+    /**
+     * @suppress PHP0417
+     */
     while ( have_rows ( 'step_1_questions', $product_group_id ) ) :
       the_row (); ?>
       <div class="step-field qualification-field">
