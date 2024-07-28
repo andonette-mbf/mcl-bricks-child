@@ -1,6 +1,9 @@
 <?php
 if ( ! defined ( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+/**
+ * @suppress PHP0413
+ */
 class Element_Custom_Title extends \Bricks\Element {
   /** 
    * How to create custom elements in Bricks
@@ -131,25 +134,25 @@ class Element_Custom_Title extends \Bricks\Element {
    */
   public static function render_builder () { ?>
     <script type="text/x-template" id="tmpl-bricks-element-custom-title">
-          <component 
-            :is="tag"
-            class="custom-title-wrapper">
-            <contenteditable
-              v-if="settings.title" 
-              tag="h4"
-              :name="name"
-              :settings="settings"
-              controlKey="title"
-              class="title"/>
+                                              <component 
+                                                :is="tag"
+                                                class="custom-title-wrapper">
+                                                <contenteditable
+                                                  v-if="settings.title" 
+                                                  tag="h4"
+                                                  :name="name"
+                                                  :settings="settings"
+                                                  controlKey="title"
+                                                  class="title"/>
 
-            <contenteditable
-              v-if="settings.subtitle" 
-              :name="name"
-              :settings="settings"
-              controlKey="subtitle"
-              class="subtitle"/>
-          </component>
-        </script>
+                                                <contenteditable
+                                                  v-if="settings.subtitle" 
+                                                  :name="name"
+                                                  :settings="settings"
+                                                  controlKey="subtitle"
+                                                  class="subtitle"/>
+                                              </component>
+                                            </script>
     <?php
     }
   }

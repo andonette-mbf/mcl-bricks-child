@@ -16,7 +16,9 @@ add_action ( 'init', function () {
     $element_files = [ 
         __DIR__ . '/elements/title.php',
     ];
-
+    /**
+     * @suppress PHP0413
+     */
     foreach ( $element_files as $file ) {
         \Bricks\Elements::register_element ( $file );
         }

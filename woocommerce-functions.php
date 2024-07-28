@@ -1,30 +1,20 @@
 <?php
-
 //Functions Added By Andonette 
-//woocommerce theme support
-function mytheme_add_woocommerce_support () {
-    add_theme_support ( 'woocommerce' );
-    }
-
-add_action ( 'after_setup_theme', 'mytheme_add_woocommerce_support' );
 
 //Include JavaScript 
 function enqueue_custom_scripts () {
-    // Enqueue the custom JS file
-    wp_enqueue_script (
-        'custom-js', // Handle for the script
-        get_stylesheet_directory_uri () . '/woocommerce-scripts.js', // Path to the JS file
-        array( 'jquery' ), // Dependencies (if any)
-        '1.0.0', // Version number
-        true // Load in the footer
-    );
+    wp_enqueue_script ( 'custom-js', get_stylesheet_directory_uri () . '/woocommerce-scripts.js', array( 'jquery' ), '1.0.0', true );
     }
 add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
+
 // Include the Composer autoload file
-require_once get_stylesheet_directory () . '/vendor/autoload.php';
+//require_once get_stylesheet_directory () . '/vendor/autoload.php';
 
 use Automattic\WooCommerce\Client;
 
+/**
+ * @suppress PHP0415
+ */
 function initialize_woocommerce_client () {
     $woocommerce = new Client(
         site_url (), // Your store URL
@@ -60,7 +50,9 @@ function parent_grouped_id ( $post_id = 0 ) {
         global $post;
         $post_id = $post->get_id ();
         }
-
+    /**
+     * @suppress PHP0417
+     */
     $grouped_parents = wc_get_products ( [ 
         'type'   => 'grouped',
         'status' => 'publish',
@@ -175,36 +167,33 @@ function delegate_display_name_email_text_cart ( $item_data, $cart_item ) {
     return $item_data;
     }
 
-//Add delegates to order
+// Add delegates to order
 function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $values, $order ) {
 
     if ( empty ( $values[ 'delegates' ] ) ) {
         return;
         }
 
-    //set delegates for variable
+    // Set delegates for variable
     $delegates = $values[ 'delegates' ];
-    echo $delegates;
 
-    //add delegates for array
-    $item->add_meta_data ( __ ( 'delegates', 'delegates', 'delegates', 'delegates', 'delegates' ), $delegates );
+    // Add delegates for array
+    $item->add_meta_data ( 'delegates', $delegates );
 
-    //Split out delegates for display
-    $i = 1;
-    foreach ( $delegates as $delegate ) {
+    // Split out delegates for display
+    foreach ( $delegates as $index => $delegate ) {
+        $delegate_number = $index + 1;
         if ( ! empty ( $delegate[ 'name' ] ) ) {
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Name', 'delegates' ), $delegate[ 'name' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Level Select', 'delegates' ), $delegate[ 'level_select' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Number', 'delegates' ), $delegate[ 'number' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' DOB', 'delegates' ), $delegate[ 'dob' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Phone', 'delegates' ), $delegate[ 'phone' ] );
-            $item->add_meta_data ( __ ( 'Delegate ' . $i . ' Email', 'delegates' ), $delegate[ 'email' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' Name', $delegate[ 'name' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' Level Select', $delegate[ 'level_select' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' Number', $delegate[ 'number' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' DOB', $delegate[ 'dob' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' Phone', $delegate[ 'phone' ] );
+            $item->add_meta_data ( 'Delegate ' . $delegate_number . ' Email', $delegate[ 'email' ] );
             }
-        $i++;
         }
-
     }
-add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 6 );
+add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 4 );
 
 
 

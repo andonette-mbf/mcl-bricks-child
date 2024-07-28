@@ -42,6 +42,9 @@ do_action ( 'woocommerce_before_main_content' );
 		// Load custom template for bookable training courses
 		get_template_part ( 'woocommerce/content', 'single-bookable' );
 		} else {
+		/**
+		 * @suppress PHP0417
+		 */
 		// Load default single product template
 		wc_get_template_part ( 'content', 'single-product' );
 		}

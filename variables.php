@@ -1,6 +1,9 @@
 <?php
 defined ( 'ABSPATH' ) || exit;
 global $product;
+/**
+ * @suppress PHP0415
+ */
 // Use the constants defined in wp-config.php
 $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
 $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
@@ -12,7 +15,9 @@ $product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $produ
 $parent_group     = wc_get_product ( $product_group_id );
 $durationType     = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
 $duarionTime      = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
-
+/**
+ * @suppress PHP0417
+ */
 //Hero Variables
 $grants_funding         = '';
 $product_id             = $product->get_id ();
