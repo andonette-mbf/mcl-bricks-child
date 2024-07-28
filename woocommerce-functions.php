@@ -1,7 +1,5 @@
 <?php
 //Functions Added By Andonette 
-
-//Include JavaScript 
 function enqueue_custom_scripts () {
     wp_enqueue_script ( 'custom-js', get_stylesheet_directory_uri () . '/woocommerce-scripts.js', array( 'jquery' ), '1.0.0', true );
     }
