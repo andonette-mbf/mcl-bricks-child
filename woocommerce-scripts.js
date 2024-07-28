@@ -1,4 +1,4 @@
-/// <reference types="jquery" />
+<reference types="jquery" />
 jQuery(function () {
 // Define a custom jQuery plugin named 'multiply'
 jQuery.fn.multiply = function (numCopies) {
