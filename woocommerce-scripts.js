@@ -1,6 +1,6 @@
-<reference types="jquery" />
 jQuery(function () {
 // Define a custom jQuery plugin named 'multiply'
+// @ts-ignore
 jQuery.fn.multiply = function (numCopies) {
     // Clone the original element and replace {X} in the HTML with 1
     var newElements = this.clone().html(this.clone().html().replace(/{X}/g, 1));
@@ -20,7 +20,9 @@ jQuery.fn.multiply = function (numCopies) {
       e.preventDefault();
 
       // Toggle active class on person links
+      // @ts-ignore
       jQuery('.step-field.person-field a').removeClass('active');
+      // @ts-ignore
       jQuery(this).addClass('active');
 
       // Get and update the number of persons

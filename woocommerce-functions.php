@@ -5,9 +5,6 @@ function enqueue_custom_scripts () {
     }
 add_action ( 'wp_enqueue_scripts', 'enqueue_custom_scripts' );
 
-// Include the Composer autoload file
-//require_once get_stylesheet_directory () . '/vendor/autoload.php';
-
 use Automattic\WooCommerce\Client;
 
 /**
@@ -23,7 +20,6 @@ function initialize_woocommerce_client () {
             'version' => 'wc/v3', // WooCommerce WP REST API version
         ],
     );
-
     return $woocommerce;
     }
 function add_woocommerce_capabilities () {
@@ -34,7 +30,7 @@ function add_woocommerce_capabilities () {
         }
     }
 add_action ( 'admin_init', 'add_woocommerce_capabilities' );
-// Custom Woocommerce Functions
+
 // Remove unused tabs
 add_filter ( 'woocommerce_product_tabs', 'wcs_woo_remove_reviews_tab', 98 );
 function wcs_woo_remove_reviews_tab ( $tabs ) {

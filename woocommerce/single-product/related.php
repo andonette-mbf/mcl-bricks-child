@@ -1,65 +1,3 @@
-<style>
-    .product-post {
-
-        /* Adjust width and margin as necessary */
-        margin-bottom: 20px;
-        border: 1px solid #e1e1e1;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.3s ease;
-        background: #fff;
-    }
-
-    .product-post:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .post-thumbnail-outer {
-        background-size: cover;
-        background-position: center;
-        width: 100%;
-        max-height: 500px;
-        height: 500px;
-        overflow: hidden;
-        border-bottom: 1px solid #e1e1e1;
-    }
-
-    .post-thumbnail-outer .vertical.missing-img.title {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        height: 100%;
-        color: #fff;
-        background: #000;
-    }
-
-    .post-content {
-        text-align: center;
-        padding: 15px;
-    }
-
-
-    .post-content .price {
-        font-size: 1.2em;
-        margin: 10px 0;
-    }
-
-    .cta-button {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 10px 20px;
-        background-color: #0073aa;
-        color: #fff;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    .cta-button:hover {
-        background-color: #005177;
-    }
-</style>
 <?php
 /**
  * Related Products
@@ -133,6 +71,9 @@ if ( $products->have_posts () ) : ?>
     <?php while ( $products->have_posts () ) :
         $products->the_post (); ?>
         <?php
+        /**
+         * @suppress PHP0417
+         */
         $related_product = wc_get_product ( get_the_ID () );
         ?>
         <div class="product-grid">
