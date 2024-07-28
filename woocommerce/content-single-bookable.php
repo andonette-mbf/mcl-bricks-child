@@ -8,19 +8,17 @@ global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
 
 // Initialize common variables
-$product_group_id = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
-$parent_group     = wc_get_product ( $product_group_id );
-$durationType     = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
-$duarionTime      = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
+$parent_group = wc_get_product ( $product_group_id );
+$durationType = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
+$duarionTime  = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
 /**
  * @suppress PHP0417
  */
 
-
 //Sidebar Summary Variables 
-$product_group_title = get_the_title ( $product_group_id );
-$location            = get_field ( 'location' );
-$location_label      = is_array ( $location ) && isset ( $location[ 'label' ] ) ? $location[ 'label' ] : ( is_array ( $location ) ? 'Location data is not properly set' : esc_html ( $location ) );
+
+$location       = get_field ( 'location' );
+$location_label = is_array ( $location ) && isset ( $location[ 'label' ] ) ? $location[ 'label' ] : ( is_array ( $location ) ? 'Location data is not properly set' : esc_html ( $location ) );
 
 //GET THE DATES
 $availabilityInFuture = false;
@@ -311,7 +309,6 @@ if ( ! empty ( $bookings ) ) {
   echo 'No bookings found for this product.';
   }
 ?>
-
 <main id="brx-content">
   <div id="product-<?php the_ID (); ?>" <?php
      /**
@@ -320,8 +317,7 @@ if ( ! empty ( $bookings ) ) {
      wc_product_class ( '', $product ); ?>>
 
     <!--Header Section -->
-    <?php $tp = get_template_part ( 'woocommerce/template-parts/block', 'hero' );
-    echo $tp ?>
+    <?php get_template_part ( 'woocommerce/template-parts/block', 'hero' ); ?>
     <section class="brxe-section brxe-wc-section">
       <div class="brxe-container">
         <?php wc_print_notices (); // Add this to display WooCommerce notices ?>
@@ -333,40 +329,7 @@ if ( ! empty ( $bookings ) ) {
 
       <div class="brxe-container grid--1-3 gap--m">
         <!--Sidebar Summary-->
-        <div class="training-sidebar">
-          <div class="sidebar-inner">
-            <div class="sidebar-selections">
-              <h3 class="brxe-heading">Your Selection</h3>
-              <!-- meta class uses js -->
-              <div class="meta">
-                <b>Course: </b><br>
-                <span><?php echo $product_group_title; ?></span>
-              </div>
-
-              <div class="meta">
-                <b>Venue</b>
-                <span>
-                  <p>Location: <?php echo $location_label; ?></p>
-                </span>
-              </div>
-
-              <div class="meta" id="course-date-meta">
-                <b>Course Date</b><br>
-                <span class="title">
-                  <span class="start-date">
-                    <div class="dd"></div>
-                    <div class="mm"></div>
-                    <div class="yyyy"></div>
-                  </span>
-                </span>
-              </div>
-              <p class="from-price price"></p>
-              <p class="total-price price">
-                <span class="price title">Total: <span id="total-cost"></span></span>
-              </p>
-            </div>
-          </div>
-        </div>
+        <?php get_template_part ( 'woocommerce/template-parts/block', 'sidebar' ); ?>
         <div class="brxe-block">
           <h3 class="brxe-heading">Confirm Venue</h3>
           <?php if ( isset ( $_GET[ 'scrollStep' ] ) ) {
