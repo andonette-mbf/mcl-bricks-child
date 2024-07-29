@@ -35,19 +35,19 @@ include get_stylesheet_directory () . '/woocommerce-variables.php';
             <?php do_action ( 'woocommerce_before_single_product' ); ?>
             <?php get_template_part ( 'woocommerce/template-parts/block', 'location' ); ?>
             <!-- Only show the date table & selection options if there is availability -->
-            <? //php if ( ! empty ( $future_availability_rows ) ) : ?>
-            <!--dates partial -->
-            <?php get_template_part ( 'woocommerce/template-parts/block', 'dates' ); ?>
-            <!--contact partial -->
-            <?php get_template_part ( 'woocommerce/template-parts/block', 'contact' ); ?>
-            <!--People select partial-->
-            <?php get_template_part ( 'woocommerce/template-parts/block', 'persons' ); ?>
-            <!--review block partial -->
-            <?php get_template_part ( 'woocommerce/template-parts/block', 'review' ); ?>
-            <?php //else : ?>
-            <!--course full partial -->
-            <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
-            <?php //endif; ?>
+            <?php if ( ! empty ( $from_date ) ) : ?>
+              <!--dates partial -->
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'dates' ); ?>
+              <!--contact partial -->
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'contact' ); ?>
+              <!--People select partial-->
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'persons' ); ?>
+              <!--review block partial -->
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'review' ); ?>
+            <?php else : ?>
+              <!--course full partial -->
+              <?php get_template_part ( 'woocommerce/template-parts/block', 'full' ); ?>
+            <?php endif; ?>
           </div>
         </div>
       </div>
