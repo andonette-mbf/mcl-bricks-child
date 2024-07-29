@@ -33,3 +33,9 @@ $duration   = get_field ( 'number_of_days' );
     </div>
   </div>
 </section>
+<!-- Woocommerce store notices -->
+<section class="brxe-section brxe-wc-section">
+  <div class="brxe-container">
+    <?php wc_print_notices (); // Add this to display WooCommerce notices ?>
+  </div>
+</section>
