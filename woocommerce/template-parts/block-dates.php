@@ -3,135 +3,101 @@
  * The template for displaying dates
  */
 defined ( 'ABSPATH' ) || exit;
+
 global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
-/**
- * @suppress PHP0417
- */
-// Manual date table ACF fields
-$manual_dates = get_field ( 'manual_dates' );
-
-if ( $manual_dates ) {
-  $first_row      = $manual_dates[ 0 ];
-  $acf_start_date = $first_row[ 'start_date' ];
-  $acf_end_date   = $first_row[ 'end_date' ];
-  $acf_places     = $first_row[ 'available_spaces' ];
-  $acf_full       = $first_row[ 'course_full' ];
-  }
 
 // Get available dates from booking
-$availabilityInFuture = false;
-$availability         = get_post_meta ( $product->get_id (), '_wc_booking_availability', true );
+$availability = get_post_meta ( $product->get_id (), '_wc_booking_availability', true );
 
-echo "<h2>dump availability</h2>";
-var_dump ( $availability );
+// Get the max_places ACF field value
+$max_places = get_field ( 'max_places', $product->get_id () );
 
+// Initialize the array to store future availability rows
+$future_availability_rows = [];
+$current_date             = new DateTime();
 
-// Loop through and check dates in the future
 foreach ( $availability as $availabilityRange ) {
-  // Determine the opening and closing dates
   $from_date = $availabilityRange[ 'from' ];
   $to_date   = $availabilityRange[ 'to' ];
-
   try {
     $opening_date = new DateTime( $from_date );
     $closing_date = new DateTime( $to_date );
 
-    // Check if the opening date is in the future
     if ( $opening_date > $current_date ) {
-      // Add to array to display in list
       $future_availability_rows[] = [ 
-        'from'          => $opening_date->format ( 'd/m/Y' ),
-        'to'            => $closing_date->format ( 'd/m/Y' ),
-        'location_name' => $location_name,
-        'data_day'      => $opening_date->format ( 'j' ),
-        'data_month'    => $opening_date->format ( 'n' ),
-        'data_year'     => $opening_date->format ( 'Y' ),
-        'hidden_class'  => '',
+        'from'             => $opening_date->format ( 'd/m/Y' ),
+        'to'               => $closing_date->format ( 'd/m/Y' ),
+        'location_name'    => $location_name,
+        'data_day'         => $opening_date->format ( 'j' ),
+        'data_month'       => $opening_date->format ( 'n' ),
+        'data_year'        => $opening_date->format ( 'Y' ),
+        'hidden_class'     => '',
+        'available_spaces' => $max_places // Use max_places for total available slots
       ];
       }
     } catch ( Exception $e ) {
-    // Handle the exception if DateTime creation fails
     error_log ( 'Invalid date format: ' . $e->getMessage () );
     }
   }
 
-// Check if bookings are not empty
-if ( empty ( $json_bookings ) ) {
-  echo 'No bookings found.';
-  } else {
-  // Loop through each availability row
-  foreach ( $future_availability_rows as $row ) {
-    // Convert availability dates to timestamps
-    $from_date = strtotime ( $row[ 'from' ] );
-    $to_date   = strtotime ( $row[ 'to' ] );
-
-    foreach ( $json_bookings as $booking ) {
-      // Convert booking dates to timestamps
-      $booking_start = isset ( $booking[ 'start' ] ) ? strtotime ( $booking[ 'start' ] ) : null;
-      $booking_end   = isset ( $booking[ 'end' ] ) ? strtotime ( $booking[ 'end' ] ) : null;
-
-      // Check if booking is within the date range
-      if ( $booking_start && $booking_end && $booking_start >= $from_date && $booking_end <= $to_date ) {
-        // Perform necessary operations
-        }
-      }
-
-    // Perform the subtraction and print the result for each date range
-    echo "From: " . esc_attr ( $row[ 'from' ] ) . " To: " . esc_attr ( $row[ 'to' ] ) . "<br>";
-    }
-  }
-
-echo "<h2>dump future availability rows </h2>";
-var_dump ( $future_availability_rows );
-function get_bookings_by_product_id ( $product_id ) {
-  $args = array(
+// Fetch bookings for the given product
+$bookings = new WP_Query(
+  array(
     'post_type'      => 'wc_booking',
     'posts_per_page' => -1,
-    'post_status'    => 'any',
+    'post_status'    => array( 'paid', 'confirmed' ),
     'meta_query'     => array(
       array(
         'key'     => '_booking_product_id',
-        'value'   => $product_id,
+        'value'   => $product->get_id (),
         'compare' => '=',
-        'type'    => 'NUMERIC',
       ),
     ),
-  );
+  ),
+);
 
-  $course_bookings = new WP_Query( $args );
-  return $course_bookings->posts;
-  }
+// Initialize an array to store total persons count per start date
+$total_persons_by_date = [];
 
-$bookings = get_bookings_by_product_id ( $product->get_id () );
-// Assuming $bookings is already declared and contains the necessary data
-if ( ! empty ( $bookings ) ) {
-  echo '<ul>';
-  foreach ( $bookings as $booking ) {
-    $booking_id         = $booking->ID;
+// Loop through bookings and sum the persons count
+if ( $bookings->have_posts () ) {
+  while ( $bookings->have_posts () ) {
+    $bookings->the_post ();
+
+    $booking_id         = get_the_ID ();
     $booking_start      = get_post_meta ( $booking_id, '_booking_start', true );
-    $booking_end        = get_post_meta ( $booking_id, '_booking_end', true );
-    $customer_id        = get_post_meta ( $booking_id, '_booking_customer_id', true );
-    $customer           = get_userdata ( $customer_id );
     $persons_count_meta = get_post_meta ( $booking_id, '_booking_persons', true );
 
-    // Calculate the total persons count
-    $persons_count = 0;
-    if ( is_array ( $persons_count_meta ) ) {
-      $persons_count = array_sum ( $persons_count_meta );
+    $booking_start_date = new DateTime( $booking_start );
+    $start_date_str     = $booking_start_date->format ( 'Y-m-d' );
+
+    if ( ! isset ( $total_persons_by_date[ $start_date_str ] ) ) {
+      $total_persons_by_date[ $start_date_str ] = 0;
       }
 
-    echo '<li>';
-    echo 'Booking ID: ' . $booking_id . '<br>';
-    echo 'Start: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_start ) ) . '<br>';
-    echo 'End: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_end ) ) . '<br>';
-    //echo 'Customer: ' . ($customer ? $customer->display_name : 'N/A') . '<br>';
-    echo 'Persons Count: ' . ( $persons_count > 0 ? $persons_count : 'N/A' );
-    echo '</li>';
+    // Sum all persons in this booking
+    if ( is_array ( $persons_count_meta ) ) {
+      $total_persons = array_sum ( $persons_count_meta );
+      } else {
+      $total_persons = (int) $persons_count_meta;
+      }
+
+    $total_persons_by_date[ $start_date_str ] += $total_persons;
     }
-  echo '</ul>';
-  } else {
-  echo 'No bookings found for this product.';
+  // Reset post data
+  wp_reset_postdata ();
+  }
+
+// Update available spaces in future availability rows
+foreach ( $future_availability_rows as &$row ) {
+  // Convert the 'from' date to 'Y-m-d' format for comparison
+  $start_date_str = DateTime::createFromFormat ( 'd/m/Y', $row[ 'from' ] )->format ( 'Y-m-d' );
+
+  // Check if this start date has any bookings and calculate remaining spaces
+  if ( isset ( $total_persons_by_date[ $start_date_str ] ) ) {
+    $row[ 'available_spaces' ] -= $total_persons_by_date[ $start_date_str ];
+    }
   }
 ?>
 
@@ -141,27 +107,9 @@ if ( ! empty ( $bookings ) ) {
     <a href="#" data-step="2" class="previous-step"></a>
   </div>
 
-  <div class="step-layouts">TEST
+  <div class="step-layouts">
     <div class="layouts" id="layout-list">
       <div class="calendar-list">
-
-        <?php
-        // Assuming $future_availability_rows is fetched and contains data
-        $available_spaces_list = [];
-
-        // Create a list of available spaces in order and check the dates
-        $current_date = date ( 'Ymd' ); // Get the current date in 'YYYYMMDD' format
-        
-        if ( $manual_dates ) {
-          foreach ( $manual_dates as $row ) {
-            $start_date = $row[ 'start_date' ]; // Assuming 'start_date' is in 'YYYYMMDD' format
-            if ( $start_date >= $current_date ) { // Check if the start date is today or in the future
-              $available_spaces_list[] = $row[ 'available_spaces' ];
-              }
-            }
-          }
-        ?>
-
         <div class="table-section">
           <?php if ( ! empty ( $future_availability_rows ) ) : ?>
             <table class="table">
@@ -182,18 +130,13 @@ if ( ! empty ( $bookings ) ) {
                 </tr>
               </thead>
               <tbody>
-                <?php
-                $i = 0; // Initialize a counter to access available spaces
-                foreach ( $future_availability_rows as $row ) :
-                  $available_spaces = isset ( $available_spaces_list[ $i ] ) ? $available_spaces_list[ $i ] : 'N/A';
-                  $i++; // Increment the counter
-                  ?>
+                <?php foreach ( $future_availability_rows as $row ) : ?>
                   <tr class="availability-date <?php echo esc_attr ( $row[ 'hidden_class' ] ); ?>"
-                    data-start="<?php echo esc_attr ( $row[ 'from' ] ); ?>"
-                    data-end="<?php echo esc_attr ( $row[ 'to' ] ); ?>">
+                    data-start="<?php echo esc_attr ( DateTime::createFromFormat ( 'd/m/Y', $row[ 'from' ] )->format ( 'Y-m-d' ) ); ?>"
+                    data-end="<?php echo esc_attr ( DateTime::createFromFormat ( 'd/m/Y', $row[ 'to' ] )->format ( 'Y-m-d' ) ); ?>">
                     <td><?php echo esc_html ( $row[ 'from' ] ); ?></td>
                     <td class="mobile-hide"><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
-                    <td><?php echo esc_html ( $available_spaces ); ?></td>
+                    <td><?php echo esc_html ( $row[ 'available_spaces' ] ); ?></td>
                     <td class="add-td">
                       <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
                         data-month="<?php echo esc_attr ( $row[ 'data_month' ] ); ?>"
@@ -207,7 +150,6 @@ if ( ! empty ( $bookings ) ) {
             <button id="show-more-dates" class="cta-button" style="display: none;">More</button>
           <?php endif; ?>
         </div>
-
       </div>
     </div>
     <div class="layouts float-left w-100 position-relative" id="layout-calendar">
