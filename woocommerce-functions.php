@@ -1,5 +1,7 @@
 <?php
-//Include any custom scripts
+/**
+ * @suppress PHP0417
+ */
 function enqueue_custom_scripts () {
     wp_enqueue_script ( 'custom-js', get_stylesheet_directory_uri () . '/woocommerce-scripts.js', array( 'jquery' ), '1.0.0', true );
     }
@@ -184,8 +186,6 @@ function delegate_add_name_email_text_to_order_items ( $item, $cart_item_key, $v
         }
     }
 add_action ( 'woocommerce_checkout_create_order_line_item', 'delegate_add_name_email_text_to_order_items', 10, 4 );
-
-
 
 function enqueue_woocommerce_scripts () {
     if ( is_product () ) {

@@ -1,5 +1,7 @@
 <?php
-// @suppress PHP0415
+/**
+ * @suppress PHP0417
+ */
 // Use the constants defined in wp-config.php
 $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
 $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
