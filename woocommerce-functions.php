@@ -39,7 +39,7 @@ function wcs_woo_remove_reviews_tab ( $tabs ) {
     unset ( $tabs[ 'description' ] );
     return $tabs;
     }
-remove_action ( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
+remove_action ( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
 // Get Grouped product parent using WooCommerce functions and redirect
 function parent_grouped_id ( $post_id = 0 ) {
     if ( ! $post_id ) {
