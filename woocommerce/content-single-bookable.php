@@ -15,8 +15,8 @@ $availability         = get_post_meta ( $product->get_id (), '_wc_booking_availa
 echo "<h2>dump availability</h2>";
 var_dump ( $availability );
 
-// Find non-empty values in the array
-$availabilityIsTrue = array_filter ( $availability );
+// No need to filter non-empty values since dates can't be empty
+$availabilityIsTrue = $availability;
 
 echo "<h2>dump availability is true</h2>";
 var_dump ( $availabilityIsTrue );
@@ -44,32 +44,29 @@ switch ( $select_address_value ) {
 // Loop through and check dates in the future
 foreach ( $availabilityIsTrue as $availabilityRange ) {
   // Determine the opening and closing dates
-  $from_date = ! empty ( $availabilityRange[ 'from' ] ) ? $availabilityRange[ 'from' ] : null;
-  $to_date   = ! empty ( $availabilityRange[ 'to' ] ) ? $availabilityRange[ 'to' ] : null;
+  $from_date = $availabilityRange[ 'from' ];
+  $to_date   = $availabilityRange[ 'to' ];
 
-  // Create DateTime objects if dates are valid
-  if ( $from_date && $to_date ) {
-    try {
-      $opening_date = new DateTime( $from_date );
-      $closing_date = new DateTime( $to_date );
+  try {
+    $opening_date = new DateTime( $from_date );
+    $closing_date = new DateTime( $to_date );
 
-      // Check if the opening date is in the future
-      if ( $opening_date > $current_date ) {
-        // Add to array to display in list
-        $future_availability_rows[] = [ 
-          'from'          => $opening_date->format ( 'd/m/Y' ),
-          'to'            => $closing_date->format ( 'd/m/Y' ),
-          'location_name' => $location_name,
-          'data_day'      => $opening_date->format ( 'j' ),
-          'data_month'    => $opening_date->format ( 'n' ),
-          'data_year'     => $opening_date->format ( 'Y' ),
-          'hidden_class'  => '',
-        ];
-        }
-      } catch ( Exception $e ) {
-      // Handle the exception if DateTime creation fails
-      error_log ( 'Invalid date format: ' . $e->getMessage () );
+    // Check if the opening date is in the future
+    if ( $opening_date > $current_date ) {
+      // Add to array to display in list
+      $future_availability_rows[] = [ 
+        'from'          => $opening_date->format ( 'd/m/Y' ),
+        'to'            => $closing_date->format ( 'd/m/Y' ),
+        'location_name' => $location_name,
+        'data_day'      => $opening_date->format ( 'j' ),
+        'data_month'    => $opening_date->format ( 'n' ),
+        'data_year'     => $opening_date->format ( 'Y' ),
+        'hidden_class'  => '',
+      ];
       }
+    } catch ( Exception $e ) {
+    // Handle the exception if DateTime creation fails
+    error_log ( 'Invalid date format: ' . $e->getMessage () );
     }
   }
 
@@ -90,18 +87,6 @@ if ( $manual_dates ) {
   $acf_places     = $first_row[ 'available_spaces' ];
   $acf_full       = $first_row[ 'course_full' ];
   }
-
-// Original code to store person counts in a variable
-$person_count = 0;
-
-foreach ( $json_bookings as $booking ) {
-  if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
-    $person_count = array_sum ( $booking[ 'person_counts' ] );
-    break; // Only need the person count once, so break after first
-    }
-  }
-
-var_dump ( $person_count );
 ?>
 <?php
 
@@ -111,10 +96,6 @@ if ( empty ( $json_bookings ) ) {
   } else {
   // Loop through each availability row
   foreach ( $future_availability_rows as $row ) {
-
-    // Initialize person count for each date range
-    $person_count = 0;
-
     // Convert availability dates to timestamps
     $from_date = strtotime ( $row[ 'from' ] );
     $to_date   = strtotime ( $row[ 'to' ] );
@@ -126,10 +107,7 @@ if ( empty ( $json_bookings ) ) {
 
       // Check if booking is within the date range
       if ( $booking_start && $booking_end && $booking_start >= $from_date && $booking_end <= $to_date ) {
-        // Add to the person count
-        if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
-          $person_count += array_sum ( $booking[ 'person_counts' ] );
-          }
+        // Perform necessary operations
         }
       }
 
@@ -137,8 +115,6 @@ if ( empty ( $json_bookings ) ) {
     echo "From: " . esc_attr ( $row[ 'from' ] ) . " To: " . esc_attr ( $row[ 'to' ] ) . "<br>";
     }
   }
-
-var_dump ( $person_count );
 ?>
 <?php
 function get_bookings_by_product_id ( $product_id ) {
@@ -192,19 +168,9 @@ if ( ! empty ( $bookings ) ) {
   }
 ?>
 <main id="brx-content">
-  <div id="product-<?php the_ID (); ?>" <?php
-     /**
-      * @suppress PHP0417
-      */
-     wc_product_class ( '', $product ); ?>>
-
+  <div id="product-<?php the_ID (); ?>" class="product-<?php the_ID (); ?>">
     <!--Header Section -->
     <?php get_template_part ( 'woocommerce/template-parts/block', 'hero' ); ?>
-    <section class="brxe-section brxe-wc-section">
-      <div class="brxe-container">
-        <?php wc_print_notices (); // Add this to display WooCommerce notices ?>
-      </div>
-    </section>
 
     <!--Course Selection-->
     <section class="brxe-section brxe-wc-section training-course-product">
