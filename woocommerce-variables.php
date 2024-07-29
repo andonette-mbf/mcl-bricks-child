@@ -35,5 +35,23 @@ $parent_group        = wc_get_product ( $product_group_id );
 $display_title = get_field ( 'display_title' );
 $location      = get_field ( 'location' );
 
-$durationType = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
-$durationTime = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
+//availability determines what blocks show in the template
+// Store availability dates
+$future_availability_rows = [];
+$current_date             = new DateTime();
+$select_address           = get_field ( 'location' );
+$select_address_value     = $select_address[ 'value' ];
+
+// Determine location name based on the selected address value
+$location_name = '';
+switch ( $select_address_value ) {
+  case 'grimsby':
+    $location_name = 'Humber Training Centre';
+    break;
+  case 'wandsworth':
+    $location_name = 'South London Training Centre';
+    break;
+  default:
+    $location_name = 'East London Training Centre';
+    break;
+  }

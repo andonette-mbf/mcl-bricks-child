@@ -8,6 +8,8 @@ include get_stylesheet_directory () . '/woocommerce-variables.php';
 /**
  * @suppress PHP0417
  */
+$durationType   = get_post_meta ( $product->get_id (), '_wc_booking_duration_unit', true );
+$durationTime   = get_post_meta ( $product->get_id (), '_wc_booking_duration', true );
 $duration_time  = $durationTime[ 0 ];
 $duration_type  = $durationType[ 0 ];
 $select_address = get_field ( 'select_address' );

@@ -20,6 +20,7 @@ foreach ( $locations as $location ) {
   ];
   }
 ?>
+
 <div class="course-step" id="step-1">
   <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
   <div>

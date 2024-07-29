@@ -154,8 +154,6 @@ jQuery('#course-date-meta .start-date').text(fullDate);
       }, 2000);
   });
     
-    
-
     // Submit Cart Button
     jQuery('a#confirm-boooking').click(function (e) {
         e.preventDefault();
