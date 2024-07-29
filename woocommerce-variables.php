@@ -6,6 +6,24 @@ $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
 $api_url         = WC_BOOKINGS_API_URL . 'wp-json/wc-bookings/v1/bookings';
 $site_url        = 'https://mcl.local';
 
+// Set up the authentication header
+$headers = array(
+  'Authorization' => 'Basic ' . base64_encode ( $consumer_key . ':' . $consumer_secret ),
+);
+
+// Define the API endpoint
+$api_endpoint = $site_url . '/wp-json/wc-bookings/v1/bookings';
+// Make the request
+$response = wp_remote_get (
+  $api_endpoint,
+  array(
+    'headers' => $headers,
+  ),
+);
+
+// Decode the JSON response body
+$json_bookings = json_decode ( wp_remote_retrieve_body ( $response ), true );
+
 $product_id          = $product->get_id ();
 $product_group_id    = $product->is_type ( 'booking' ) ? parent_grouped_id ( $product->get_id () ) : $product->get_id ();
 $product_group_title = get_the_title ( $product_group_id );

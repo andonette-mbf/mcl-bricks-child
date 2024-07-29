@@ -4,126 +4,83 @@
  *
  */
 defined ( 'ABSPATH' ) || exit;
+
 global $product;
 include get_stylesheet_directory () . '/woocommerce-variables.php';
 
-/**
- * @suppress PHP0417
- */
-//Get available dates from booking 
+// Get available dates from booking
 $availabilityInFuture = false;
-$availability         = get_post_meta ( $product->get_id (), '_wc_booking_availability' );
-$availabilityTest     = array_filter ( $availability );
+$availability         = get_post_meta ( $product->get_id (), '_wc_booking_availability', true );
+
+echo "<h2>dump availability</h2>";
+var_dump ( $availability );
+
+// Find non-empty values in the array
+$availabilityIsTrue = array_filter ( $availability );
+
+echo "<h2>dump availability is true</h2>";
+var_dump ( $availabilityIsTrue );
+
 // Store availability dates
-$futureAvailabilityDates = [];
-$current_date            = new DateTime();
+$future_availability_rows = [];
+$current_date             = new DateTime();
+$select_address           = get_field ( 'location' );
+$select_address_value     = $select_address[ 'value' ];
+
+// Determine location name based on the selected address value
+$location_name = '';
+switch ( $select_address_value ) {
+  case 'grimsby':
+    $location_name = 'Humber Training Centre';
+    break;
+  case 'wandsworth':
+    $location_name = 'South London Training Centre';
+    break;
+  default:
+    $location_name = 'East London Training Centre';
+    break;
+  }
 
 // Loop through and check dates in the future
-foreach ( $availabilityTest as $availabilityTestRange ) {
-  foreach ( $availabilityTestRange as $availabilityTestRangeSingle ) {
-    // Determine the opening and closing dates
-    $opening_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "from_date" ] ) ? $availabilityTestRangeSingle[ "from_date" ] : $availabilityTestRangeSingle[ "from" ] );
-    $closing_date = new DateTime( ! empty ( $availabilityTestRangeSingle[ "to_date" ] ) ? $availabilityTestRangeSingle[ "to_date" ] : $availabilityTestRangeSingle[ "to" ] );
+foreach ( $availabilityIsTrue as $availabilityRange ) {
+  // Determine the opening and closing dates
+  $from_date = ! empty ( $availabilityRange[ 'from' ] ) ? $availabilityRange[ 'from' ] : null;
+  $to_date   = ! empty ( $availabilityRange[ 'to' ] ) ? $availabilityRange[ 'to' ] : null;
 
-    // Check if the opening date is in the future
-    if ( $opening_date > $current_date ) {
-      $availabilityInFuture = true;
+  // Create DateTime objects if dates are valid
+  if ( $from_date && $to_date ) {
+    try {
+      $opening_date = new DateTime( $from_date );
+      $closing_date = new DateTime( $to_date );
 
-      // Add to array to display in list
-      $futureAvailabilityDates[] = [ 
-        "from" => $opening_date,
-        "to"   => $closing_date,
-      ];
-      }
-    }
-  }
-
-
-//STep 2 for date table 
-$select_address       = get_field ( 'location' );
-$select_address_value = $select_address[ 'value' ];
-//$select_address_label = $select_address[ 'choices' ][ $select_address_value ];
-
-$future_availability_rows = [];
-if ( ! empty ( $futureAvailabilityDates ) ) {
-  $count = 0;
-  foreach ( $futureAvailabilityDates as $futureAvailabilityDate ) {
-    $count++;
-    $hidden_class = $count > 6 ? 'hidden-row' : '';
-    $from_date    = $futureAvailabilityDate[ 'from' ]->format ( 'd/m/Y' );
-    $to_date      = $futureAvailabilityDate[ 'to' ]->format ( 'd/m/Y' );
-    $data_day     = $futureAvailabilityDate[ 'from' ]->format ( 'j' );
-    $data_month   = $futureAvailabilityDate[ 'from' ]->format ( 'n' );
-    $data_year    = $futureAvailabilityDate[ 'from' ]->format ( 'Y' );
-
-    $location_name = '';
-    switch ( $select_address_value ) {
-      case 'grimsby':
-        $location_name = 'Humber Training Centre';
-        break;
-      case 'wandsworth':
-        $location_name = 'South London Training Centre';
-        break;
-      default:
-        $location_name = 'East London Training Centre';
-        break;
-      }
-
-    $future_availability_rows[] = [ 
-      'hidden_class'  => $hidden_class,
-      'from_date'     => $from_date,
-      'to_date'       => $to_date,
-      'location_name' => $location_name,
-      'data_day'      => $data_day,
-      'data_month'    => $data_month,
-      'data_year'     => $data_year,
-    ];
-    }
-  }
-
-//step 4 
-
-$additional_dates_information_per_day = [];
-
-if ( $additional_date_information_json = get_field ( 'additional_date_information' ) ) {
-  // Decode the JSON data
-  $additional_dates_information = json_decode ( $additional_date_information_json, true );
-
-  foreach ( $additional_dates_information as $additional_date_information ) {
-    if ( $additional_date_information[ 'from' ] == $additional_date_information[ 'to' ] ) {
-      // Single day course
-      $date                                                    = new DateTime( $additional_date_information[ 'to' ] );
-      $formatted_date                                          = $date->format ( 'Y-m-d' );
-      $additional_dates_information_per_day[ $formatted_date ] = [ 
-        'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
-        'call_to_book'  => $additional_date_information[ 'call_to_book' ],
-      ];
-      } else {
-      // Multi-day course
-      $period = new DatePeriod(
-        new DateTime( $additional_date_information[ 'from' ] ),
-        new DateInterval( 'P1D' ),
-        ( new DateTime( $additional_date_information[ 'to' ] ) )->modify ( '+1 day' ) // include end date
-      );
-
-      foreach ( $period as $date ) {
-        $formatted_date                                          = $date->format ( 'Y-m-d' );
-        $additional_dates_information_per_day[ $formatted_date ] = [ 
-          'spaces_remain' => $additional_date_information[ 'spaces_remain' ],
-          'call_to_book'  => $additional_date_information[ 'call_to_book' ],
+      // Check if the opening date is in the future
+      if ( $opening_date > $current_date ) {
+        // Add to array to display in list
+        $future_availability_rows[] = [ 
+          'from'          => $opening_date->format ( 'd/m/Y' ),
+          'to'            => $closing_date->format ( 'd/m/Y' ),
+          'location_name' => $location_name,
+          'data_day'      => $opening_date->format ( 'j' ),
+          'data_month'    => $opening_date->format ( 'n' ),
+          'data_year'     => $opening_date->format ( 'Y' ),
+          'hidden_class'  => '',
         ];
         }
+      } catch ( Exception $e ) {
+      // Handle the exception if DateTime creation fails
+      error_log ( 'Invalid date format: ' . $e->getMessage () );
       }
     }
   }
-//tabs
 
+echo "<h2>dump future availability rows </h2>";
+var_dump ( $future_availability_rows );
 
 $training_courses_id = get_term_by ( 'slug', 'training-courses', 'product_cat' );
-$product_cat         = get_the_terms ( $product_id, 'product_cat' );
+$product_cat         = get_the_terms ( $product->get_id (), 'product_cat' );
 $cat_name_first      = '';
 
-//manual date table ACF fields
+// Manual date table ACF fields
 $manual_dates = get_field ( 'manual_dates' );
 
 if ( $manual_dates ) {
@@ -134,42 +91,17 @@ if ( $manual_dates ) {
   $acf_full       = $first_row[ 'course_full' ];
   }
 
-
-// Set up the authentication header
-$headers = array(
-  'Authorization' => 'Basic ' . base64_encode ( $consumer_key . ':' . $consumer_secret ),
-);
-
-// Define the API endpoint
-$api_endpoint = $site_url . '/wp-json/wc-bookings/v1/bookings';
-
-// Make the request
-$response = wp_remote_get (
-  $api_endpoint,
-  array(
-    'headers' => $headers,
-  ),
-);
-
-// Decode the JSON response body
-$json_bookings = json_decode ( wp_remote_retrieve_body ( $response ), true );
-
-// Store person counts in a variable
+// Original code to store person counts in a variable
 $person_count = 0;
 
 foreach ( $json_bookings as $booking ) {
   if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
     $person_count = array_sum ( $booking[ 'person_counts' ] );
-    // Only need the person count once, so break after first
+    break; // Only need the person count once, so break after first
     }
   }
 
-
-// Perform the subtraction and print the result
-$result_count = 8 - $person_count;
-echo $result_count;
-
-
+var_dump ( $person_count );
 ?>
 <?php
 
@@ -179,12 +111,13 @@ if ( empty ( $json_bookings ) ) {
   } else {
   // Loop through each availability row
   foreach ( $future_availability_rows as $row ) {
+
     // Initialize person count for each date range
     $person_count = 0;
 
     // Convert availability dates to timestamps
-    $from_date = strtotime ( $row[ 'from_date' ] );
-    $to_date   = strtotime ( $row[ 'to_date' ] );
+    $from_date = strtotime ( $row[ 'from' ] );
+    $to_date   = strtotime ( $row[ 'to' ] );
 
     foreach ( $json_bookings as $booking ) {
       // Convert booking dates to timestamps
@@ -193,15 +126,19 @@ if ( empty ( $json_bookings ) ) {
 
       // Check if booking is within the date range
       if ( $booking_start && $booking_end && $booking_start >= $from_date && $booking_end <= $to_date ) {
-
+        // Add to the person count
+        if ( isset ( $booking[ 'person_counts' ] ) && is_array ( $booking[ 'person_counts' ] ) ) {
+          $person_count += array_sum ( $booking[ 'person_counts' ] );
+          }
         }
       }
 
     // Perform the subtraction and print the result for each date range
-
-    echo "From: " . esc_attr ( $row[ 'from_date' ] ) . " To: " . esc_attr ( $row[ 'to_date' ] ) . "<br>";
+    echo "From: " . esc_attr ( $row[ 'from' ] ) . " To: " . esc_attr ( $row[ 'to' ] ) . "<br>";
     }
   }
+
+var_dump ( $person_count );
 ?>
 <?php
 function get_bookings_by_product_id ( $product_id ) {
@@ -223,7 +160,7 @@ function get_bookings_by_product_id ( $product_id ) {
   return $course_bookings->posts;
   }
 
-$bookings = get_bookings_by_product_id ( $product_id );
+$bookings = get_bookings_by_product_id ( $product->get_id () );
 // Assuming $bookings is already declared and contains the necessary data
 if ( ! empty ( $bookings ) ) {
   echo '<ul>';
@@ -245,7 +182,7 @@ if ( ! empty ( $bookings ) ) {
     echo 'Booking ID: ' . $booking_id . '<br>';
     echo 'Start: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_start ) ) . '<br>';
     echo 'End: ' . date ( 'Y-m-d H:i:s', strtotime ( $booking_end ) ) . '<br>';
-    //secho 'Customer: ' . ( $customer ? $customer->display_name : 'N/A' ) . '<br>';
+    //echo 'Customer: ' . ($customer ? $customer->display_name : 'N/A') . '<br>';
     echo 'Persons Count: ' . ( $persons_count > 0 ? $persons_count : 'N/A' );
     echo '</li>';
     }
@@ -320,8 +257,7 @@ if ( ! empty ( $bookings ) ) {
 
                       <?php
                       // Assuming $future_availability_rows is fetched and contains data
-// Fetch the manual_dates repeater field data for the current product
-                      $manual_dates          = get_field ( 'manual_dates' );
+                    
                       $available_spaces_list = [];
 
                       // Create a list of available spaces in order and check the dates
@@ -364,12 +300,11 @@ if ( ! empty ( $bookings ) ) {
                                 $i++; // Increment the counter
                                 ?>
                                 <tr class="availability-date <?php echo esc_attr ( $row[ 'hidden_class' ] ); ?>"
-                                  data-start="<?php echo esc_attr ( $row[ 'from_date' ] ); ?>"
-                                  data-end="<?php echo esc_attr ( $row[ 'to_date' ] ); ?>">
-                                  <td><?php echo esc_html ( $row[ 'from_date' ] ); ?></td>
+                                  data-start="<?php echo esc_attr ( $row[ 'from' ] ); ?>"
+                                  data-end="<?php echo esc_attr ( $row[ 'to' ] ); ?>">
+                                  <td><?php echo esc_html ( $row[ 'from' ] ); ?></td>
                                   <td class="mobile-hide"><?php echo esc_html ( $row[ 'location_name' ] ); ?></td>
-                                  <td><?php echo esc_html ( $available_spaces ); ?><?php echo esc_html ( $result_count ); ?>
-                                  </td>
+                                  <td><?php echo esc_html ( $available_spaces ); ?></td>
                                   <td class="add-td">
                                     <a href="#" data-day="<?php echo esc_attr ( $row[ 'data_day' ] ); ?>"
                                       data-month="<?php echo esc_attr ( $row[ 'data_month' ] ); ?>"
