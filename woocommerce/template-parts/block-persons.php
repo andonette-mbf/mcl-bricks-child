@@ -16,12 +16,13 @@ $prices        = [
   3 => $product_price * 3,
   4 => $product_price * 4,
   5 => $product_price * 5,
+  6 => $product_price * 6,
 ];
 ?>
 <div class="course-step" id="step-3">
   <div class="step-title">
     <span class="title">Select The Number Of People</span>
-    <a href="#" data-step="3" class="previous-step">Previous step</a>
+    <a href="#" data-step="3" class="previous-step"></a>
   </div>
 
   <?php foreach ( $prices as $people => $price ) : ?>
@@ -33,17 +34,5 @@ $prices        = [
     </div>
   <?php endforeach; ?>
 
-  <!-- <div class="step-field person-dropdown">
-                <a href="#" class="people-over-5-content">5+ People</a>
-                <div class="people-select-menu">
-                  <select id="groupBookingMenu">
-                    <option>Select No. People</option>
-                    <?php //for ( $i = 6; $i <= 10; $i++ ) : ?>
-                      <option value="<?php //echo $i; ?>" data-bookingPerson="<?php //echo $i; ?>"><?php //echo $i; ?> People
-                      </option>
-                    <?php //endfor; ?>
-                  </select>
-                </div>
-              </div> -->
   <?php get_template_part ( 'woocommerce/template-parts/block', 'delegate' ); ?>
 </div>

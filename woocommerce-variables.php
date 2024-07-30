@@ -6,7 +6,7 @@
 $consumer_key    = WC_BOOKINGS_CONSUMER_KEY;
 $consumer_secret = WC_BOOKINGS_CONSUMER_SECRET;
 $api_url         = WC_BOOKINGS_API_URL . 'wp-json/wc-bookings/v1/bookings';
-$site_url        = 'https://mcl.local';
+$site_url        = home_url ();
 
 // Set up the authentication header
 $headers = array(
@@ -149,3 +149,4 @@ foreach ( $future_availability_rows as &$row ) {
     $row[ 'available_spaces' ] -= $total_persons_by_date[ $start_date_str ];
     }
   }
+
