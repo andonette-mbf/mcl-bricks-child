@@ -19,7 +19,7 @@ $select_address = get_field ( 'select_address' );
 <input type="hidden" id="changed-cost-of-course" value="" />
 <div class="course-step" id="step-4">
   <div class="title-row step-title">
-    <span class="title">Step 4 - Review Your Booking</span>
+    <span class="title">Review Your Booking</span>
     <a href="#" data-step="4" class="previous-step float-right to-animate"></a>
   </div>
 

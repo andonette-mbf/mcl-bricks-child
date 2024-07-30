@@ -20,7 +20,7 @@ $prices        = [
 ?>
 <div class="course-step" id="step-3">
   <div class="step-title">
-    <span class="title">Step 3 - Select The Number Of People</span>
+    <span class="title">Select The Number Of People</span>
     <a href="#" data-step="3" class="previous-step">Previous step</a>
   </div>
 

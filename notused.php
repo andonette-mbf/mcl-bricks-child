@@ -1,7 +1,6 @@
 <div class="course-step" id="step-4">
   <div class="title-row step-title">
-    <span class="title">Step 4 - <?php echo get_field ( 'step_1_title', $product_group_id ); ?></span>
-    <a href="#" data-step="4" class="previous-stept">Previous step</a>
+    <span class="title"><?php echo get_field ( 'step_1_title', $product_group_id ); ?></span>
 
     <div class="content">
       <?php echo get_field ( 'step_1_content', $product_group_id ); ?>

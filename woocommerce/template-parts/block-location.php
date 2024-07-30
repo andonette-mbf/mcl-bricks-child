@@ -19,18 +19,23 @@ foreach ( $locations as $location ) {
     'is_active' => ( $location === $product_id ),
   ];
   }
-?>
 
-<div class="course-step" id="step-1">
-  <div class="step-title"><span class="title">Step 1 - Choose Your Venue</span></div>
-  <div>
-    <?php foreach ( $location_data as $location ) : ?>
-      <div class="step-field location">
-        <a class="<?php echo $location[ 'is_active' ] ? 'active' : ''; ?>"
-          href="<?php echo $location[ 'permalink' ]; ?>?scrollStep=2">
-          <?php echo $location[ 'address' ]; ?>
-        </a>
-      </div>
-    <?php endforeach; ?>
+// Only display the HTML if there is more than one location
+if ( count ( $locations ) > 1 ) :
+  ?>
+
+  <div class="course-step" id="step-1">
+    <div class="step-title"><span class="title">Choose Your Venue</span></div>
+    <div>
+      <?php foreach ( $location_data as $location ) : ?>
+        <div class="step-field location">
+          <a class="<?php echo $location[ 'is_active' ] ? 'active' : ''; ?>"
+            href="<?php echo $location[ 'permalink' ]; ?>?scrollStep=2">
+            <?php echo esc_html ( $location[ 'address' ] ); ?>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    </div>
   </div>
-</div>
+
+<?php endif; ?>

@@ -47,12 +47,15 @@ $location_name = '';
 switch ( $select_address_value ) {
   case 'grimsby':
     $location_name = 'Humber Training Centre';
+    $location_venue = 'Humber Training Centre';
     break;
   case 'wandsworth':
     $location_name = 'South London Training Centre';
+    $location_venue = 'South London Training Centre';
     break;
   default:
     $location_name = 'East London Training Centre';
+    $location_venue = 'East London Training Centre';
     break;
   }
 // Get available dates from booking

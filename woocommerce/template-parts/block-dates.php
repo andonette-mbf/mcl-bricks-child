@@ -10,7 +10,7 @@ include get_stylesheet_directory () . '/woocommerce-variables.php';
 
 <div class="course-step" id="step-2">
   <div class="step-title">
-    <span class="title">Step 2 - Choose The Date</span>
+    <span class="title">Choose The Date</span>
     <a href="#" data-step="2" class="previous-step"></a>
   </div>
 
